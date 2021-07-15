@@ -1,6 +1,11 @@
 import {
     config,
+    fedsConfig,
   } from './config.js';
+
+import {
+    loadScript,
+} from './common.js';
 
 const getMetadata = (name) => {
     const meta = document.head.querySelector(`meta[name="${name}"]`);
@@ -165,5 +170,31 @@ const loadBlocks = (config, suppliedEl) => {
     init(parentEl);
 };
 
+const loadFeds = async (fedsConfig) => {    
+    window.fedsConfig = {
+        locale: fedsConfig.locale,
+        content: {
+            experience: fedsConfig.content.experience,
+        },
+        search: {
+            context: fedsConfig.search.context,
+            passExperienceName: fedsConfig.search.passExperienceName,
+        },
+        disableSticky: fedsConfig.disableSticky,
+        privacy: {
+            otDomainId: fedsConfig.privacy.otDomainId,
+            footerLinkSelector: fedsConfig.privacy.footerLinkSelector,
+        },
+    };
+    
+    // window.adobeid = {
+    //     client_id: 'theblog-helix',
+    //     scope: 'AdobeID,openid',
+    //     locale: window.blog.language,
+    // };
+
+    loadScript('https://www.adobe.com/etc.clientlibs/globalnav/clientlibs/base/feds.js').id = 'feds-script';
+}
+loadFeds(fedsConfig);
 loadTheme(config);
 loadBlocks(config);
