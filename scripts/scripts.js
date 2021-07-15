@@ -366,7 +366,7 @@ async function decoratePage(win = window) {
       // post LCP actions go here
       await loadBlocks($main);
       loadCSS('/styles/lazy-styles.css');
-      addFavIcon('/favicon.svg');
+      addFavIcon('/styles/favicon.svg');
     });
   }
 }
