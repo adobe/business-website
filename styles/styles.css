@@ -1,1 +1,294 @@
 /* above the fold CSS goes here */
+
+/* default content */
+
+:root {
+  --color-white: #FFF;
+  --color-gray-100: #F8F8F8;
+  --color-gray-200: #E8E8E8;
+  --color-gray-300: #D4D4D4;
+  --color-gray-400: #B6B6B6;
+  --color-gray-500: #909090;
+  --color-gray-600: #686868;
+  --color-gray-700: #444;
+  --color-gray-800: #242424;
+  --color-black: #000;
+  --color-brand-title: #000B1D;
+  --color-info-accent: #1473e6;
+  --color-info-accent-hover: #1473e6; /* needs to be fixed */
+  --color-info-accent-down: #1473e6; /* needs to be fixed */
+  --color-info-accent-light: #DEDEF9;
+
+  /* body */
+  --body-background-color: var(--color-white);
+  --body-alt-background-color: var(--color-gray-200);
+  --body-font-family: 'adobe-clean', 'Adobe Clean', sans-serif;
+  --body-font-weight: normal;
+  --body-color: var(--color-gray-800);
+  --body-line-height: 1.5;
+  --body-font-size-xxl: 1.5rem; /* 24px */
+  --body-font-size-xl: 1.25rem; /* 20px */
+  --body-font-size-l: 1.125rem; /* 18px */
+  --body-font-size-m: 1rem; /* 16px */
+  --body-font-size-s: 0.875rem; /* 14px */
+  --body-font-size-xs: 0.75rem; /* 12px */
+
+  /* headings */
+  --heading-font-weight: 800;
+  --heading-color: var(--color-gray-800);
+  --heading-line-height: 1.25;
+  --heading-font-size-xxxl: 5rem; /* 80px */
+  --heading-font-size-xxl: 3.75rem; /* 60px */
+  --heading-font-size-xl: 2.8125rem; /* 45px */
+  --heading-font-size-l: 2.25rem; /* 36px */
+  --heading-font-size-m: 1.75rem; /* 28px */
+  --heading-font-size-s: 1.375rem; /* 22px */
+}
+
+@media (min-width: 900px) {
+  :root {
+    --heading-font-size-xxxl: 3.75rem; /* 60px */
+  }
+}
+
+@media (min-width: 1200px) {
+  :root {
+    --heading-font-size-xxxl: 2.8125rem; /* 45px */
+  }
+}
+
+body {
+  background-color: var(--body-background-color);
+  font-family: var(--body-font-family);
+  font-size: var(--body-font-size-m);
+  color: var(--body-color);
+  margin: 0;
+  padding: 0;
+}
+
+/* buttons */
+
+a.button:any-link {
+  text-decoration: none;
+  border-radius: 18px;
+  padding: 5px 1.2em 6px 1.2em;
+  /*outline: none; (keep outline for a11n) */
+  text-align: center;
+  font-size: var(--body-font-size-s);
+  font-style: normal; 
+  font-weight: 600;
+  line-height: var(--body-line-height);
+  cursor: pointer;
+  color: var(--color-white);
+  background-color: var(--color-info-accent);
+  transition: background-color .4s;
+  margin: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+}
+
+a.button.xlarge:any-link {
+  padding: 13px 1.5em 13px 1.5em;
+  border-radius: 27px;
+  font-size: var(--body-font-size-m);
+}
+
+a.button.large:any-link {
+  padding: 10px 1.5em 10px 1.5em;
+  border-radius: 22px;
+}
+
+a.button.small:any-link {
+  padding: 4px 1em 4px 1em;
+  border-radius: 15px;
+  font-size: var(--body-font-size-xs);
+}
+
+a.button.primary:any-link {
+  background-color: var(--color-gray-800);
+}
+
+a.button.secondary:any-link {
+  background-color: var(--color-gray-300);
+  color: var(--color-gray-800);
+}
+
+a.button.light:any-link {
+  background-color: var(--color-white);
+  color: var(--color-info-accent);
+  border: solid 2px var(--color-info-accent);
+}
+
+a.button.primary.light:any-link,
+a.button.secondary.light:any-link {
+  color: var(--color---color-gray-800);
+}
+
+a.button.primary.light:any-link {
+  border-color: var(--color-gray-800);
+}
+
+a.button.secondary.light:any-link {
+  border-color: var(--color-gray-300);
+}
+
+a.button.dark:any-link {
+  color: var(--color-white);
+  border: solid 2px var(--color-white);
+  background-color: transparent;
+}
+
+a.button > svg {
+  float: left;
+  display: inline;
+  width: 20px;
+  height: 20px;
+  margin: 8px 8px 8px 0;
+  fill: currentColor;
+  color: currentColor;
+}
+
+a.button > svg > use {
+  fill: currentColor;
+  color: currentColor;
+}
+
+/* headings and body */
+
+main h1, h2, h3, h4, h5, h6 {
+  font-weight: var(--heading-font-weight);
+  line-height: var(--heading-line-height);
+}
+
+main h1 {
+  font-size: var(--heading-font-size-xxl);
+}
+
+main h2 {
+  font-size: var(--heading-font-size-l);
+}
+
+main h3 {
+  font-size: var(--heading-font-size-m);
+}
+
+main h4,
+main h5 {
+  font-size: var(--heading-font-size-s);
+}
+
+main p {
+  font-size: var(--body-font-size-xl);
+  line-height: var(--body-line-height);
+}
+
+@media (min-width:600px) {
+
+  main h2 {
+    font-size: var(--heading-font-size-l);
+  }
+
+  main h3 {
+    font-size: var(--heading-font-size-l);
+  }
+
+  main h4 {
+    font-size: var(--heading-font-size-m);
+  }
+
+  main p {
+    font-size: var(--body-font-size-l);
+  }
+}
+
+
+/* links */
+
+main a:any-link {
+  color: var(--body-color);
+}
+
+main img {
+  max-width: 100%;
+}
+
+/* section wrapper */
+
+main .section-wrapper {
+  padding-top: 40px;
+}
+
+main .section-wrapper:first-of-type {
+  padding-top: 0;
+}
+
+main .section-wrapper:last-of-type {
+  margin-bottom: 0;
+}
+
+/* section wrapper */
+
+main .section-wrapper {
+  padding-top: 60px;
+}
+
+main .section-wrapper:first-of-type {
+  padding-top: 120px;
+}
+
+main .section-wrapper:first-of-type {
+  padding: 0;
+}
+
+main .section-wrapper > div {
+  margin: auto;
+  max-width: 375px;
+  padding: 0 32px;
+}
+
+main .section-wrapper > div:empty {
+  padding: 0;
+}
+
+main .section-wrapper h1,
+main .section-wrapper h2,
+main .section-wrapper h3,
+main .section-wrapper h4,
+main .section-wrapper h5 {
+  margin: 0;
+}
+
+main .section-wrapper p {
+    margin: 32px 0;
+}
+
+main .section-wrapper p.button-container {
+  text-align: center;
+  margin-top: 16px;
+  margin-bottom: 0;
+}
+
+@media (min-width:900px) {
+  main .section-wrapper > div {
+    max-width: 830px;
+  }
+}
+
+@media (min-width:1200px) {
+  main .section-wrapper > div {
+    max-width: 1024px;
+  }
+}
+
+
+/* gnav placeholder */
+
+header {
+  box-sizing: border-box;
+  border-bottom: 1px solid #EAEAEA;
+  height: 64px;
+  background-color: #FFF;
+}
+
