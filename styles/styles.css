@@ -1,0 +1,9 @@
+body {
+    opacity: 0;
+}
+body.is-Loaded{
+    opacity: 1;
+}
+header {
+    height: 65px;
+}
