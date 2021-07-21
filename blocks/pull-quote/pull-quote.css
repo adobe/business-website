@@ -18,8 +18,10 @@ main .pull-quote img {
     border-radius: 100%;
     margin: 0;
 }
-main .pull-quote h2,
-main .pull-quote h3 {
-    margin-top: 32px;
+main .pull-quote blockquote {
+    margin: 32px 0 0 0;
     color: var(--color-quote);
+    font-weight: var(--heading-font-weight);
+    line-height: var(--heading-line-height);
+    font-size: var(--heading-font-size-l);
 }
