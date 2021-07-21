@@ -157,7 +157,7 @@ a.button > svg > use {
 
 /* headings and body */
 
-main h1, h2, h3, h4, h5, h6 {
+main h1, main h2, main h3, main h4, main h5, main h6 {
   font-weight: var(--heading-font-weight);
   line-height: var(--heading-line-height);
 }
