@@ -1,5 +1,21 @@
-.legend {
+/* caption styling */
+main .images .legend {
+    text-align: left;
     font-style: italic;
-    font-size: 14px;
-    color: #4b4b4b;
+    font-size: var(--body-font-size-s);
+    color: var(--color-gray-700);
+}
+
+main .images .figure {
+    text-align: center;
+}
+
+main .images-list {
+    display: flex;
+}
+
+@media (max-width: 900px) {
+    main .images-list {
+        flex-direction: column;
+    }
 }
