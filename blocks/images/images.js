@@ -1,6 +1,7 @@
 export default function decorateImages(blockEl) {
-  if (blockEl.firstChild.childElementCount > 1) {
-    const rowEl = buildColumns(blockEl.firstChild);
+  const blockCount = blockEl.firstChild.childElementCount;
+  if (blockCount > 1) {
+    buildColumns(blockEl.firstChild, blockCount);
   } else {
     const figEl = buildFigure(blockEl.firstChild.firstChild);
     blockEl.innerHTML = '';
@@ -8,16 +9,15 @@ export default function decorateImages(blockEl) {
   }
 }
 
-function buildColumns(rowEl) {
+function buildColumns(rowEl, count) {
+  console.log(count);
   const columnEls = Array.from(rowEl.children);
   columnEls.forEach((columnEl) => {
     const figEl = buildFigure(columnEl);
     columnEl.remove();
     rowEl.append(figEl);
   })
-  // prep for flex
-  rowEl.classList.add("images-list");
-  return rowEl;
+  rowEl.classList.add("images-list", `images-list-${count}`);
 }
 
 function buildFigure(blockEl) {
@@ -42,6 +42,7 @@ function buildFigure(blockEl) {
   return figEl;
 }
 
+// TODO: move out for use throughout
 function buildCaption(pEl) {
   const figCaptionEl = document.createElement('figcaption');
   figCaptionEl.classList.add('caption');

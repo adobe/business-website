@@ -8,14 +8,36 @@ main .images .legend {
 
 main .images .figure {
     text-align: center;
+    margin: 0;
+    padding: 0.5em 0;
 }
 
 main .images-list {
+    margin: 64px 0;
     display: flex;
+}
+
+main .images-list-2 > :first-child {
+    /* border: 2px solid red; */
+    margin-right: 32px;
+}
+
+main .images-list-3 > :nth-child(2) {
+    margin-left: 32px;
+    margin-right: 32px;
 }
 
 @media (max-width: 900px) {
     main .images-list {
         flex-direction: column;
+    }
+
+    main .images-list-2 > :first-child {
+        margin-right: 0;
+    }
+
+    main .images-list-3 > :nth-child(2) {
+        margin-left: 0;
+        margin-right: 0;
     }
 }
