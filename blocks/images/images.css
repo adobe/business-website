@@ -1,0 +1,64 @@
+/* caption styling */
+main .images .legend {
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    text-align: left;
+    font-style: italic;
+    font-size: var(--body-font-size-s);
+    color: var(--color-gray-700);
+}
+
+main .images {
+    margin-left: 0;
+    margin-right: 0;
+    max-width: 800px;
+    text-align: center;
+}
+
+main .images .figure {
+    margin: 1.5em auto 0.5em;
+}
+
+main .images .images-list .figure {
+    margin-top: 0.5em;
+}
+
+main .images .figure img {
+    margin-top: 64px;
+    max-width: 100%;
+    max-height: 600px;
+    width: unset;
+}
+
+main .images .images-list .figure img {
+    margin-top: 0;
+}
+
+main .images-list {
+    display: flex;
+    margin: 64px 0;
+}
+
+main .images-list-2 > :first-child {
+    margin-right: 32px;
+}
+
+main .images-list-3 > :nth-child(2) {
+    margin-left: 32px;
+    margin-right: 32px;
+}
+
+@media (max-width: 900px) {
+    main .images-list {
+        flex-direction: column;
+    }
+
+    main .images-list-2 > :first-child {
+        margin-right: 0;
+    }
+
+    main .images-list-3 > :nth-child(2) {
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
