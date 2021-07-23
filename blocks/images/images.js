@@ -10,7 +10,6 @@ export default function decorateImages(blockEl) {
 }
 
 function buildColumns(rowEl, count) {
-  console.log(count);
   const columnEls = Array.from(rowEl.children);
   columnEls.forEach((columnEl) => {
     const figEl = buildFigure(columnEl);
