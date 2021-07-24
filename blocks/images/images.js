@@ -19,7 +19,12 @@ function buildColumns(rowEl, count) {
   rowEl.classList.add("images-list", `images-list-${count}`);
 }
 
-function buildFigure(blockEl) {
+/**
+ * This is a helper function that could be reusable for other blocks.
+ * @param {Element} blockEl The original element to be placed in figure.
+ * @returns figEl Generated figure
+ */
+export function buildFigure(blockEl) {
   let figEl = document.createElement('figure');
   figEl.classList.add("figure");
   // content is picture only, no caption or link
