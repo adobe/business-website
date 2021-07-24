@@ -10,6 +10,9 @@
  * governing permissions and limitations under the License.
  */
 /* global sessionStorage, Image */
+import {
+  buildFigure
+} from '/blocks/images/images.js';
 
 /**
  * Loads a CSS file.
@@ -103,6 +106,36 @@ function decorateBlocks($main) {
   $main
     .querySelectorAll('div.section-wrapper > div > div')
     .forEach(($block) => decorateBlock($block));
+}
+
+/**
+ * Decorates hero image.
+ */
+function decorateHero() {
+  const h1El = document.querySelector('main h1');
+  // create container to pass to buildFigure func
+  const containerEl = document.createElement('div'); 
+  if (h1El) {
+    // check for hero image
+    let hasHero = h1El.parentElement.querySelector('p picture') || false;
+    if (hasHero) {
+      const heroEl = hasHero.parentNode;
+      // check for hero caption
+      const heroPicSiblingEl = heroEl.nextElementSibling;
+      const heroPicCaption = heroPicSiblingEl || false;
+      // populate container to pass to buildFigure func
+      if (heroEl) { containerEl.append(heroEl) };
+      if (heroPicCaption) { containerEl.append(heroPicCaption) };
+      const figContainerEl = document.createElement('div');
+      figContainerEl.classList.add('hero-image');
+      const figEl = buildFigure(containerEl);
+      figEl.classList.add('hero-image-figure');
+      figContainerEl.append(figEl);
+      h1El.parentNode.parentNode.parentNode.append(figContainerEl);
+      // insert hero div below H1 parent
+      h1El.parentNode.parentNode.parentNode.insertBefore(figContainerEl, h1El.parentNode.parentNode.nextSibling);
+    }
+  }
 }
 
 /**
@@ -292,6 +325,7 @@ export function decorateMain($main) {
   checkWebpFeature(() => {
     webpPolyfill($main);
   });
+  decorateHero();
   decorateBlocks($main);
 }
 

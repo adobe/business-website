@@ -292,3 +292,46 @@ header {
   background-color: #FFF;
 }
 
+/* hero */
+
+main .hero-image {
+  width: 100%;
+  padding: 0;
+  margin: auto;
+  max-width: 1000px;
+}
+
+main .hero-image .hero-image-figure {
+  margin: 0;
+}
+
+main .hero-image .hero-image-figure img {
+  width: 100%;
+  max-height: 438px;
+  object-fit: cover;
+}
+
+main .hero-image .hero-image-figure .caption {
+  padding: 0 32px;
+  max-width: 830px;
+  margin: auto;
+  /* border: 2px solid red; */
+}
+
+@media (max-width: 900px) {
+  main .hero-image .hero-image-figure .caption {
+    margin: auto;
+    max-width: 375px;
+    padding: 0 32px;
+  }
+}
+
+/* caption styling */
+main .legend {
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  text-align: left;
+  font-style: italic;
+  font-size: var(--body-font-size-s);
+  color: var(--color-gray-700);
+}
