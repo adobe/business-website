@@ -5,7 +5,7 @@ indices:
     source: html
     fetch: https://{repo}-{owner}.hlx.page/{path}
     include:
-      - '/blog/**.(docx|md)'
+      - '/blog/**/*.(docx|md)'
     exclude:
       - '**/Document.*'
     target: https://adobe.sharepoint.com/:x:/r/sites/BizWeb/_layouts/15/Doc.aspx?sourcedoc=%7B24A19E0A-D1D6-4EE3-9C1D-353849B93BDB%7D&file=query-index.xlsx&action=default&mobileredirect=true
