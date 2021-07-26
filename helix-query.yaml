@@ -39,7 +39,7 @@ indices:
         value: |
           attribute(el, 'content')
       topics:
-        select: head > meta[property="article:topics"]
+        select: head > meta[name="topics"]
         values: |
           attribute(el, 'content')
       description:
