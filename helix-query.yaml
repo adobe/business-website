@@ -40,7 +40,7 @@ indices:
           attribute(el, 'content')
       topics:
         select: head > meta[name="topics"]
-        values: |
+        value: |
           attribute(el, 'content')
       description:
         select: head > meta[name="description"]
