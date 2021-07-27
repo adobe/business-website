@@ -11,6 +11,10 @@
  */
 /* global sessionStorage, Image */
 
+import {
+  buildFigure
+} from '/blocks/images/images.js';
+
 /**
  * Loads a CSS file.
  * @param {string} href The path to the CSS file
@@ -67,7 +71,7 @@ export function toClassName(name) {
 /**
  * Wraps each section in an additional {@code div}.
  * @param {[Element]} $sections The sections
- */
+ */ 
 function wrapSections($sections) {
   $sections.forEach(($div) => {
     if (!$div.id) {
@@ -93,6 +97,44 @@ export function decorateBlock($block) {
   }
   $block.classList.add('block');
   $block.setAttribute('data-block-name', blockName);
+}
+
+/**
+ * Decorates all inline images in a container element.
+ * @param {Element} mainEl The container element
+ */
+function decorateImages(mainEl) {
+  // remove styling from images, if any
+  const styledImgEls = [ ...mainEl.querySelectorAll('strong picture'), ...mainEl.querySelectorAll('em picture')];
+  styledImgEls.forEach((imgEl) => {
+    const parentEl = imgEl.closest('p');
+    parentEl.prepend(imgEl);
+    parentEl.lastChild.remove();
+  })
+  // select all non-hero, non-image-block images
+  const imgEls = Array.from(mainEl.querySelectorAll('div.section-wrapper:not(:first-of-type) > div > p > picture'));
+  imgEls.forEach((imgEl) => {
+    const parentEl = imgEl.parentNode;
+    const parentSiblingEl = parentEl.nextElementSibling;
+    let imgCaptionEl;
+    // check for caption immediately following image
+    if (parentSiblingEl.firstChild.nodeName === 'EM') {
+      imgCaptionEl = parentSiblingEl;
+    }
+    const blockEl = document.createElement('div');
+    // build image block nested div structure
+    blockEl.classList.add('images', 'block');
+    blockEl.setAttribute('data-block-name', 'images');
+    const firstNestEl = document.createElement('div');
+    const secondNestEl = document.createElement('div');
+    // populate images block
+    firstNestEl.append(parentEl.cloneNode(true));
+    if (imgCaptionEl) { firstNestEl.append(imgCaptionEl) };
+    secondNestEl.append(firstNestEl);
+    blockEl.append(secondNestEl);
+    parentEl.parentNode.insertBefore(blockEl, parentEl);
+    parentEl.remove();
+  })
 }
 
 /**
@@ -292,6 +334,7 @@ export function decorateMain($main) {
   checkWebpFeature(() => {
     webpPolyfill($main);
   });
+  decorateImages($main);
   decorateBlocks($main);
 }
 
