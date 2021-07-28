@@ -209,6 +209,21 @@ main p {
 main a:any-link {
   color: var(--body-color);
 }
+main a.cta-link {
+  color: var(--color-info-accent);
+  font-weight: 700;
+  text-decoration: none;
+}
+main a.cta-link:after {
+  content: " >";
+}
+main a.cta-link:hover {
+  color: var(--color-info-accent-hover);
+}
+main a.cta-link:active,
+main a.cta-link:focus {
+  color: var(--color-info-accent-down);
+}
 
 main img {
   max-width: 100%;

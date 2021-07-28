@@ -6,22 +6,13 @@
  */
  export const replaceElementType = ($e, type) => {
     // If they are same, no need to replace.
-    if ($e.nodeName === type.toUpperCase()) {
+    if ($e === null || $e.nodeName === type.toUpperCase()) {
         return $e;
     }
     const $n = document.createElement(type);
     $n.innerHTML = $e.innerHTML;
     $e.parentNode.replaceChild($n, $e);
+    // copy all attributes from $e to $n
+    [...$e.attributes].forEach(attr => $n.setAttribute(attr.nodeName, attr.nodeValue));
     return $n;
-}
-
-/**
- * Getting HTML source from given URL
- * @param {String} url 
- * @returns String from response.text()
- */
-export const getSourceFromURL = async (url) => {
-    const response = await fetch(url);
-    const text = await response.text();
-    return text;
 }

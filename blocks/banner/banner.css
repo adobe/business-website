@@ -1,7 +1,13 @@
 main .banner {
     opacity: 0;
-    max-width: 600px;
     min-height: 152px;
+}
+main .banner.is-loaded {
+    opacity: 1;
+    min-height: 0;
+}
+main .banner .content-wrapper {
+    max-width: 600px;    
     display: flex;
     padding: 1.5rem 0;
     border-top: 2px solid #ddd;
@@ -9,22 +15,14 @@ main .banner {
     align-items: center;
     margin: 64px auto;
 }
-main .banner.is-loaded {
-    opacity: 1;
-    min-height: 0;
-}
 main .banner img {
     width: 100px;
     max-width: unset;
 }
-main .banner > *:nth-child(2) {
+main .banner .banner-text {
     padding-left: 2rem;   
 }
-main .banner > *:nth-child(2) h1,
-main .banner > *:nth-child(2) h2,
-main .banner > *:nth-child(2) h3,
-main .banner > *:nth-child(2) h4,
-main .banner > *:nth-child(2) h5 {
+main .banner .banner-text h3 {
     font-size: 14px;
     font-weight: 700;
     line-height: 1.5em;
@@ -32,15 +30,8 @@ main .banner > *:nth-child(2) h5 {
     text-transform: uppercase;
     margin: .5em 0;
 }
-main .banner > *:nth-child(2) p {
+main .banner .banner-text p {
     margin: .5rem 0;
     line-height: 1.5rem;
     font-size: 1rem;
-}
-main .banner > *:nth-child(2) a:any-link {
-    font-weight: 700;
-    text-decoration: none;
-}
-main .banner > *:nth-child(2) a:after {
-    content: " >";
 }
