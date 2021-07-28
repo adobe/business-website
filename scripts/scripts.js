@@ -67,7 +67,7 @@ export function toClassName(name) {
 /**
  * Wraps each section in an additional {@code div}.
  * @param {[Element]} $sections The sections
- */ 
+ */
 function wrapSections($sections) {
   $sections.forEach(($div) => {
     if (!$div.id) {
@@ -101,12 +101,12 @@ export function decorateBlock($block) {
  */
 function buildImageBlocks(mainEl) {
   // remove styling from images, if any
-  const styledImgEls = [ ...mainEl.querySelectorAll('strong picture'), ...mainEl.querySelectorAll('em picture')];
+  const styledImgEls = [...mainEl.querySelectorAll('strong picture'), ...mainEl.querySelectorAll('em picture')];
   styledImgEls.forEach((imgEl) => {
     const parentEl = imgEl.closest('p');
     parentEl.prepend(imgEl);
     parentEl.lastChild.remove();
-  })
+  });
   // select all non-featured, default (non-images block) images
   const imgEls = Array.from(mainEl.querySelectorAll('div.section-wrapper:not(:first-of-type) > div > p > picture'));
   imgEls.forEach((imgEl) => {
@@ -124,12 +124,12 @@ function buildImageBlocks(mainEl) {
     const secondNestEl = document.createElement('div');
     // populate images block
     firstNestEl.append(parentEl.cloneNode(true));
-    if (imgCaptionEl) { firstNestEl.append(imgCaptionEl) };
+    if (imgCaptionEl) { firstNestEl.append(imgCaptionEl); }
     secondNestEl.append(firstNestEl);
     blockEl.append(secondNestEl);
     parentEl.parentNode.insertBefore(blockEl, parentEl);
     parentEl.remove();
-  })
+  });
 }
 
 /**

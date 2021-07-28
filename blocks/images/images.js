@@ -1,22 +1,19 @@
-export default function decorateImages(blockEl) {
-  const blockCount = blockEl.firstChild.childElementCount;
-  if (blockCount > 1) {
-    buildColumns(blockEl.firstChild, blockCount);
-  } else {
-    const figEl = buildFigure(blockEl.firstChild.firstChild);
-    blockEl.innerHTML = '';
-    blockEl.append(figEl);
+export function wrapPicInAnchor(figEl, aEl) {
+  const picEl = figEl.querySelector('picture');
+  if (picEl) {
+    aEl.textContent = '';
+    aEl.append(picEl);
+    figEl.prepend(aEl);
   }
+  return figEl;
 }
 
-function buildColumns(rowEl, count) {
-  const columnEls = Array.from(rowEl.children);
-  columnEls.forEach((columnEl) => {
-    const figEl = buildFigure(columnEl);
-    columnEl.remove();
-    rowEl.append(figEl);
-  })
-  rowEl.classList.add('images-list', `images-list-${count}`);
+// TODO: move out for use throughout
+export function buildCaption(pEl) {
+  const figCaptionEl = document.createElement('figcaption');
+  pEl.classList.add('caption');
+  figCaptionEl.append(pEl);
+  return figCaptionEl;
 }
 
 /**
@@ -24,7 +21,7 @@ function buildColumns(rowEl, count) {
  * @param {Element} blockEl The original element to be placed in figure.
  * @returns figEl Generated figure
  */
- export function buildFigure(blockEl) {
+export function buildFigure(blockEl) {
   let figEl = document.createElement('figure');
   figEl.classList.add('figure');
   // content is picture only, no caption or link
@@ -41,25 +38,28 @@ function buildColumns(rowEl, count) {
       } else if (pEl.firstChild.nodeName === 'A') {
         figEl = wrapPicInAnchor(figEl, pEl.firstChild);
       }
-    })
+    });
   }
   return figEl;
 }
 
-// TODO: move out for use throughout
-export function buildCaption(pEl) {
-  const figCaptionEl = document.createElement('figcaption');
-  pEl.classList.add('caption');
-  figCaptionEl.append(pEl);
-  return figCaptionEl;  
+function buildColumns(rowEl, count) {
+  const columnEls = Array.from(rowEl.children);
+  columnEls.forEach((columnEl) => {
+    const figEl = buildFigure(columnEl);
+    columnEl.remove();
+    rowEl.append(figEl);
+  });
+  rowEl.classList.add('images-list', `images-list-${count}`);
 }
 
-export function wrapPicInAnchor(figEl, aEl) {
-  const picEl = figEl.querySelector('picture');
-  if (picEl) {
-    aEl.textContent = '';
-    aEl.append(picEl);
-    figEl.prepend(aEl);
+export default function decorateImages(blockEl) {
+  const blockCount = blockEl.firstChild.childElementCount;
+  if (blockCount > 1) {
+    buildColumns(blockEl.firstChild, blockCount);
+  } else {
+    const figEl = buildFigure(blockEl.firstChild.firstChild);
+    blockEl.innerHTML = '';
+    blockEl.append(figEl);
   }
-  return figEl;
 }
