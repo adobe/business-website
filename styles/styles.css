@@ -292,3 +292,12 @@ header {
   background-color: #FFF;
 }
 
+/* caption styling */
+main .caption {
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  text-align: left;
+  font-style: italic;
+  font-size: var(--body-font-size-s);
+  color: var(--color-gray-700);
+} 
