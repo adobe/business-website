@@ -1,15 +1,5 @@
 import { buildFigure } from '../../scripts/scripts.js';
 
-export function wrapPicInAnchor(figEl, aEl) {
-  const picEl = figEl.querySelector('picture');
-  if (picEl) {
-    aEl.textContent = '';
-    aEl.append(picEl);
-    figEl.prepend(aEl);
-  }
-  return figEl;
-}
-
 function buildColumns(rowEl, count) {
   const columnEls = Array.from(rowEl.children);
   columnEls.forEach((columnEl) => {

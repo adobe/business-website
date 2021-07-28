@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 /* global sessionStorage, Image */
-import { wrapPicInAnchor } from '../blocks/images/images.js';
 /**
  * Loads a CSS file.
  * @param {string} href The path to the CSS file
@@ -178,7 +177,12 @@ export function buildFigure(blockEl) {
         const figCapEl = buildCaption(pEl);
         figEl.append(figCapEl);
       } else if (pEl.firstChild.nodeName === 'A') {
-        figEl = wrapPicInAnchor(figEl, pEl.firstChild);
+        const picEl = figEl.querySelector('picture');
+        if (picEl) {
+          pEl.firstChild.textContent = '';
+          pEl.firstChild.append(picEl);
+          figEl.prepend(pEl.firstChild);
+        }
       }
     });
   }
