@@ -1,0 +1,90 @@
+main .article-feed .article-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 16px;
+}
+  
+main .article-feed .article-card .article-card-image {
+  width: 100%;
+  position: relative;
+}
+  
+main .article-feed {
+  text-align: center;
+}
+
+main .article-feed .article-card {
+  cursor: pointer;
+}
+
+main .article-feed .article-card {
+  display: flex;
+  flex-direction: column;
+  width: 350px;
+  margin: 10px;
+  text-align: left;
+  text-decoration: unset;
+  color: unset;
+}
+
+main .article-feed .article-card .article-card-image {
+  line-height: 0;
+}
+
+main .article-feed .article-card .article-card-image img {
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  width: 100%;
+  border-radius: 10px 10px 0 0;
+}
+
+main .article-feed .article-card-body h3 {
+  font-size: var(--heading-font-size-s);
+  margin-top: 0;
+  text-align: left;
+}
+
+
+main .article-feed .article-card .article-card-body p {
+  font-size: var(--body-font-size-s);
+  margin: 12px 0;
+}
+
+main .article-feed .article-card-body p.article-card-category {
+  text-transform: uppercase;
+  margin: 0;
+  margin-bottom: 12px;
+  font-weight: 700;
+  color: #696969;
+  font-size: var(--body-font-size-xs);
+  line-height: 16px;
+  letter-spacing: .1em;
+}
+
+main .article-feed .article-card .article-card-body {
+  padding: 16px;
+  border: 1px solid lightgrey;
+  border-radius: 0 0 10px 10px;
+  border-top: none;
+  height: 200px;
+}
+
+@media (min-width: 900px) {
+  main .article-feed .article-card {
+    width: 240px;  
+  }
+
+  main .article-feed .article-card-body h3 {
+    font-size: var(--heading-font-size-xs);
+  }
+    
+  main .article-feed .article-card .article-card-body p {
+    font-size: var(--body-font-size-xs);
+  }
+  
+  main .article-feed .article-card-body p.article-card-category {
+    font-size: var(--body-font-size-xs);
+  }
+  
+}
