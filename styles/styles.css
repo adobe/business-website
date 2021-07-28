@@ -292,33 +292,33 @@ header {
   background-color: #FFF;
 }
 
-/* hero */
+/* feature img */
 
-main .hero-image {
+main .feature-image {
   width: 100%;
   padding: 0;
   margin: auto;
   max-width: 1000px;
 }
 
-main .hero-image .hero-image-figure {
+main .feature-image .feature-image-figure {
   margin: 0;
 }
 
-main .hero-image .hero-image-figure img {
+main .feature-image .feature-image-figure img {
   width: 100%;
   max-height: 438px;
   object-fit: cover;
 }
 
-main .hero-image .hero-image-figure .caption {
+main .feature-image .feature-image-figure .caption {
   padding: 0 32px;
   max-width: 830px;
   margin: auto;
 }
 
 @media (max-width: 900px) {
-  main .hero-image .hero-image-figure .caption {
+  main .feature-image .feature-image-figure .caption {
     margin: auto;
     max-width: 375px;
     padding: 0 32px;
