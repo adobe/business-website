@@ -11,10 +11,6 @@
  */
 /* global sessionStorage, Image */
 
-import {
-  buildFigure
-} from '/blocks/images/images.js';
-
 /**
  * Loads a CSS file.
  * @param {string} href The path to the CSS file
@@ -100,10 +96,10 @@ export function decorateBlock($block) {
 }
 
 /**
- * Decorates all inline images in a container element.
+ * Decorates all default images in a container element.
  * @param {Element} mainEl The container element
  */
-function decorateImages(mainEl) {
+function buildImageBlocks(mainEl) {
   // remove styling from images, if any
   const styledImgEls = [ ...mainEl.querySelectorAll('strong picture'), ...mainEl.querySelectorAll('em picture')];
   styledImgEls.forEach((imgEl) => {
@@ -111,7 +107,7 @@ function decorateImages(mainEl) {
     parentEl.prepend(imgEl);
     parentEl.lastChild.remove();
   })
-  // select all non-hero, non-image-block images
+  // select all non-featured, default (non-images block) images
   const imgEls = Array.from(mainEl.querySelectorAll('div.section-wrapper:not(:first-of-type) > div > p > picture'));
   imgEls.forEach((imgEl) => {
     const parentEl = imgEl.parentNode;
@@ -123,8 +119,7 @@ function decorateImages(mainEl) {
     }
     const blockEl = document.createElement('div');
     // build image block nested div structure
-    blockEl.classList.add('images', 'block');
-    blockEl.setAttribute('data-block-name', 'images');
+    blockEl.classList.add('images');
     const firstNestEl = document.createElement('div');
     const secondNestEl = document.createElement('div');
     // populate images block
@@ -145,6 +140,10 @@ function decorateBlocks($main) {
   $main
     .querySelectorAll('div.section-wrapper > div > div')
     .forEach(($block) => decorateBlock($block));
+}
+
+function buildAutoBlocks(mainEl) {
+  buildImageBlocks(mainEl);
 }
 
 /**
@@ -334,7 +333,7 @@ export function decorateMain($main) {
   checkWebpFeature(() => {
     webpPolyfill($main);
   });
-  decorateImages($main);
+  buildAutoBlocks($main);
   decorateBlocks($main);
 }
 
