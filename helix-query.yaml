@@ -1,2 +1,52 @@
 version: 1
-# See https://main--helix-home--adobe.hlx.page/docs/setup-indexing.html for more information.
+
+indices:
+  blog:
+    source: html
+    fetch: https://{repo}-{owner}.hlx.page/{path}
+    include:
+      - '/blog/**/*.(docx|md)'
+    exclude:
+      - '**/Document.*'
+    target: https://adobe.sharepoint.com/:x:/r/sites/BizWeb/_layouts/15/Doc.aspx?sourcedoc=%7B24A19E0A-D1D6-4EE3-9C1D-353849B93BDB%7D&file=query-index.xlsx&action=default&mobileredirect=true
+    properties:
+      author:
+        select: head > meta[name="author"]
+        value: |
+          attribute(el, 'content')
+      title:
+        select: head > meta[property="og:title"]
+        value: |
+          attribute(el, 'content')
+      date:
+        select: head > meta[name="publication-date"]
+        value: |
+          attribute(el, 'content')
+      image:
+        select: head > meta[property="og:image"]
+        value: |
+          match(attribute(el, 'content'), 'https:\/\/[^/]+(\/.*)')
+      description:
+        select: head > meta[name="description"]
+        value: |
+          attribute(el, 'content')
+      sourceHash:
+        select: head > meta[name="x-source-hash"]
+        value: |
+          attribute(el, 'content')
+      category:
+        select: head > meta[name="category"]
+        value: |
+          attribute(el, 'content')
+      topics:
+        select: head > meta[name="topics"]
+        value: |
+          attribute(el, 'content')
+      description:
+        select: head > meta[name="description"]
+        value: |
+          attribute(el, 'content')
+      lastModified:
+        select: none
+        value: |
+          parseTimestamp(headers['last-modified'], 'ddd, DD MMM YYYY hh:mm:ss GMT')

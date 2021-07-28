@@ -99,6 +99,43 @@ export function decorateBlock($block) {
 }
 
 /**
+ * Decorates all default images in a container element.
+ * @param {Element} mainEl The container element
+ */
+function buildImageBlocks(mainEl) {
+  // remove styling from images, if any
+  const styledImgEls = [...mainEl.querySelectorAll('strong picture'), ...mainEl.querySelectorAll('em picture')];
+  styledImgEls.forEach((imgEl) => {
+    const parentEl = imgEl.closest('p');
+    parentEl.prepend(imgEl);
+    parentEl.lastChild.remove();
+  });
+  // select all non-featured, default (non-images block) images
+  const imgEls = Array.from(mainEl.querySelectorAll('div.section-wrapper:not(:first-of-type) > div > p > picture'));
+  imgEls.forEach((imgEl) => {
+    const parentEl = imgEl.parentNode;
+    const parentSiblingEl = parentEl.nextElementSibling;
+    let imgCaptionEl;
+    // check for caption immediately following image
+    if (parentSiblingEl.firstChild.nodeName === 'EM') {
+      imgCaptionEl = parentSiblingEl;
+    }
+    const blockEl = document.createElement('div');
+    // build image block nested div structure
+    blockEl.classList.add('images');
+    const firstNestEl = document.createElement('div');
+    const secondNestEl = document.createElement('div');
+    // populate images block
+    firstNestEl.append(parentEl.cloneNode(true));
+    if (imgCaptionEl) { firstNestEl.append(imgCaptionEl); }
+    secondNestEl.append(firstNestEl);
+    blockEl.append(secondNestEl);
+    parentEl.parentNode.insertBefore(blockEl, parentEl);
+    parentEl.remove();
+  });
+}
+
+/**
  * Decorates all blocks in a container element.
  * @param {Element} $main The container element
  */
@@ -106,6 +143,10 @@ function decorateBlocks($main) {
   $main
     .querySelectorAll('div.section-wrapper > div > div')
     .forEach(($block) => decorateBlock($block));
+}
+
+function buildAutoBlocks(mainEl) {
+  buildImageBlocks(mainEl);
 }
 
 /**
@@ -325,7 +366,11 @@ export function decorateMain($main) {
   checkWebpFeature(() => {
     webpPolyfill($main);
   });
+<<<<<<< HEAD
   decorateHero();
+=======
+  buildAutoBlocks($main);
+>>>>>>> main
   decorateBlocks($main);
 }
 
