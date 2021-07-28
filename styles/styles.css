@@ -292,7 +292,6 @@ header {
   background-color: #FFF;
 }
 
-<<<<<<< HEAD
 /* hero */
 
 main .hero-image {
@@ -327,19 +326,11 @@ main .hero-image .hero-image-figure .caption {
 }
 
 /* caption styling */
-main .legend {
-=======
-/* caption styling */
 main .caption {
->>>>>>> main
   margin-top: 1.5em;
   margin-bottom: 0.5em;
   text-align: left;
   font-style: italic;
   font-size: var(--body-font-size-s);
   color: var(--color-gray-700);
-<<<<<<< HEAD
-}
-=======
 } 
->>>>>>> main
