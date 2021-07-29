@@ -1,5 +1,7 @@
-// import { buildFigure } from '../../scripts/scripts.js';
+import { buildFigure } from '../../scripts/scripts.js';
 
 export default function decorateInfographic(blockEl) {
-  console.log('hello from infographic');
+    const figEl = buildFigure(blockEl.firstChild.firstChild);
+    blockEl.prepend(figEl);
+    blockEl.lastChild.remove();
 }
