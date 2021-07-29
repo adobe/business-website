@@ -30,13 +30,16 @@ main .article-feed .article-card {
 
 main .article-feed .article-card .article-card-image {
   line-height: 0;
+  padding-bottom: 56.25%;
+  position: relative;
 }
 
 main .article-feed .article-card .article-card-image img {
-  aspect-ratio: 16 / 9;
   object-fit: cover;
   width: 100%;
   border-radius: 10px 10px 0 0;
+  position: absolute;
+  height: 100%;
 }
 
 main .article-feed .article-card-body h3 {

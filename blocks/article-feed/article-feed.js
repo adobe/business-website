@@ -9,31 +9,28 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-/* global fetch */
+/* global */
 /* eslint-disable import/named, import/extensions */
 
 import {
   readBlockConfig,
   getOptimizedImageURL,
+  fetchBlogArticleIndex,
 } from '../../scripts/scripts.js';
 
-async function fetchArticleIndex(locale = '') {
-  const resp = await fetch(`${locale}/blog/query-index.json`);
-  const json = await resp.json();
-  const byPath = {};
-  json.data.forEach((post) => {
-    byPath[post.path.split('.')[0]] = post;
-  });
-  const index = { data: json.data, byPath };
-  return (index);
+function isCardOnPage(article) {
+  const path = article.path.split('.')[0];
+  /* using recommended and featured articles */
+  return !!document.querySelector(`.featured-article a.featured-article-card[href="${path}"], .recommended-articles a.article-card[href="${path}"]`);
 }
 
 async function filterArticles(config, locale) {
   if (!window.blogIndex) {
-    window.blogIndex = await fetchArticleIndex(locale);
+    window.blogIndex = await fetchBlogArticleIndex(locale);
   }
-  const result = [];
   const index = window.blogIndex;
+
+  const result = [];
 
   /* filter posts by category, tag and author */
   const filters = {};
@@ -58,7 +55,7 @@ async function filterArticles(config, locale) {
         && article[key].toLowerCase().includes(val)));
       return matchedFilter;
     });
-    return (matchedAll && !result.includes(article));
+    return (matchedAll && !result.includes(article) && !isCardOnPage(article));
   });
   return (feed);
 }
