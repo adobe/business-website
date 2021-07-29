@@ -1,0 +1,37 @@
+main .banner {
+    opacity: 0;
+    min-height: 152px;
+}
+main .banner.is-loaded {
+    opacity: 1;
+    min-height: 0;
+}
+main .banner .content-wrapper {
+    max-width: 600px;    
+    display: flex;
+    padding: 1.5rem 0;
+    border-top: 2px solid #ddd;
+    border-bottom: 2px solid #ddd;
+    align-items: center;
+    margin: 64px auto;
+}
+main .banner img {
+    width: 100px;
+    max-width: unset;
+}
+main .banner .banner-text {
+    padding-left: 2rem;   
+}
+main .banner .banner-text h3 {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.5em;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    margin: .5em 0;
+}
+main .banner .banner-text p {
+    margin: .5rem 0;
+    line-height: 1.5rem;
+    font-size: 1rem;
+}

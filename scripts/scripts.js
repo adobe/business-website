@@ -96,6 +96,43 @@ export function decorateBlock($block) {
 }
 
 /**
+ * Decorates all default images in a container element.
+ * @param {Element} mainEl The container element
+ */
+function buildImageBlocks(mainEl) {
+  // remove styling from images, if any
+  const styledImgEls = [...mainEl.querySelectorAll('strong picture'), ...mainEl.querySelectorAll('em picture')];
+  styledImgEls.forEach((imgEl) => {
+    const parentEl = imgEl.closest('p');
+    parentEl.prepend(imgEl);
+    parentEl.lastChild.remove();
+  });
+  // select all non-featured, default (non-images block) images
+  const imgEls = Array.from(mainEl.querySelectorAll('div.section-wrapper:not(:first-of-type) > div > p > picture'));
+  imgEls.forEach((imgEl) => {
+    const parentEl = imgEl.parentNode;
+    const parentSiblingEl = parentEl.nextElementSibling;
+    let imgCaptionEl;
+    // check for caption immediately following image
+    if (parentSiblingEl.firstChild.nodeName === 'EM') {
+      imgCaptionEl = parentSiblingEl;
+    }
+    const blockEl = document.createElement('div');
+    // build image block nested div structure
+    blockEl.classList.add('images');
+    const firstNestEl = document.createElement('div');
+    const secondNestEl = document.createElement('div');
+    // populate images block
+    firstNestEl.append(parentEl.cloneNode(true));
+    if (imgCaptionEl) { firstNestEl.append(imgCaptionEl); }
+    secondNestEl.append(firstNestEl);
+    blockEl.append(secondNestEl);
+    parentEl.parentNode.insertBefore(blockEl, parentEl);
+    parentEl.remove();
+  });
+}
+
+/**
  * Decorates all blocks in a container element.
  * @param {Element} $main The container element
  */
@@ -103,6 +140,86 @@ function decorateBlocks($main) {
   $main
     .querySelectorAll('div.section-wrapper > div > div')
     .forEach(($block) => decorateBlock($block));
+}
+
+function buildAutoBlocks(mainEl) {
+  buildImageBlocks(mainEl);
+}
+
+/**
+ * Build figcaption element
+ * @param {Element} pEl The original element to be placed in figcaption.
+ * @returns figCaptionEl Generated figcaption
+ */
+export function buildCaption(pEl) {
+  const figCaptionEl = document.createElement('figcaption');
+  pEl.classList.add('caption');
+  figCaptionEl.append(pEl);
+  return figCaptionEl;
+}
+
+/**
+ * Build figure element
+ * @param {Element} blockEl The original element to be placed in figure.
+ * @returns figEl Generated figure
+ */
+export function buildFigure(blockEl) {
+  let figEl = document.createElement('figure');
+  figEl.classList.add('figure');
+  // content is picture only, no caption or link
+  if (blockEl.firstChild.nodeName === 'PICTURE') {
+    figEl.append(blockEl.firstChild);
+  } else if (blockEl.firstChild.nodeName === 'P') {
+    const pEls = Array.from(blockEl.children);
+    pEls.forEach((pEl) => {
+      if (pEl.firstChild.nodeName === 'PICTURE') {
+        figEl.append(pEl.firstChild);
+      } else if (pEl.firstChild.nodeName === 'EM') {
+        const figCapEl = buildCaption(pEl);
+        figEl.append(figCapEl);
+      } else if (pEl.firstChild.nodeName === 'A') {
+        const picEl = figEl.querySelector('picture');
+        if (picEl) {
+          pEl.firstChild.textContent = '';
+          pEl.firstChild.append(picEl);
+          figEl.prepend(pEl.firstChild);
+        }
+      }
+    });
+  }
+  return figEl;
+}
+
+/**
+ * Decorates feature image.
+ */
+function decorateFeatureImg() {
+  const h1 = document.querySelector('main h1');
+  // create container to pass to buildFigure func
+  const containerEl = document.createElement('div');
+  if (h1) {
+    // check for feature image
+    const hasFeatureImg = h1.parentElement.querySelector('p picture') || false;
+    if (hasFeatureImg) {
+      const featureImgEl = hasFeatureImg.parentNode;
+      // check for hero caption
+      const featureImgSiblingEl = featureImgEl.nextElementSibling;
+      const featureImgCaption = featureImgSiblingEl || false;
+      // populate container to pass to buildFigure func
+      if (featureImgEl) { containerEl.append(featureImgEl); }
+      if (featureImgCaption) { containerEl.append(featureImgCaption); }
+      const figContainerEl = document.createElement('div');
+      figContainerEl.classList.add('feature-image');
+      const figEl = buildFigure(containerEl);
+      figEl.classList.add('feature-image-figure');
+      figContainerEl.append(figEl);
+      h1.parentNode.parentNode.parentNode.append(figContainerEl);
+      // insert feature img div below H1 parent
+      h1.parentNode.parentNode.parentNode.insertBefore(
+        figContainerEl, h1.parentNode.parentNode.nextSibling,
+      );
+    }
+  }
 }
 
 /**
@@ -292,6 +409,8 @@ export function decorateMain($main) {
   checkWebpFeature(() => {
     webpPolyfill($main);
   });
+  decorateFeatureImg();
+  buildAutoBlocks($main);
   decorateBlocks($main);
 }
 

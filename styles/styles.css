@@ -209,6 +209,21 @@ main p {
 main a:any-link {
   color: var(--body-color);
 }
+main a.cta-link {
+  color: var(--color-info-accent);
+  font-weight: 700;
+  text-decoration: none;
+}
+main a.cta-link:after {
+  content: " >";
+}
+main a.cta-link:hover {
+  color: var(--color-info-accent-hover);
+}
+main a.cta-link:active,
+main a.cta-link:focus {
+  color: var(--color-info-accent-down);
+}
 
 main img {
   max-width: 100%;
@@ -293,3 +308,45 @@ header {
   background-color: #FFF;
 }
 
+/* feature img */
+
+main .feature-image {
+  width: 100%;
+  padding: 0;
+  margin: auto;
+  max-width: 1000px;
+}
+
+main .feature-image .feature-image-figure {
+  margin: 0;
+}
+
+main .feature-image .feature-image-figure img {
+  width: 100%;
+  max-height: 438px;
+  object-fit: cover;
+}
+
+main .feature-image .feature-image-figure .caption {
+  padding: 0 32px;
+  max-width: 830px;
+  margin: auto;
+}
+
+@media (max-width: 900px) {
+  main .feature-image .feature-image-figure .caption {
+    margin: auto;
+    max-width: 375px;
+    padding: 0 32px;
+  }
+}
+
+/* caption styling */
+main .caption {
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  text-align: left;
+  font-style: italic;
+  font-size: var(--body-font-size-s);
+  color: var(--color-gray-700);
+} 
