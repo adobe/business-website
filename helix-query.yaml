@@ -2,13 +2,11 @@ version: 1
 
 indices:
   blog:
-    source: html
-    fetch: https://{repo}-{owner}.hlx.page/{path}
     include:
-      - '/blog/**/*.(docx|md)'
+      - '/blog/**'
     exclude:
       - '**/Document.*'
-    target: https://adobe.sharepoint.com/:x:/r/sites/BizWeb/_layouts/15/Doc.aspx?sourcedoc=%7B24A19E0A-D1D6-4EE3-9C1D-353849B93BDB%7D&file=query-index.xlsx&action=default&mobileredirect=true
+    target: https://adobe.sharepoint.com/sites/BizWeb/Shared%20Documents/website/blog/query-index.xlsx
     properties:
       author:
         select: head > meta[name="author"]
@@ -28,10 +26,6 @@ indices:
           match(attribute(el, 'content'), 'https:\/\/[^/]+(\/.*)')
       description:
         select: head > meta[name="description"]
-        value: |
-          attribute(el, 'content')
-      sourceHash:
-        select: head > meta[name="x-source-hash"]
         value: |
           attribute(el, 'content')
       category:
