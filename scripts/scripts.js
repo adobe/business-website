@@ -164,7 +164,7 @@ export function buildCaption(pEl) {
  * @returns figEl Generated figure
  */
 export function buildFigure(blockEl) {
-  let figEl = document.createElement('figure');
+  const figEl = document.createElement('figure');
   figEl.classList.add('figure');
   // content is picture only, no caption or link
   if (blockEl.firstChild.nodeName === 'PICTURE') {
