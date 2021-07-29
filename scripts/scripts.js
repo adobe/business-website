@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-/* global sessionStorage, Image */
+/* global sessionStorage Image fetch */
 
 /**
  * Loads a CSS file.
@@ -310,6 +310,37 @@ export function addFavIcon(href) {
   } else {
     document.getElementsByTagName('head')[0].appendChild($link);
   }
+}
+
+/**
+ * fetches blog article index.
+ * @param {string} locale prefix used for path to index
+ * @returns {object} index with data and path lookup
+ */
+
+export async function fetchBlogArticleIndex(locale = '') {
+  const resp = await fetch(`${locale}/blog/query-index.json`);
+  const json = await resp.json();
+  const byPath = {};
+  json.data.forEach((post) => {
+    byPath[post.path.split('.')[0]] = post;
+  });
+  const index = { data: json.data, byPath };
+  return (index);
+}
+
+/**
+ * gets a blog article index information by path.
+ * @param {string} path indentifies article
+ * @returns {object} article object
+ */
+
+export async function getBlogArticle(path, locale = '') {
+  if (!window.blogIndex) {
+    window.blogIndex = await fetchBlogArticleIndex(locale);
+  }
+  const index = window.blogIndex;
+  return (index.byPath[path]);
 }
 
 /**
