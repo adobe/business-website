@@ -7,6 +7,5 @@ main .infographic .figure {
 }
 
 main .infographic .figure img {
-    /* margin-top: 64px; */
     max-height: 100%;
 }
