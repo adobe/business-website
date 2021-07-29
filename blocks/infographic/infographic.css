@@ -1,0 +1,11 @@
+main .infographic {
+    text-align: center;
+}
+
+main .infographic .figure {
+    margin: 1.5em auto 0.5em;
+}
+
+main .infographic .figure img {
+    max-height: 100%;
+}
