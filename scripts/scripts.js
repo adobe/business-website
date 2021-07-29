@@ -167,12 +167,12 @@ export function buildFigure(blockEl) {
   let figEl = document.createElement('figure');
   figEl.classList.add('figure');
   // content is picture only, no caption or link
-  if (blockEl.firstChild.nodeName === 'PICTURE') {
+  if (blockEl.firstChild.nodeName === 'PICTURE' || blockEl.firstChild.nodeName === 'VIDEO') {
     figEl.append(blockEl.firstChild);
   } else if (blockEl.firstChild.nodeName === 'P') {
     const pEls = Array.from(blockEl.children);
     pEls.forEach((pEl) => {
-      if (pEl.firstChild.nodeName === 'PICTURE') {
+      if (pEl.firstChild.nodeName === 'PICTURE' || pEl.firstChild.nodeName === 'VIDEO') {
         figEl.append(pEl.firstChild);
       } else if (pEl.firstChild.nodeName === 'EM') {
         const figCapEl = buildCaption(pEl);
