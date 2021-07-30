@@ -160,6 +160,7 @@ a.button > svg > use {
 main h1, main h2, main h3, main h4, main h5, main h6 {
   font-weight: var(--heading-font-weight);
   line-height: var(--heading-line-height);
+  font-weight: 600;
 }
 
 main h1 {
@@ -257,7 +258,8 @@ main .section-wrapper:first-of-type {
   padding: 0;
 }
 
-main .section-wrapper > div {
+main .section-wrapper > div,
+main .article-header > div {
   margin: auto;
   max-width: 375px;
   padding: 0 32px;
@@ -287,13 +289,15 @@ main .section-wrapper p.button-container {
 
 
 @media (min-width:600px) {
-  main .section-wrapper > div {
+  main .section-wrapper > div,
+  main .article-header > div {
     max-width: unset;
   }
 }
 
 @media (min-width:1200px) {
-  main .section-wrapper > div {
+  main .section-wrapper > div,
+  main .article-header > div {
     max-width: 1024px;
   }
 }
@@ -306,6 +310,67 @@ header {
   border-bottom: 1px solid #EAEAEA;
   height: 64px;
   background-color: #FFF;
+}
+
+/* article header */
+
+main .article-header {
+  margin-top: 48px;
+  padding: 1rem 2rem;
+}
+
+main .article-category {
+  color: var(--color-gray-600);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  font-size: var(--body-font-size-s);
+}
+
+main .article-title h1 {
+  color: var(--color-gray-800);
+  font-size: var(--heading-font-size-m);
+}
+
+@media (min-width: 600px) {
+  main .article-title h1 {
+    font-size: var(--heading-font-size-l);
+  }
+}
+
+main .article-byline {
+  display: flex;
+  height: 96px;
+}
+
+main .article-byline-image-container {
+  margin-right: 16px;
+}
+
+main .article-author-image {
+  height: 64px;
+  width: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+main .article-byline-info {
+  height: 64px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+main .article-byline p {
+  margin: 0;
+}
+
+main .article-author {
+  font-weight: 600;
+}
+
+main .article-date {
+  font-weight: 300;
 }
 
 /* feature img */

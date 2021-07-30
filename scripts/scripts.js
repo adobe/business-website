@@ -54,6 +54,49 @@ export function addPublishDependencies(url) {
 }
 
 /**
+ * Returns an image URL with optimization parameters
+ * @param {string} url The image URL
+ */
+export function getOptimizedImageURL(src) {
+  const url = new URL(src, window.location.href);
+  let result = src;
+  const { pathname, search } = url;
+  if (pathname.includes('media_')) {
+    const usp = new URLSearchParams(search);
+    usp.delete('auto');
+    if (!window.webpSupport) {
+      if (pathname.endsWith('.png')) {
+        usp.set('format', 'png');
+      } else if (pathname.endsWith('.gif')) {
+        usp.set('format', 'gif');
+      } else {
+        usp.set('format', 'pjpg');
+      }
+    } else {
+      usp.set('format', 'webply');
+    }
+    result = `${src.split('?')[0]}?${usp.toString()}`;
+  }
+  return (result);
+}
+
+/**
+ * Resets an element's attribute to the optimized image URL.
+ * @see getOptimizedImageURL
+ * @param {Element} $elem The element
+ * @param {string} attrib The attribute
+ */
+function resetOptimizedImageURL($elem, attrib) {
+  const src = $elem.getAttribute(attrib);
+  if (src) {
+    const oSrc = getOptimizedImageURL(src);
+    if (oSrc !== src) {
+      $elem.setAttribute(attrib, oSrc);
+    }
+  }
+}
+
+/**
  * Sanitizes a name for use as class name.
  * @param {*} name The unsanitized name
  * @returns {string} The class name
@@ -132,6 +175,60 @@ function buildImageBlocks(mainEl) {
   });
 }
 
+async function fetchAuthorImage(imgEl, author) {
+  const resp = await fetch(`/blog/authors/${toClassName(author)}.plain.html`);
+  const text = await resp.text();
+  if (resp.status === 200) {
+    const placeholder = document.createElement('div');
+    placeholder.innerHTML = text;
+    const placeholderImg = placeholder.querySelector('img');
+    const src = placeholderImg.src.replace('width=2000', 'width=200');
+    imgEl.src = getOptimizedImageURL(src);
+    imgEl.onerror = () => {
+      imgEl.src = '/blocks/gnav/adobe-logo.svg';
+    };
+  }
+}
+
+function formatDate(date) {
+  const dateObj = new Date(date);
+  const m = dateObj.toLocaleString('default', { month: 'long' });
+  const d = dateObj.getDate();
+  const y = dateObj.getFullYear();
+  return `${m} ${d}, ${y}`;
+}
+
+/**
+ * Build article header (category, title, byline).
+ */
+function buildArticleHeader(mainEl) {
+  // target first div on page, this is our header
+  const sectionHeadEl = mainEl.querySelector('div');
+  sectionHeadEl.classList = 'article-header';
+  sectionHeadEl.firstChild.classList.add('article-title');
+  // build category field
+  const category = getMetadata('category');
+  const categoryEl = document.createElement('div');
+  categoryEl.classList.add('article-category');
+  categoryEl.textContent = category;
+  sectionHeadEl.prepend(categoryEl);
+  // build byline
+  const author = getMetadata('author');
+  const date = getMetadata('publication-date');
+  const bylineEl = `<div class="article-byline">
+  <div class="article-byline-image-container">
+  <img loading="lazy" class="article-author-image" src="/blocks/gnav/adobe-logo.svg" />
+  </div>
+  <div class="article-byline-info">
+  <p class="article-author">${author}</p>
+  <p class="article-date">${formatDate(date)}</p>
+  </div>
+  </div>`;
+  sectionHeadEl.innerHTML += bylineEl;
+  fetchAuthorImage(sectionHeadEl.querySelector('.article-author-image'), author);
+  
+}
+
 /**
  * Decorates all blocks in a container element.
  * @param {Element} $main The container element
@@ -143,6 +240,7 @@ function decorateBlocks($main) {
 }
 
 function buildAutoBlocks(mainEl) {
+  buildArticleHeader(mainEl);
   buildImageBlocks(mainEl);
 }
 
@@ -311,49 +409,6 @@ function checkWebpFeature(callback) {
   } else {
     window.webpSupport = (webpSupport === 'true');
     callback();
-  }
-}
-
-/**
- * Returns an image URL with optimization parameters
- * @param {string} url The image URL
- */
-export function getOptimizedImageURL(src) {
-  const url = new URL(src, window.location.href);
-  let result = src;
-  const { pathname, search } = url;
-  if (pathname.includes('media_')) {
-    const usp = new URLSearchParams(search);
-    usp.delete('auto');
-    if (!window.webpSupport) {
-      if (pathname.endsWith('.png')) {
-        usp.set('format', 'png');
-      } else if (pathname.endsWith('.gif')) {
-        usp.set('format', 'gif');
-      } else {
-        usp.set('format', 'pjpg');
-      }
-    } else {
-      usp.set('format', 'webply');
-    }
-    result = `${src.split('?')[0]}?${usp.toString()}`;
-  }
-  return (result);
-}
-
-/**
- * Resets an elelemnt's attribute to the optimized image URL.
- * @see getOptimizedImageURL
- * @param {Element} $elem The element
- * @param {string} attrib The attribute
- */
-function resetOptimizedImageURL($elem, attrib) {
-  const src = $elem.getAttribute(attrib);
-  if (src) {
-    const oSrc = getOptimizedImageURL(src);
-    if (oSrc !== src) {
-      $elem.setAttribute(attrib, oSrc);
-    }
   }
 }
 
