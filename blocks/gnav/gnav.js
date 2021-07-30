@@ -79,8 +79,6 @@ async function populateSearchResults(searchTerms, searchResultsEl) {
       const pictureTag = `<picture>
         <img src="${imageSrc}">
       </picture>`;
-      console.log(pictureTag);
-
       const card = document.createElement('a');
       card.className = 'article-card';
       card.href = path;
