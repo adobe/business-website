@@ -36,7 +36,7 @@ async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
     const card = document.createElement('a');
     card.className = 'article-card';
     card.href = path;
-    card.innerHTML = `<div class="rticle-card-image">
+    card.innerHTML = `<div class="article-card-image">
         ${pictureTag}
       </div>
       <div class="article-card-body">

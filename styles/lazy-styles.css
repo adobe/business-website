@@ -19,7 +19,6 @@
   font-display:swap;font-style:normal;font-weight:700;
 }
 
-
 /* no js treatment */
 
 @font-face {
@@ -55,7 +54,6 @@
 .tk-adobe-clean { font-family: "adobe-clean",sans-serif; }
 .tk-adobe-clean-serif { font-family: "adobe-clean-serif",sans-serif; }
 
-
 /* article card styles, share between blocks */
 
 .article-card {
@@ -65,11 +63,9 @@
 .article-card {
   display: flex;
   flex-direction: column;
-  width: 100%;
   min-width: 268px;
   max-width: 378px;
-  margin-right: 32px;
-  margin-bottom: 32px;
+  margin: 0 16px 32px 16px;
   text-align: left;
   text-decoration: unset;
   color: unset;
@@ -109,7 +105,7 @@
   color: var(--color-gray-600);
   font-size: var(--body-font-size-s);
   line-height: 1.25rem;
-  height: 2.5rem;
+  height: 3.75rem;
   overflow: hidden;
   margin-bottom: 1rem;
   text-overflow: ellipsis;
@@ -138,10 +134,11 @@
 @media (min-width: 900px) {
   .article-card {
     width: calc(100%/2 - 18px);
+    margin: 0 0 32px 0;
   }
 
   .article-card:nth-of-type(2n) {
-    margin-right: 0;
+    margin-left: 32px;
   }
 
   .article-card-body h3 {
@@ -167,10 +164,11 @@
   }
 
   .article-card:nth-of-type(2n) {
-    margin-right: 32px;
+    margin-left: 0;
   }
 
-  .article-card:nth-of-type(3n) {
-    margin-right: 0;
+  .article-card:nth-of-type(3n - 1) {
+    margin-left: 32px;
+    margin-right: 32px;
   }
 }
