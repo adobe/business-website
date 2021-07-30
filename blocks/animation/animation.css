@@ -1,0 +1,12 @@
+main .animation {
+    text-align: center;
+}
+
+main .animation .figure {
+    margin: 1.5em auto 0.5em;
+}
+
+main .animation .figure img,
+main .animation .figure video {
+    max-height: 100%;
+}
