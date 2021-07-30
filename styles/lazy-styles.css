@@ -56,11 +56,11 @@
 
 /* article card styles, share between blocks */
 
-main .article-card {
+.article-card {
   cursor: pointer;
 }
 
-main .article-card {
+.article-card {
   display: flex;
   flex-direction: column;
   min-width: 268px;
@@ -73,14 +73,14 @@ main .article-card {
   border-radius: 4px;
 }
 
-main .article-card .article-card-image {
+.article-card .article-card-image {
   width: 100%;
   line-height: 0;
   padding-bottom: 56.25%;
   position: relative;
 }
 
-main .article-card .article-card-image img {
+.article-card .article-card-image img {
   object-fit: cover;
   width: 100%;
   border-radius: 3px 3px 0 0;
@@ -88,7 +88,7 @@ main .article-card .article-card-image img {
   height: 100%;
 }
 
-main .article-card-body h3 {
+.article-card-body h3 {
   margin: 0;
   font-size: var(--body-font-size-m);
   line-height: 1.25rem;
@@ -101,7 +101,7 @@ main .article-card-body h3 {
 }
 
 
-main .article-card .article-card-body p {
+.article-card .article-card-body p {
   color: var(--color-gray-600);
   font-size: var(--body-font-size-s);
   line-height: 1.25rem;
@@ -112,7 +112,7 @@ main .article-card .article-card-body p {
   margin: 0;
 }
 
-main .article-card-body p.article-card-category {
+.article-card-body p.article-card-category {
   text-transform: uppercase;
   margin: 0;
   margin-bottom: 0.5rem;
@@ -124,7 +124,7 @@ main .article-card-body p.article-card-category {
   letter-spacing: .1em;
 }
 
-main .article-card .article-card-body {
+.article-card .article-card-body {
   padding: 2rem;
   border-radius: 0 0 4px 4px;
   border-top: none;
@@ -132,42 +132,42 @@ main .article-card .article-card-body {
 }
 
 @media (min-width: 900px) {
-  main .article-card {
+  .article-card {
     width: calc(100%/2 - 18px);
     margin: 0 0 32px 0;
   }
 
-  main .article-card:nth-of-type(2n) {
+  .article-card:nth-of-type(2n) {
     margin-left: 32px;
   }
 
-  main .article-card-body h3 {
+  .article-card-body h3 {
     font-size: var(--body-font-size-xl);
     line-height: 1.5rem;
     margin-bottom: 0.5rem;
     max-height: unset;
   }
     
-  main .article-card .article-card-body p {
+  .article-card .article-card-body p {
     font-size: var(--body-font-size-xs);
   }
   
-  main .article-card-body p.article-card-category {
+  .article-card-body p.article-card-category {
     font-size: var(--body-font-size-xs);
   }
   
 }
 
 @media (min-width: 1200px) {
-  main .article-card {
+  .article-card {
     width: calc(100%/3 - 24px);
   }
 
-  main .article-card:nth-of-type(2n) {
+  .article-card:nth-of-type(2n) {
     margin-left: 0;
   }
 
-  main .article-card:nth-of-type(3n - 1) {
+  .article-card:nth-of-type(3n - 1) {
     margin-left: 32px;
     margin-right: 32px;
   }

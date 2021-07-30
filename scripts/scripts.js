@@ -498,6 +498,13 @@ async function decoratePage(win = window) {
     doc.querySelector('body').classList.add('appear');
     setLCPTrigger(doc, async () => {
       // post LCP actions go here
+
+      /* load gnav */
+      const header = document.querySelector('header');
+      header.setAttribute('data-block-name', 'gnav');
+      header.setAttribute('data-gnav-source', '/blog/gnav');
+      loadBlock(header);
+
       await loadBlocks($main);
       loadCSS('/styles/lazy-styles.css');
       addFavIcon('/styles/favicon.svg');
