@@ -57,7 +57,7 @@ async function populateSearchResults(searchTerms, searchResultsEl) {
     let i = 0;
     for (; i < articles.length; i += 1) {
       const e = articles[i];
-      const text = [e.topics[0], e.title, e.teaser].join(' ').toLowerCase();
+      const text = [e.category, e.title, e.teaser].join(' ').toLowerCase();
 
       if (terms.every((term) => text.includes(term))) {
         if (hits.length === limit) {
