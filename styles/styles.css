@@ -350,3 +350,11 @@ main .caption {
   font-size: var(--body-font-size-s);
   color: var(--color-gray-700);
 } 
+
+/* CLS and FOUC protection for lazy loaded content/styles */
+header .gnav,
+main .recommended-articles,
+main .featured-article,
+main .featured-feed {
+  visibility: hidden;
+}

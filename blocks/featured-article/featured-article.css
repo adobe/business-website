@@ -1,4 +1,8 @@
 main .featured-article {
+  visibility: unset;
+}
+
+main .featured-article {
   text-align: center;
   width: 100%;
 }
