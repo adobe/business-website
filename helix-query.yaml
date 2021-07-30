@@ -9,7 +9,7 @@ indices:
       - '/blog/**'
     exclude:
       - '**/Document.*'
-    target: https://adobe.sharepoint.com/:x:/r/sites/BizWeb/_layouts/15/Doc.aspx?sourcedoc=%7B24A19E0A-D1D6-4EE3-9C1D-353849B93BDB%7D&file=query-index.xlsx&action=default&mobileredirect=true
+    target: target: https://adobe.sharepoint.com/sites/BizWeb/Shared%20Documents/website/blog/query-index.xlsx
     properties:
       author:
         select: head > meta[name="author"]
