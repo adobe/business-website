@@ -175,60 +175,6 @@ function buildImageBlocks(mainEl) {
   });
 }
 
-async function fetchAuthorImage(imgEl, author) {
-  const resp = await fetch(`/blog/authors/${toClassName(author)}.plain.html`);
-  const text = await resp.text();
-  if (resp.status === 200) {
-    const placeholder = document.createElement('div');
-    placeholder.innerHTML = text;
-    const placeholderImg = placeholder.querySelector('img');
-    const src = placeholderImg.src.replace('width=2000', 'width=200');
-    imgEl.src = getOptimizedImageURL(src);
-    imgEl.onerror = () => {
-      imgEl.src = '/blocks/gnav/adobe-logo.svg';
-    };
-  }
-}
-
-function formatDate(date) {
-  const dateObj = new Date(date);
-  const m = dateObj.toLocaleString('default', { month: 'long' });
-  const d = dateObj.getDate();
-  const y = dateObj.getFullYear();
-  return `${m} ${d}, ${y}`;
-}
-
-/**
- * Build article header (category, title, byline).
- */
-function buildArticleHeader(mainEl) {
-  // target first div on page, this is our header
-  const sectionHeadEl = mainEl.querySelector('div');
-  sectionHeadEl.classList = 'article-header';
-  sectionHeadEl.firstChild.classList.add('article-title');
-  // build category field
-  const category = getMetadata('category');
-  const categoryEl = document.createElement('div');
-  categoryEl.classList.add('article-category');
-  categoryEl.textContent = category;
-  sectionHeadEl.prepend(categoryEl);
-  // build byline
-  const author = getMetadata('author');
-  const date = getMetadata('publication-date');
-  const bylineEl = `<div class="article-byline">
-  <div class="article-byline-image-container">
-  <img loading="lazy" class="article-author-image" src="/blocks/gnav/adobe-logo.svg" />
-  </div>
-  <div class="article-byline-info">
-  <p class="article-author">${author}</p>
-  <p class="article-date">${formatDate(date)}</p>
-  </div>
-  </div>`;
-  sectionHeadEl.innerHTML += bylineEl;
-  fetchAuthorImage(sectionHeadEl.querySelector('.article-author-image'), author);
-  
-}
-
 /**
  * Decorates all blocks in a container element.
  * @param {Element} $main The container element
@@ -240,7 +186,6 @@ function decorateBlocks($main) {
 }
 
 function buildAutoBlocks(mainEl) {
-  buildArticleHeader(mainEl);
   buildImageBlocks(mainEl);
 }
 
@@ -286,38 +231,6 @@ export function buildFigure(blockEl) {
     });
   }
   return figEl;
-}
-
-/**
- * Decorates feature image.
- */
-function decorateFeatureImg() {
-  const h1 = document.querySelector('main h1');
-  // create container to pass to buildFigure func
-  const containerEl = document.createElement('div');
-  if (h1) {
-    // check for feature image
-    const hasFeatureImg = h1.parentElement.querySelector('p picture') || false;
-    if (hasFeatureImg) {
-      const featureImgEl = hasFeatureImg.parentNode;
-      // check for hero caption
-      const featureImgSiblingEl = featureImgEl.nextElementSibling;
-      const featureImgCaption = featureImgSiblingEl || false;
-      // populate container to pass to buildFigure func
-      if (featureImgEl) { containerEl.append(featureImgEl); }
-      if (featureImgCaption) { containerEl.append(featureImgCaption); }
-      const figContainerEl = document.createElement('div');
-      figContainerEl.classList.add('feature-image');
-      const figEl = buildFigure(containerEl);
-      figEl.classList.add('feature-image-figure');
-      figContainerEl.append(figEl);
-      h1.parentNode.parentNode.parentNode.append(figContainerEl);
-      // insert feature img div below H1 parent
-      h1.parentNode.parentNode.parentNode.insertBefore(
-        figContainerEl, h1.parentNode.parentNode.nextSibling,
-      );
-    }
-  }
 }
 
 /**
@@ -464,7 +377,6 @@ export function decorateMain($main) {
   checkWebpFeature(() => {
     webpPolyfill($main);
   });
-  decorateFeatureImg();
   buildAutoBlocks($main);
   decorateBlocks($main);
 }

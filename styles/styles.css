@@ -258,8 +258,7 @@ main .section-wrapper:first-of-type {
   padding: 0;
 }
 
-main .section-wrapper > div,
-main .article-header > div {
+main .section-wrapper > div {
   margin: auto;
   max-width: 375px;
   padding: 0 32px;
@@ -289,15 +288,13 @@ main .section-wrapper p.button-container {
 
 
 @media (min-width:600px) {
-  main .section-wrapper > div,
-  main .article-header > div {
+  main .section-wrapper > div {
     max-width: unset;
   }
 }
 
 @media (min-width:1200px) {
-  main .section-wrapper > div,
-  main .article-header > div {
+  main .section-wrapper > div {
     max-width: 1024px;
   }
 }
@@ -310,101 +307,6 @@ header {
   border-bottom: 1px solid #EAEAEA;
   height: 64px;
   background-color: #FFF;
-}
-
-/* article header */
-
-main .article-header {
-  margin-top: 48px;
-  padding: 1rem 2rem;
-}
-
-main .article-category {
-  color: var(--color-gray-600);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  font-weight: 700;
-  font-size: var(--body-font-size-s);
-}
-
-main .article-title h1 {
-  color: var(--color-gray-800);
-  font-size: var(--heading-font-size-m);
-}
-
-@media (min-width: 600px) {
-  main .article-title h1 {
-    font-size: var(--heading-font-size-l);
-  }
-}
-
-main .article-byline {
-  display: flex;
-  height: 96px;
-}
-
-main .article-byline-image-container {
-  margin-right: 16px;
-}
-
-main .article-author-image {
-  height: 64px;
-  width: 64px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-main .article-byline-info {
-  height: 64px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-main .article-byline p {
-  margin: 0;
-  font-size: var(--body-font-size-m);
-}
-
-main .article-author {
-  font-weight: 600;
-}
-
-main .article-date {
-  font-weight: 300;
-}
-
-/* feature img */
-
-main .feature-image {
-  width: 100%;
-  padding: 0;
-  margin: auto;
-  max-width: 1000px;
-}
-
-main .feature-image .feature-image-figure {
-  margin: 0;
-}
-
-main .feature-image .feature-image-figure img {
-  width: 100%;
-  max-height: 438px;
-  object-fit: cover;
-}
-
-main .feature-image .feature-image-figure .caption {
-  padding: 0 32px;
-  max-width: 830px;
-  margin: auto;
-}
-
-@media (max-width: 900px) {
-  main .feature-image .feature-image-figure .caption {
-    margin: auto;
-    max-width: 375px;
-    padding: 0 32px;
-  }
 }
 
 /* caption styling */
