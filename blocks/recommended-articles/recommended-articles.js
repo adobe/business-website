@@ -29,11 +29,9 @@ async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
     const path = article.path.split('.')[0];
 
     const imagePath = image.split('?')[0].split('_')[1];
-    const imageSrcDesktop = getOptimizedImageURL(`./media_${imagePath}?format=webply&optimize=medium&width=2000`);
-    const imageSrcMobile = getOptimizedImageURL(`./media_${imagePath}?format=webply&optimize=medium&width=2000`);
+    const imageSrc = getOptimizedImageURL(`./media_${imagePath}?format=webply&optimize=medium&width=2000`);
     const pictureTag = `<picture>
-      <source media="(max-width: 400px)" srcset="${imageSrcMobile}">
-      <img src="${imageSrcDesktop}">
+      <img src="${imageSrc}">
     </picture>`;
     const card = document.createElement('a');
     card.className = 'article-card';

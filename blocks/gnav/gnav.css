@@ -1,0 +1,376 @@
+/* gnav placeholder */
+
+header .gnav {
+  font-size: 14px;
+  width: 100%;
+  z-index: 10;
+  -webkit-font-smoothing: antialiased;
+  color: #2c2c2c;
+  font-weight: 400;
+  display: grid;
+  grid-template-areas: 
+    'hamburger logo signin';
+  grid-template-columns: 100px 1fr 100px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  box-sizing: border-box;
+  height: 64px;
+  padding: 0 23px;
+  align-items: center;
+}
+
+header .gnav a:any-link {
+  color: #2e2e2e;
+  text-decoration: none;
+}
+
+header {
+  height: 64px;
+  box-sizing: border-box;
+  border-bottom: 1px solid #EAEAEA;
+}
+
+header .gnav .gnav-hamburger {
+  font-size: 19px;
+  grid-area: hamburger;
+  justify-self: start;
+}
+
+header .gnav .gnav-signin {
+  font-size: 14px;
+  grid-area: signin;
+  justify-self: end;
+}
+
+header .gnav .gnav-logo {
+  grid-area: logo;
+  justify-self: center;
+}
+
+header .gnav .gnav-section {
+  grid-area: section;
+}
+
+header .gnav .gnav-logo img {
+  height: 25px;
+  width: 25px;
+  box-sizing: content-box;    
+}
+
+header .gnav .gnav-hamburger::before {
+  content: "\2630";
+}
+
+
+header .gnav .gnav-submenu {
+  display: none;
+}
+
+
+header .gnav .gnav-search,
+header .gnav .gnav-section {
+  display: none;
+}
+
+header .gnav .gnav-section span[aria-expanded=true] .gnav-submenu {
+  display: block;
+}
+
+
+header .gnav .gnav-submenu > div {
+  padding: 5px 32px;
+}
+
+header .gnav .gnav-submenu > div:hover {
+  background-color: #f2f2f2;
+}
+
+header .gnav .gnav-logo {
+  min-width: 124px;
+  box-sizing: border-box;
+  display: flex;
+  font-weight: 700;
+}
+
+header .gnav .gnav-logo img {
+  height: 24px;
+  width: 25px;
+}
+
+header .gnav .gnav-logo span {
+  color: #fa0f00;
+  font-size: 18px;
+  padding-left: 10px;
+  display: inline-block;
+  padding-top: 0px;
+  vertical-align: top;
+}
+
+header .gnav .gnav-section > span {
+  margin: 0 12px;
+  cursor: pointer;
+  position: relative;
+  display: block;
+}
+
+header .gnav .gnav-section span:hover,
+header .gnav .gnav-section span a:hover {
+  color: #1473e6;  
+}
+
+header .gnav .gnav-section .gnav-selected {
+  font-weight: 700;
+  box-sizing: border-box;
+}
+
+header .gnav .gnav-section .gnav-selected > div {
+  font-weight: 400;
+}
+
+header .gnav .gnav-button {
+  font-size: 14px;
+  margin-left: 0px;
+  font-weight: 700;
+  padding: 6px 16px 5px 16px;
+  background-color: #1473e6;
+}      
+
+header .gnav .gnav-selected {
+  font-weight: 700;
+}
+
+header .gnav-search > svg {
+  display: none;
+}
+
+header .gnav .gnav-nosearch .gnav-search-results {
+  display: none;
+}
+
+header .gnav .gnav-nosearch .gnav-search-link {
+  display: none;
+}
+
+
+header .gnav-search-box {
+  max-width: 1200px;
+  margin: auto;
+}
+
+header .gnav-search-box-wrapper {
+  position: relative;
+  padding: 20px;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: white;
+}
+
+header .gnav-search-results {
+  margin: 16px 0 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+header .gnav-search-results, header .gnav-search-link {
+  background-color: #f4f4f4;  
+  padding: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+header .gnav-search-link {
+  text-align: center;
+}
+
+header .gnav-search-input {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+header .gnav-search-box input {
+  width: 100%;
+  font-size: 16px;
+  font-family: 'adobe-clean', 'Adobe Clean', sans-serif;
+  border: 1px solid #1473e6;
+  border-radius: 3px;
+  padding: 6px;
+  box-sizing: border-box;
+}
+
+header .gnav-search-box svg {
+  position: absolute;
+  top: 6px;
+  right: 10px;
+}
+
+header .gnav .gnav-search-highlight {
+  background-color: yellow;
+}
+
+@media (max-width: 1199px) {
+  
+  header .gnav[aria-expanded=true] .gnav-hamburger::before {
+    content: "\2715";
+  }
+  
+  header .gnav[aria-expanded=true] {
+    grid-template-areas: 
+    'hamburger logo    signin'
+    'search    search  search'
+    'section   section section';
+    grid-template-rows: 64px;
+    height: unset;
+    min-height: 200px;
+  }
+  
+  header .gnav[aria-expanded=true] .gnav-search,
+  header .gnav[aria-expanded=true] .gnav-section {
+    display: block;
+    margin: 0;
+    width: 100vw;
+    box-sizing: border-box;
+    margin-left: -23px;
+  }
+  
+  header .gnav[aria-expanded=true] .gnav-section > span {
+    padding: 16px 20px 16px 35px;
+    border-bottom: 1px solid #f4f4f4;
+  }
+  
+  header .gnav[aria-expanded=true] .gnav-search {
+    background-color: white;
+    padding: 20px;  
+  }
+  
+  header .gnav[aria-expanded=true] .gnav-section {
+    background-color: #fbfbfb;
+  }  
+}
+
+@media (min-width: 1200px) {
+
+  header .gnav .gnav-hamburger {
+    display: none;
+  }
+
+  header .gnav .gnav-logo {
+    grid-area: logo;
+    justify-self: start;
+  }
+  
+
+  header .gnav .gnav-logo,
+  header .gnav .gnav-section {
+    display: block;
+  }  
+  
+  header .gnav {
+    color: #2c2c2c;
+    max-width: 1440px;
+    min-width: 1200px;
+    margin: auto;
+    grid-template-areas: 'logo section search signin';
+    grid-template-columns: 200px 1fr 20px 50px;
+  }
+
+  header .gnav .gnav-section {
+    padding: 0 8.5px 1px 8.5px;
+  }
+
+  header .gnav .gnav-right {
+    padding: 0 10px;
+  }
+
+  header .gnav .gnav-section > span {
+    display: inline-flex;
+    height: 64px;
+    align-items: center;
+  }
+
+  header .gnav .gnav-section > span.gnav-selected {
+    padding-top: 2px;
+    border-bottom: 2px solid #2c2c2c;
+  }
+
+  header .gnav .gnav-right > div {
+    padding: 0px 6px 1px 6px;
+  }
+
+  header .gnav .gnav-search {
+    display: flex;
+    fill: currentColor;
+  }
+
+  header .gnav-search > svg {
+    display: unset;
+  }
+  
+
+  header .gnav .gnav-drop {
+    display: flex;
+  }
+
+  header .gnav .gnav-selected.drop::after {
+    margin-left: 4px;      
+  }
+  
+  header .gnav .gnav-drop::after {
+    display: flex;
+    width: 5px;
+    height: 5px;
+    border-top-width: 0;
+    border-left-width: 0;
+    border-bottom-width: 1px;
+    border-right-width: 1px;
+    border-style: solid;
+    border-color: #2c2c2c;
+    transform-origin: 75% 75%;
+    transform: rotate( 45deg );
+    transition: transform .1s ease;
+    content: "";
+    margin-left: 5px;
+    margin-right: 3px;
+  }
+  header .gnav .gnav-drop[aria-expanded=true]::after {
+    transform: rotate( 225deg );
+  }
+
+  header .gnav .gnav-section {
+    display: flex;
+    align-items: center;
+  }
+
+  header .gnav .gnav-submenu {
+    position: absolute;
+    top: 64px;
+    background-color: #fbfbfb;
+    box-shadow: 0px 3px 3px 0px rgb(0 0 0 / 20%);
+    margin-left: -20px;
+    min-width: 240px;
+    padding: 7px 0;
+  }
+
+  header .gnav .gnav-search-box-wrapper {
+    display: none;
+  }
+
+  header .gnav .gnav-search[aria-expanded=true] .gnav-search-box-wrapper {
+    display: block;
+    position: absolute;
+    top: 64px;
+    left: 0;
+  }
+
+  header .gnav img {
+    max-width: 100%;
+  }
+
+  header .gnav .article-card {
+      width: calc(100%/3 - 28px);
+  }
+}
