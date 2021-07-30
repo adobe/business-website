@@ -363,6 +363,7 @@ main .article-byline-info {
 
 main .article-byline p {
   margin: 0;
+  font-size: var(--body-font-size-m);
 }
 
 main .article-author {
