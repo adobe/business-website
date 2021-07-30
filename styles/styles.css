@@ -358,3 +358,12 @@ main .featured-article,
 main .featured-feed {
   visibility: hidden;
 }
+
+main .featured-article {
+  min-height: 320px;
+  margin-bottom: 24px;
+}
+
+main .article-feed {
+  min-height: 900px;  
+}
