@@ -495,7 +495,7 @@ async function decoratePage(win = window) {
   const $main = doc.querySelector('main');
   if ($main) {
     decorateMain($main);
-    doc.querySelector('body').classList.add('ready');
+    doc.querySelector('body').classList.add('appear');
     setLCPTrigger(doc, async () => {
       // post LCP actions go here
 
