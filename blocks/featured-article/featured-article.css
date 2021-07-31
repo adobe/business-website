@@ -1,4 +1,8 @@
 main .featured-article {
+  visibility: unset;
+}
+
+main .featured-article {
   text-align: center;
   width: 100%;
 }
@@ -13,7 +17,6 @@ main .featured-article-card {
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  margin: 10px;
   text-align: left;
 }
 

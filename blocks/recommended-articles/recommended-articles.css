@@ -1,4 +1,8 @@
 main .recommended-articles {
+    visibility: unset;
+}
+  
+main .recommended-articles {
     text-align: center;
     display: flex;
     flex-wrap: wrap;

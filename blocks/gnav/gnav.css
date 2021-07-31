@@ -1,4 +1,7 @@
 /* gnav placeholder */
+header .gnav {
+  visibility: unset;
+}
 
 header .gnav {
   font-size: 14px;
