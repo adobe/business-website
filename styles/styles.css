@@ -352,6 +352,14 @@ main .caption {
 } 
 
 /* CLS and FOUC protection for lazy loaded content/styles */
+body {
+  visibility: hidden;
+}
+
+body.ready {
+  visibility: unset;
+}
+
 header .gnav,
 main .recommended-articles,
 main .featured-article,
