@@ -15,3 +15,4 @@ jobs:
         uses: auniverseaway/helix-actions/psi@main
         with:
           psi-key: ${{ secrets.PSI_KEY }}
+          relative-url: /blog/
