@@ -139,8 +139,7 @@ function buildImageBlocks(mainEl) {
     parentEl.lastChild.remove();
   });
   // select all non-featured, default (non-images block) images
-  const imgEls = [...mainEl.querySelectorAll('div > p > picture')];
-  imgEls.shift();
+  const imgEls = [...mainEl.querySelectorAll(':scope > div > p > picture')];
   imgEls.forEach((imgEl) => {
     const parentEl = imgEl.parentNode;
     const parentSiblingEl = parentEl.nextElementSibling;
@@ -194,10 +193,10 @@ function decorateBlocks($main) {
  */
 function buildAutoBlocks(mainEl) {
   try {
-    buildImageBlocks(mainEl);
     if (getMetadata('author') && getMetadata('publication-date') && !mainEl.querySelector('.article-header')) {
       buildArticleHeader(mainEl);
     }
+    buildImageBlocks(mainEl);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);
