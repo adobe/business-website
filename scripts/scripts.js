@@ -96,7 +96,38 @@ export function decorateBlock($block) {
 }
 
 /**
- * Decorates all default images in a container element.
+ * Builds a block DOM Element from a two dimensional array
+ * @param {string} blockName name of the block
+ * @param {any} content two dimensional array or string or object of content
+ */
+function buildBlock(blockName, content) {
+  const table = Array.isArray(content) ? content : [[content]];
+  const blockEl = document.createElement('div');
+  // build image block nested div structure
+  blockEl.classList.add(blockName);
+  table.forEach((row) => {
+    const rowEl = document.createElement('div');
+    row.forEach((col) => {
+      const colEl = document.createElement('div');
+      const vals = col.elems ? col.elems : [col];
+      vals.forEach((val) => {
+        if (val) {
+          if (typeof val === 'string') {
+            colEl.innerHTML += val;
+          } else {
+            colEl.appendChild(val);
+          }
+        }
+      });
+      rowEl.appendChild(colEl);
+    });
+    blockEl.appendChild(rowEl);
+  });
+  return (blockEl);
+}
+
+/**
+ * builds images blocks from default content.
  * @param {Element} mainEl The container element
  */
 function buildImageBlocks(mainEl) {
@@ -108,7 +139,8 @@ function buildImageBlocks(mainEl) {
     parentEl.lastChild.remove();
   });
   // select all non-featured, default (non-images block) images
-  const imgEls = Array.from(mainEl.querySelectorAll('div.section-wrapper:not(:first-of-type) > div > p > picture'));
+  const imgEls = [...mainEl.querySelectorAll('div > p > picture')];
+  imgEls.shift();
   imgEls.forEach((imgEl) => {
     const parentEl = imgEl.parentNode;
     const parentSiblingEl = parentEl.nextElementSibling;
@@ -117,19 +149,33 @@ function buildImageBlocks(mainEl) {
     if (parentSiblingEl.firstChild.nodeName === 'EM') {
       imgCaptionEl = parentSiblingEl;
     }
-    const blockEl = document.createElement('div');
-    // build image block nested div structure
-    blockEl.classList.add('images');
-    const firstNestEl = document.createElement('div');
-    const secondNestEl = document.createElement('div');
-    // populate images block
-    firstNestEl.append(parentEl.cloneNode(true));
-    if (imgCaptionEl) { firstNestEl.append(imgCaptionEl); }
-    secondNestEl.append(firstNestEl);
-    blockEl.append(secondNestEl);
-    parentEl.parentNode.insertBefore(blockEl, parentEl);
+    const imagesBlockEl = buildBlock('images', {
+      elems: [parentEl.cloneNode(true), imgCaptionEl],
+    });
+    parentEl.parentNode.insertBefore(imagesBlockEl, parentEl);
     parentEl.remove();
   });
+}
+
+/**
+ * builds article header block from meta and default content.
+ * @param {Element} mainEl The container element
+ */
+function buildArticleHeader(mainEl) {
+  const h1 = mainEl.querySelector('h1');
+  const picture = mainEl.querySelector('picture').closest('p');
+  const category = getMetadata('category');
+  const author = getMetadata('author');
+  const publicationDate = getMetadata('publication-date');
+
+  const articleHeaderBlockEl = buildBlock('article-header', [
+    [`<p>${category}</p>`],
+    [h1],
+    [`<p><a href="/blog/authors/${toClassName(author)}">${author}</a></p>
+      <p>${publicationDate}</p>`],
+    [picture],
+  ]);
+  mainEl.firstChild.prepend(articleHeaderBlockEl);
 }
 
 /**
@@ -142,8 +188,20 @@ function decorateBlocks($main) {
     .forEach(($block) => decorateBlock($block));
 }
 
+/**
+ * Builds all synthetic blocks in a container element.
+ * @param {Element} $main The container element
+ */
 function buildAutoBlocks(mainEl) {
-  buildImageBlocks(mainEl);
+  try {
+    buildImageBlocks(mainEl);
+    if (getMetadata('author') && getMetadata('publication-date') && !mainEl.querySelector('.article-header')) {
+      buildArticleHeader(mainEl);
+    }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Auto Blocking failed', error);
+  }
 }
 
 /**
@@ -405,12 +463,12 @@ export function normalizeHeadings($elem, allowedHeadings) {
  * @param {Element} $main The main element
  */
 export function decorateMain($main) {
+  buildAutoBlocks($main);
   wrapSections($main.querySelectorAll(':scope > div'));
   checkWebpFeature(() => {
     webpPolyfill($main);
   });
   decorateFeatureImg();
-  buildAutoBlocks($main);
   decorateBlocks($main);
 }
 
