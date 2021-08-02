@@ -12,13 +12,15 @@ main .article-category {
     padding: 0;
 }
 
-main .article-category a {
+main .article-category p, main .article-category a {
     text-decoration: none;
     color: var(--color-gray-600);
     text-transform: uppercase;
     letter-spacing: 0.1em;
     font-weight: 700;
     font-size: var(--body-font-size-s);
+    margin: 0;
+    display: block;
 }
 
 main .article-title h1 {
