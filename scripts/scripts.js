@@ -170,10 +170,10 @@ function buildBlock(blockName, content) {
 }
 
 /**
- * builds images blocks from default content.
+ * removes formatting from images.
  * @param {Element} mainEl The container element
  */
-function buildImageBlocks(mainEl) {
+function removeStylingFromImages(mainEl) {
   // remove styling from images, if any
   const styledImgEls = [...mainEl.querySelectorAll('strong picture'), ...mainEl.querySelectorAll('em picture')];
   styledImgEls.forEach((imgEl) => {
@@ -181,18 +181,29 @@ function buildImageBlocks(mainEl) {
     parentEl.prepend(imgEl);
     parentEl.lastChild.remove();
   });
+}
+
+/**
+ * returns an image caption of a picture elements
+ * @param {Element} picture picture element
+ */
+function getImageCaption(picture) {
+  const parentEl = picture.parentNode;
+  const parentSiblingEl = parentEl.nextElementSibling;
+  return (parentSiblingEl.firstChild.nodeName === 'EM' ? parentSiblingEl : undefined);
+}
+
+/**
+ * builds images blocks from default content.
+ * @param {Element} mainEl The container element
+ */
+function buildImageBlocks(mainEl) {
   // select all non-featured, default (non-images block) images
   const imgEls = [...mainEl.querySelectorAll(':scope > div > p > picture')];
   imgEls.forEach((imgEl) => {
     const parentEl = imgEl.parentNode;
-    const parentSiblingEl = parentEl.nextElementSibling;
-    let imgCaptionEl;
-    // check for caption immediately following image
-    if (parentSiblingEl.firstChild.nodeName === 'EM') {
-      imgCaptionEl = parentSiblingEl;
-    }
     const imagesBlockEl = buildBlock('images', {
-      elems: [parentEl.cloneNode(true), imgCaptionEl],
+      elems: [parentEl.cloneNode(true), getImageCaption(imgEl)],
     });
     parentEl.parentNode.insertBefore(imagesBlockEl, parentEl);
     parentEl.remove();
@@ -205,7 +216,7 @@ function buildImageBlocks(mainEl) {
  */
 function buildArticleHeader(mainEl) {
   const h1 = mainEl.querySelector('h1');
-  const picture = mainEl.querySelector('picture').closest('p');
+  const picture = mainEl.querySelector('picture');
   const category = getMetadata('category');
   const author = getMetadata('author');
   const publicationDate = getMetadata('publication-date');
@@ -215,7 +226,7 @@ function buildArticleHeader(mainEl) {
     [h1],
     [`<p><a href="/blog/authors/${toClassName(author)}">${author}</a></p>
       <p>${publicationDate}</p>`],
-    [picture],
+    [{ elems: [picture.closest('p'), getImageCaption(picture)] }],
   ]);
   mainEl.firstChild.prepend(articleHeaderBlockEl);
 }
@@ -235,6 +246,7 @@ function decorateBlocks($main) {
  * @param {Element} $main The container element
  */
 function buildAutoBlocks(mainEl) {
+  removeStylingFromImages(mainEl);
   try {
     if (getMetadata('author') && getMetadata('publication-date') && !mainEl.querySelector('.article-header')) {
       buildArticleHeader(mainEl);
