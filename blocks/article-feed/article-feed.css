@@ -1,4 +1,9 @@
 main .article-feed {
+  visibility: unset;
+  min-height: unset;
+}
+
+main .article-feed {
   text-align: center;
 }
 
