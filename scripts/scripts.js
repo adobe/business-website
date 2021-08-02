@@ -54,6 +54,49 @@ export function addPublishDependencies(url) {
 }
 
 /**
+ * Returns an image URL with optimization parameters
+ * @param {string} url The image URL
+ */
+export function getOptimizedImageURL(src) {
+  const url = new URL(src, window.location.href);
+  let result = src;
+  const { pathname, search } = url;
+  if (pathname.includes('media_')) {
+    const usp = new URLSearchParams(search);
+    usp.delete('auto');
+    if (!window.webpSupport) {
+      if (pathname.endsWith('.png')) {
+        usp.set('format', 'png');
+      } else if (pathname.endsWith('.gif')) {
+        usp.set('format', 'gif');
+      } else {
+        usp.set('format', 'pjpg');
+      }
+    } else {
+      usp.set('format', 'webply');
+    }
+    result = `${src.split('?')[0]}?${usp.toString()}`;
+  }
+  return (result);
+}
+
+/**
+ * Resets an element's attribute to the optimized image URL.
+ * @see getOptimizedImageURL
+ * @param {Element} $elem The element
+ * @param {string} attrib The attribute
+ */
+function resetOptimizedImageURL($elem, attrib) {
+  const src = $elem.getAttribute(attrib);
+  if (src) {
+    const oSrc = getOptimizedImageURL(src);
+    if (oSrc !== src) {
+      $elem.setAttribute(attrib, oSrc);
+    }
+  }
+}
+
+/**
  * Sanitizes a name for use as class name.
  * @param {*} name The unsanitized name
  * @returns {string} The class name
@@ -191,38 +234,6 @@ export function buildFigure(blockEl) {
 }
 
 /**
- * Decorates feature image.
- */
-function decorateFeatureImg() {
-  const h1 = document.querySelector('main h1');
-  // create container to pass to buildFigure func
-  const containerEl = document.createElement('div');
-  if (h1) {
-    // check for feature image
-    const hasFeatureImg = h1.parentElement.querySelector('p picture') || false;
-    if (hasFeatureImg) {
-      const featureImgEl = hasFeatureImg.parentNode;
-      // check for hero caption
-      const featureImgSiblingEl = featureImgEl.nextElementSibling;
-      const featureImgCaption = featureImgSiblingEl || false;
-      // populate container to pass to buildFigure func
-      if (featureImgEl) { containerEl.append(featureImgEl); }
-      if (featureImgCaption) { containerEl.append(featureImgCaption); }
-      const figContainerEl = document.createElement('div');
-      figContainerEl.classList.add('feature-image');
-      const figEl = buildFigure(containerEl);
-      figEl.classList.add('feature-image-figure');
-      figContainerEl.append(figEl);
-      h1.parentNode.parentNode.parentNode.append(figContainerEl);
-      // insert feature img div below H1 parent
-      h1.parentNode.parentNode.parentNode.insertBefore(
-        figContainerEl, h1.parentNode.parentNode.nextSibling,
-      );
-    }
-  }
-}
-
-/**
  * Loads JS and CSS for a block.
  * @param {Element} $block The block element
  */
@@ -315,49 +326,6 @@ function checkWebpFeature(callback) {
 }
 
 /**
- * Returns an image URL with optimization parameters
- * @param {string} url The image URL
- */
-export function getOptimizedImageURL(src) {
-  const url = new URL(src, window.location.href);
-  let result = src;
-  const { pathname, search } = url;
-  if (pathname.includes('media_')) {
-    const usp = new URLSearchParams(search);
-    usp.delete('auto');
-    if (!window.webpSupport) {
-      if (pathname.endsWith('.png')) {
-        usp.set('format', 'png');
-      } else if (pathname.endsWith('.gif')) {
-        usp.set('format', 'gif');
-      } else {
-        usp.set('format', 'pjpg');
-      }
-    } else {
-      usp.set('format', 'webply');
-    }
-    result = `${src.split('?')[0]}?${usp.toString()}`;
-  }
-  return (result);
-}
-
-/**
- * Resets an elelemnt's attribute to the optimized image URL.
- * @see getOptimizedImageURL
- * @param {Element} $elem The element
- * @param {string} attrib The attribute
- */
-function resetOptimizedImageURL($elem, attrib) {
-  const src = $elem.getAttribute(attrib);
-  if (src) {
-    const oSrc = getOptimizedImageURL(src);
-    if (oSrc !== src) {
-      $elem.setAttribute(attrib, oSrc);
-    }
-  }
-}
-
-/**
  * WEBP Polyfill for older browser versions.
  * @param {Element} $elem The container element
  */
@@ -409,7 +377,6 @@ export function decorateMain($main) {
   checkWebpFeature(() => {
     webpPolyfill($main);
   });
-  decorateFeatureImg();
   buildAutoBlocks($main);
   decorateBlocks($main);
 }
