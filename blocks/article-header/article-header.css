@@ -1,7 +1,6 @@
 /* article header */
 main .article-header {
-    margin-top: 64px;
-    margin-bottom: 64px;
+    /* margin-top: 64px; */
 }
 
 @media (min-width: 700px) {
@@ -16,8 +15,8 @@ main .article-header {
 main .article-header .article-category,
 main .article-header .article-title,
 main .article-feature-image .caption {
-    margin: 0 32px;
-    padding: 0 2rem;
+    margin-left: 32px;
+    margin-right: 32px;
 }
 
 @media (min-width: 700px) {
@@ -41,6 +40,14 @@ main .article-header .article-category a {
     text-transform: uppercase;
     letter-spacing: .1em;
     text-decoration: none;
+    padding: 0 1rem;
+}
+
+@media (min-width: 700px) {
+    main .article-header .article-category,
+    main .article-header .article-category a {
+        padding: 0;
+    }
 }
 
 main .article-title h1 {
@@ -53,6 +60,7 @@ main .article-title h1 {
 @media (min-width: 700px) {
     main .article-title h1 {
         font-size: var(--heading-font-size-xl);
+        padding: 0;
     }
 }
 
@@ -79,6 +87,7 @@ main .article-byline-info {
 
 main .article-byline p {
     margin: 0;
+    padding: 0;
     font-size: var(--detail-font-size-m);
     line-height: var(--detail-line-height);
 }
@@ -107,4 +116,8 @@ main .article-feature-image .figure-feature img {
     width: 100%;
     max-height: 440px;
     object-fit: cover;
+}
+
+main .article-feature-image .caption {
+    max-width: unset;
 }
