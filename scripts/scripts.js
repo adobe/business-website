@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-/* global sessionStorage Image fetch */
+/* global sessionStorage Image */
 
 /**
  * Loads a CSS file.
@@ -190,7 +190,7 @@ function removeStylingFromImages(mainEl) {
 function getImageCaption(picture) {
   const parentEl = picture.parentNode;
   const parentSiblingEl = parentEl.nextElementSibling;
-  return (parentSiblingEl.firstChild.nodeName === 'EM' ? parentSiblingEl : undefined);
+  return (parentSiblingEl && parentSiblingEl.firstChild.nodeName === 'EM' ? parentSiblingEl : undefined);
 }
 
 /**
