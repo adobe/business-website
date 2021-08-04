@@ -3,13 +3,18 @@ main .article-feed {
   min-height: unset;
 }
 
-main .article-feed {
-  text-align: center;
-}
-
 main .article-cards {
+  margin: 0 auto;
   display: flex;
   flex-wrap: wrap;
+  padding: 2rem;
   justify-content: center;
 }
-  
+
+@media (min-width: 600px) {
+  main .article-cards {
+    padding-left: 0;
+    padding-right: 0;
+    width: calc(100% - 64px);
+  }
+}
