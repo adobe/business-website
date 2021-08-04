@@ -1,42 +1,66 @@
 /* article header */
-
 main .article-header {
-    margin-top: 48px;
+    margin-top: 64px;
+    margin-bottom: 64px;
 }
 
-main .article-header > * {
-    padding: 1rem 0;
+@media (min-width: 700px) {
+    main .article-header {
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 0;
+        padding-right: 0;
+    }
 }
 
-main .article-category {
-    padding: 0;
+main .article-header .article-category,
+main .article-header .article-title,
+main .article-feature-image .caption {
+    margin: 0 32px;
+    padding: 0 2rem;
 }
 
-main .article-category p, main .article-category a {
-    text-decoration: none;
-    color: var(--color-gray-600);
+@media (min-width: 700px) {
+    main .article-header .article-category,
+    main .article-header .article-title,
+    main .article-header .article-byline {
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 0;
+        padding-right: 0;
+    }
+}
+
+main .article-header .article-category,
+main .article-header .article-category a {
+    font-weight: var(--detail-font-weight);
+    color: var(--detail-color);
+    font-size: var(--detail-font-size-m);
+    line-height: var(--detail-line-height);
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-weight: 700;
-    font-size: var(--body-font-size-s);
-    margin: 0;
-    display: block;
+    letter-spacing: .1em;
+    text-decoration: none;
 }
 
 main .article-title h1 {
     color: var(--color-gray-800);
-    font-size: var(--heading-font-size-m);
+    font-size: var(--heading-font-size-l);
+    margin: 0;
+    margin-top: 16px;
 }
 
-@media (min-width: 600px) {
+@media (min-width: 700px) {
     main .article-title h1 {
-        font-size: var(--heading-font-size-l);
+        font-size: var(--heading-font-size-xl);
     }
 }
 
 main .article-byline {
     display: flex;
-    height: 66px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+    padding: 0 2rem;
 }
 
 main .article-author-image {
@@ -48,7 +72,6 @@ main .article-author-image {
 }
 
 main .article-byline-info {
-    height: 64px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -56,7 +79,8 @@ main .article-byline-info {
 
 main .article-byline p {
     margin: 0;
-    font-size: var(--body-font-size-m);
+    font-size: var(--detail-font-size-m);
+    line-height: var(--detail-line-height);
 }
 
 main .article-author {
@@ -65,14 +89,14 @@ main .article-author {
 
 main .article-date {
     font-weight: 300;
-}
+} 
 
 /* feature img */
-
 main .article-feature-image {
-    width: 100%;
     padding: 0;
     margin: auto;
+    width: 100%;
+    max-width: 1000px;
 }
 
 main .article-feature-image .figure-feature {
@@ -81,6 +105,6 @@ main .article-feature-image .figure-feature {
 
 main .article-feature-image .figure-feature img {
     width: 100%;
-    max-height: 438px;
+    max-height: 440px;
     object-fit: cover;
 }
