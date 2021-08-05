@@ -28,7 +28,9 @@ main .featured-article a:any-link {
 }
 
 main .featured-article-card-image {
+  height: 320px;
   width: 100%;
+  background: var(--color-black);
 }
 
 @media (min-width: 600px) {
@@ -45,8 +47,12 @@ main .featured-article-card-image {
 
 main .featured-article-card-image img {
   object-fit: cover;
-  width: 100%;
-  height: 320px;
+  height: 100%;
+  transition: .4s;
+}
+
+main .featured-article-card-image img:hover {
+  opacity: 0.6;
 }
 
 main .featured-article-card-body {
