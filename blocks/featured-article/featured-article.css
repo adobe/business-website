@@ -8,7 +8,6 @@ main .featured-article-card {
   margin: 0 auto;
 }
 
-
 @media (min-width: 600px) {
   main .featured-article-card {
     flex-direction: row;
@@ -50,7 +49,6 @@ main .featured-article-card-image img {
   height: 320px;
 }
 
-  
 main .featured-article-card-body {
   padding: 2rem;
   text-align: center;
@@ -67,6 +65,14 @@ main .featured-article-card-body {
   main .featured-article-card-body {
     width: 40%;
   }
+}
+
+main .featured-article-card-body p,
+main .featured-article-card-body h3 {
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 main p.featured-article-card-category,

@@ -1,13 +1,15 @@
 main .article-feed {
   visibility: unset;
   min-height: unset;
+  text-align: center;
 }
 
-main .article-cards {
+main .article-feed .article-cards {
   margin: 0 auto;
   display: flex;
   flex-wrap: wrap;
   padding: 2rem;
+  padding-bottom: 0;
   justify-content: center;
 }
 
@@ -17,4 +19,8 @@ main .article-cards {
     padding-right: 0;
     width: calc(100% - 64px);
   }
+}
+
+main .article-feed .load-more {
+  margin: 0;
 }

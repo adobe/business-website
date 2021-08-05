@@ -6,6 +6,7 @@ main .infographic .figure {
     margin-top: 16px;
     margin-bottom: 16px;
     line-height: 0;
+    text-align: center;
 }
 
 @media (min-width: 700px) {
@@ -13,6 +14,11 @@ main .infographic .figure {
         margin: 0 auto;
         max-width: 800px;
     }
+}
+
+main .infographic .figure img {
+    width: 100%;
+    max-width: 600px;
 }
 
 main .infographic .figure .caption {
@@ -31,7 +37,7 @@ main .infographic .figure .caption {
 
 @media (min-width: 900px) {
     main .infographic .figure .caption {
-        max-width: unset;
+        /* max-width: unset; */
         padding: 0;
     }
 }
