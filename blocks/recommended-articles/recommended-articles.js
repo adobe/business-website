@@ -4,6 +4,8 @@ import {
 } from '../../scripts/scripts.js';
 
 async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
+  const articleCardsContainer = document.createElement('div');
+  articleCardsContainer.className = 'article-cards';
   for (let i = 0; i < paths.length; i += 1) {
     const articlePath = paths[i];
     // eslint-disable-next-line no-await-in-loop
@@ -30,7 +32,8 @@ async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
       <h3>${title}</h3>
         <p>${description}</p>
       </div>`;
-    recommendedArticlesEl.append(card);
+    articleCardsContainer.append(card);
+    recommendedArticlesEl.append(articleCardsContainer);
   }
 }
 
