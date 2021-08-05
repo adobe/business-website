@@ -171,7 +171,6 @@ export default function decorate($block) {
     $block.querySelectorAll('.embed.block a[href]').forEach(($a) => {
     const url = new URL($a.href.replace(/\/$/, ''));
     const config = EMBEDS_CONFIG[url.hostname];
-    console.log($a);
     if (config) {
         const html = config.embed(url);
         $block.innerHTML = html;
