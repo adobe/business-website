@@ -367,3 +367,11 @@ main .featured-article {
 main .article-feed {
   min-height: 900px;  
 }
+
+body {
+  visibility: hidden;
+}
+
+body.appear {
+  visibility: unset;
+}
