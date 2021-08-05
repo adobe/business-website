@@ -26,11 +26,11 @@ async function decorateFeaturedArticle(featuredArticleEl, articlePath) {
   const path = article.path.split('.')[0];
 
   const imagePath = image.split('?')[0].split('_')[1];
-  const imageSrcDesktop = getOptimizedImageURL(`./media_${imagePath}?format=webply&optimize=medium&width=2000`);
+  const imageSrcDesktop = getOptimizedImageURL(`./media_${imagePath}?format=webply&optimize=medium&width=750`);
   const imageSrcMobile = getOptimizedImageURL(`./media_${imagePath}?format=webply&optimize=medium&width=750`);
   const pictureTag = `<picture>
     <source media="(max-width: 400px)" srcset="${imageSrcMobile}">
-    <img src="${imageSrcDesktop}">
+    <img loading="eager" src="${imageSrcDesktop}">
   </picture>`;
   const card = document.createElement('a');
   card.className = 'featured-article-card';
