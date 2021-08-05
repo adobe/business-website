@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-/* global sessionStorage Image fetch */
+/* global sessionStorage Image fetch PerformanceObserver performance */
 
 /**
  * Loads a CSS file.
@@ -513,3 +513,44 @@ async function decoratePage(win = window) {
 }
 
 decoratePage(window);
+
+function stamp(message) {
+  if (window.name.includes('performance')) {
+    // eslint-disable-next-line no-console
+    console.log(`${new Date() - performance.timing.navigationStart}:${message}`);
+  }
+}
+
+stamp('start');
+
+function registerPerformanceLogger() {
+  try {
+    const polcp = new PerformanceObserver((entryList) => {
+      const entries = entryList.getEntries();
+      stamp(JSON.stringify(entries));
+      // eslint-disable-next-line no-console
+      console.log(entries[0].element);
+    });
+    polcp.observe({ type: 'largest-contentful-paint', buffered: true });
+
+    const pols = new PerformanceObserver((entryList) => {
+      const entries = entryList.getEntries();
+      stamp(JSON.stringify(entries));
+      console.log(entries[0].sources[0].node);
+    });
+    pols.observe({ type: 'layout-shift', buffered: true });
+
+    const pores = new PerformanceObserver((entryList) => {
+      const entries = entryList.getEntries();
+      entries.forEach((entry) => {
+        stamp(`resource loaded: ${entry.name} - [${Math.round(entry.startTime + entry.duration)}]`);
+      });
+    });
+
+    pores.observe({ type: 'resource', buffered: true });
+  } catch (e) {
+    // no output
+  }
+}
+
+if (window.name.includes('performance')) registerPerformanceLogger();
