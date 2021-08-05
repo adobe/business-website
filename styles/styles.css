@@ -345,7 +345,8 @@ main .caption {
 header .gnav,
 main .recommended-articles,
 main .featured-article,
-main .featured-feed {
+main .featured-feed,
+main .article-header {
   visibility: hidden;
 }
 

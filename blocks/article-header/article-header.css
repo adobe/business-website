@@ -1,5 +1,9 @@
 /* article header */
 
+main .article-header {
+  visibility: unset;
+}
+
 @media (min-width: 700px) {
   main .article-header {
     margin-left: auto;
