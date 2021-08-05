@@ -19,37 +19,36 @@ const loadScript = (url, callback, type) => {
     if (type) {
       $script.setAttribute('type', type);
     }
-    console.log($script);
     $head.append($script);
     $script.onload = callback;
     return $script;
-  }
+}
 
   // 'open.spotify.com' returns 'spotify'
-  const getServer = (url) => {
+const getServer = (url) => {
     const l = url.hostname.lastIndexOf('.');
     return url.hostname.substring(url.hostname.lastIndexOf('.', l - 1) + 1, l);
-  }
+}
   
-  const getDefaultEmbed = (url) => {
+const getDefaultEmbed = (url) => {
     return `<div style="left: 0; width: 100%; height: 0; position: relative; padding-bottom: 56.25%;">
       <iframe src="${url.href}" style="border: 0; top: 0; left: 0; width: 100%; height: 100%; position: absolute;" allowfullscreen=""
         scrolling="no" allow="encrypted-media" title="Content from ${url.hostname}" loading="lazy">
       </iframe>
     </div>`;
-  }
+}
   
-  const embedYoutube = (url) => {
+const embedYoutube = (url) => {
     const usp = new URLSearchParams(url.search);
     const vid = usp.get('v');
     const embed = url.pathname;
     const embedHTML = `<div style="left: 0; width: 100%; height: 0; position: relative; padding-bottom: 56.25%;">
-      <iframe src="https://www.youtube.com${vid ? `/embed/${vid}?rel=0&amp;v=${vid}` : embed}" style="border: 0; top: 0; left: 0; width: 100%; height: 100%; position: absolute;" allowfullscreen="" scrolling="no" allow="encrypted-media; accelerometer; gyroscope; picture-in-picture" title="Content from Youtube" loading="lazy"></iframe>
+      <iframe src="https://www.youtube.com${vid ? `/embed/${vid}?rel=0&amp;v=${vid}` : embed}" style="border: 0; top: 0; left: 0; width: 100%; height: 100%; position: absolute;" allow="encrypted-media; accelerometer; gyroscope; picture-in-picture" allowfullscreen="" scrolling="no" title="Content from Youtube" loading="lazy"></iframe>
     </div>`;
     return embedHTML;
-  }
+}
   
-  const embedInstagram = (url) => {
+const embedInstagram = (url) => {
     const location = window.location.href;
     const src = `${url.origin}${url.pathname}${url.pathname.charAt(url.pathname.length - 1) === '/' ? '' : '/'}embed/?cr=1&amp;v=13&amp;wp=1316&amp;rd=${location.endsWith('.html') ? location : `${location}.html`}`;
     const embedHTML = `<div style="width: 100%; position: relative; padding-bottom: 56.25%; display: flex; justify-content: center">
@@ -59,62 +58,112 @@ const loadScript = (url, callback, type) => {
       </iframe>
     </div>`;
     return embedHTML;
-  }
+}
   
-  const embedVimeo = (url) => {
+const embedVimeo = (url) => {
     const linkArr = url.href.split('/');
     const video = linkArr ? linkArr[3] : linkArr;
+
     const embedHTML = `<div style="left: 0; width: 100%; height: 0; position: relative; padding-bottom: 56.25%;">
-        <iframe src="${video ? url.href : `https://player.vimeo.com/video/${video}`}?byline=0&badge=0&portrait=0&title=0" style="border: 0; top: 0; left: 0; width: 100%; height: 100%; position: absolute;"
-          allowfullscreen="" scrolling="no" allow="encrypted-media" title="Content from Vimeo" loading="lazy">
-        </iframe>
+        <iframe src=\"https:\/\/player.vimeo.com\/video\/${video}?app_id=122963\" 
+        style="border: 0; top: 0; left: 0; width: 100%; height: 100%; position: absolute;" 
+        frameborder=\"0\" allow=\"autoplay; fullscreen; picture-in-picture\" allowfullscreen  
+        title="Content from Vimeo" loading="lazy"><\/iframe>
     </div>`;
     return embedHTML;
-  }
+}
   
-  const embedSpark = (url) => {
+const embedSpark = (url) => {
     let embedURL = url;
     if (!url.pathname.endsWith('/embed.html') && !url.pathname.endsWith('/embed')) {
       embedURL = new URL(`${url.href}${url.pathname.endsWith('/') ? '' : '/'}embed.html`);
     }
   
     return getDefaultEmbed(embedURL);
-  }
+}
   
-  const embedTwitter = (url) => {
+const embedTwitter = (url) => {
     const embedHTML = `<blockquote class="twitter-tweet"><a href="${url}"></a></blockquote>`;
     loadScript('https://platform.twitter.com/widgets.js');
     return embedHTML;
-  }
+}
+
+const embedTiktok = (url) => {
+    const linkArr = url.href.split('/');
+    const vid = linkArr.pop();
+    const embedHTML = `<blockquote class="tiktok-embed" cite="${url}" data-video-id="${vid}"><section></section></blockquote>`;
+    loadScript('https://www.tiktok.com/embed.js');
+    return embedHTML;
+}
+
+const embedSlidShare = (url) => {
+    let resultHtml = document.createElement('div');
+    resultHtml.setAttribute('id', 'slideShare');
+    fetch(url)
+    .then(data => {
+        data.text().then( data => {
+            const $el = document.createElement('div');
+            $el.innerHTML = data;
+            const embedUrl = $el.querySelector('.slideshow-info meta[itemprop="embedURL"]').content;
+            if(embedUrl) {
+                const $slideShare = document.getElementById('slideShare')
+                $slideShare.outerHTML = `<div style="left: 0; width: 100%; height: 0; position: relative; padding-bottom: 56.25%;">
+                <iframe src="${embedUrl}" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%; top: 0; left: 0; width: 100%; height: 100%; position: absolute;" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" allowfullscreen> </iframe>
+                </div>`;
+            }
+        });
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+    
+    return resultHtml.outerHTML;
+}
   
-  const EMBEDS_CONFIG = {
+const EMBEDS_CONFIG = {
     'www.youtube.com': {
-      type: 'youtube',
-      embed: embedYoutube,
+        type: 'youtube',
+        embed: embedYoutube,
     },
     'video.tv.adobe.com': {
-      type: 'adobe-tv',
-      embed: getDefaultEmbed,
+        type: 'adobe-tv',
+        embed: getDefaultEmbed,
     },
     'www.instagram.com': {
-      type: '',
-      embed: embedInstagram,
+        type: 'instagram',
+        embed: embedInstagram,
+    },
+    'vimeo.com': {
+        type: 'vimeo-player',
+        embed: embedVimeo,
     },
     'www.vimeo.com': {
-      type: 'vimeo-player',
-      embed: embedVimeo,
-    },
+        type: 'vimeo-player',
+        embed: embedVimeo,
+      },
     'player.vimeo.com': {
-      type: 'vimeo-player',
-      embed: embedVimeo,
+        type: 'vimeo-player',
+        embed: embedVimeo,
     },
     'spark.adobe.com': {
-      type: 'adobe-spark',
-      embed: embedSpark,
+        type: 'adobe-spark',
+        embed: embedSpark,
     },
     'twitter.com': {
-      type: 'twitter',
-      embed: embedTwitter,
+        type: 'twitter',
+        embed: embedTwitter,
+    },
+    'tiktok.com': {
+        type: 'tiktok',
+        embed: embedTiktok,
+    },
+    'www.tiktok.com': {
+        type: 'tiktok',
+        embed: embedTiktok,
+    },
+    'www.slideshare.net': {
+        type: 'slideshare',
+        embed: embedSlidShare,
     },
   };
   
@@ -122,6 +171,7 @@ export default function decorate($block) {
     $block.querySelectorAll('.embed.block a[href]').forEach(($a) => {
     const url = new URL($a.href.replace(/\/$/, ''));
     const config = EMBEDS_CONFIG[url.hostname];
+    console.log($a);
     if (config) {
         const html = config.embed(url);
         $block.innerHTML = html;
