@@ -27,7 +27,7 @@ async function decorateFeaturedArticle(featuredArticleEl, articlePath) {
 
   const imagePath = image.split('?')[0].split('_')[1];
   const imageSrcDesktop = getOptimizedImageURL(`./media_${imagePath}?format=webply&optimize=medium&width=2000`);
-  const imageSrcMobile = getOptimizedImageURL(`./media_${imagePath}?format=webply&optimize=medium&width=2000`);
+  const imageSrcMobile = getOptimizedImageURL(`./media_${imagePath}?format=webply&optimize=medium&width=750`);
   const pictureTag = `<picture>
     <source media="(max-width: 400px)" srcset="${imageSrcMobile}">
     <img src="${imageSrcDesktop}">
