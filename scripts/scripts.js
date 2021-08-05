@@ -225,8 +225,8 @@ export function buildFigure(blockEl) {
         if (picEl) {
           pEl.firstChild.textContent = '';
           pEl.firstChild.append(picEl);
-          figEl.prepend(pEl.firstChild);
         }
+        figEl.prepend(pEl.firstChild);
       }
     });
   }

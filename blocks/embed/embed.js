@@ -12,6 +12,8 @@
 /* global window */
 /* eslint-disable import/named, import/extensions */
 
+import { buildFigure } from '../../scripts/scripts.js';
+
 const loadScript = (url, callback, type) => {
     const $head = document.querySelector('head');
     const $script = document.createElement('script');
@@ -24,7 +26,7 @@ const loadScript = (url, callback, type) => {
     return $script;
 }
 
-  // 'open.spotify.com' returns 'spotify'
+// 'open.spotify.com' returns 'spotify'
 const getServer = (url) => {
     const l = url.hostname.lastIndexOf('.');
     return url.hostname.substring(url.hostname.lastIndexOf('.', l - 1) + 1, l);
@@ -51,10 +53,10 @@ const embedYoutube = (url) => {
 const embedInstagram = (url) => {
     const location = window.location.href;
     const src = `${url.origin}${url.pathname}${url.pathname.charAt(url.pathname.length - 1) === '/' ? '' : '/'}embed/?cr=1&amp;v=13&amp;wp=1316&amp;rd=${location.endsWith('.html') ? location : `${location}.html`}`;
-    const embedHTML = `<div style="width: 100%; position: relative; padding-bottom: 56.25%; display: flex; justify-content: center">
+    const embedHTML = `<div style="width: 100%; position: relative; display: flex; justify-content: center">
       <iframe class="instagram-media instagram-media-rendered" id="instagram-embed-0" src="${src}"
         allowtransparency="true" allowfullscreen="true" frameborder="0" height="530" style="background: white; border-radius: 3px; border: 1px solid rgb(219, 219, 219);
-        box-shadow: none; display: block;">
+        box-shadow: none; display: block;" loading="lazy">
       </iframe>
     </div>`;
     return embedHTML;
@@ -89,11 +91,20 @@ const embedTwitter = (url) => {
 }
 
 const embedTiktok = (url) => {
-    const linkArr = url.href.split('/');
-    const vid = linkArr.pop();
-    const embedHTML = `<blockquote class="tiktok-embed" cite="${url}" data-video-id="${vid}"><section></section></blockquote>`;
-    loadScript('https://www.tiktok.com/embed.js');
-    return embedHTML;
+    let resultHtml = document.createElement('div');
+    resultHtml.setAttribute('id', 'tiktok');
+    fetch(`https://www.tiktok.com/oembed?url=${url}`)
+    .then(response => response.json())
+    .then(data => {
+        loadScript('https://www.tiktok.com/embed.js');
+        const $tiktok = document.getElementById('tiktok')
+        $tiktok.outerHTML = data.html;
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+
+    return resultHtml.outerHTML;
 }
 
 const embedSlidShare = (url) => {
@@ -108,7 +119,7 @@ const embedSlidShare = (url) => {
             if(embedUrl) {
                 const $slideShare = document.getElementById('slideShare')
                 $slideShare.outerHTML = `<div style="left: 0; width: 100%; height: 0; position: relative; padding-bottom: 56.25%;">
-                <iframe src="${embedUrl}" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%; top: 0; left: 0; width: 100%; height: 100%; position: absolute;" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" allowfullscreen> </iframe>
+                <iframe src="${embedUrl}" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%; top: 0; left: 0; width: 100%; height: 100%; position: absolute;" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" allowfullscreen loading="lazy"> </iframe>
                 </div>`;
             }
         });
@@ -168,17 +179,19 @@ const EMBEDS_CONFIG = {
   };
   
 export default function decorate($block) {
-    $block.querySelectorAll('.embed.block a[href]').forEach(($a) => {
-    const url = new URL($a.href.replace(/\/$/, ''));
-    const config = EMBEDS_CONFIG[url.hostname];
-    if (config) {
-        const html = config.embed(url);
-        $block.innerHTML = html;
-        $block.classList = `block embed embed-${config.type}`;
-    }
-    else {
-        $block.innerHTML = getDefaultEmbed(url);
-        $block.classList = `block embed embed-${getServer(url)}`;
+    const $figure = buildFigure($block.firstChild.firstChild);
+    const $a = $figure.querySelector('a');
+    if($a) {
+        const url = new URL($a.href.replace(/\/$/, ''));
+        const config = EMBEDS_CONFIG[url.hostname];
+        if (config) {
+            $a.outerHTML = config.embed(url);
+            $block.classList = `block embed embed-${config.type}`;
         }
-    });
+        else {
+            $a.outerHTML = getDefaultEmbed(url);
+            $block.classList = `block embed embed-${getServer(url)}`;
+        }
+        $block.innerHTML = $figure.outerHTML;
+    }
 }
