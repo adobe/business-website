@@ -57,25 +57,26 @@
 
 .article-card {
   cursor: pointer;
-}
-
-.article-card {
   box-sizing: border-box;
   display: inline-block;
   border: solid 1px var(--color-gray-200);
   border-radius: 4px;
+  width: 100%;
+  min-width: 268px;
   max-width: 378px;
   margin-bottom: 24px;
 }
 
 @media (min-width: 600px) {
   .article-card {
+    min-width: unset;
     width: calc(100%/2 - 16px);
     margin-right: 32px;
     margin-bottom: 32px;
   }
 
-  .article-card:nth-of-type(2n) {
+  .article-card:nth-of-type(2n),
+  .article-card:last-of-type {
     margin-right: 0;
   }
 }
@@ -101,9 +102,9 @@ main a.article-card:any-link {
 
 .article-card .article-card-image {
   width: 100%;
-  height: 180px;
+  height: 250px;
   line-height: 0;
-  background-color: var(--color-gray-200);
+  background-color: var(--color-black);
   border-radius: 4px 4px 0 0;
 }
 
@@ -112,12 +113,26 @@ main a.article-card:any-link {
   object-fit: cover;
   height: 100%;
   width: 100%;
+  transition: .4s;
+}
+
+.article-card .article-card-image img:hover {
+  opacity: 0.6;
 }
 
 .article-card .article-card-body {
+  background: var(--color-white);
   padding: 2rem;
   border-radius: 0 0 4px 4px;
   text-align: left;
+}
+
+.article-card .article-card-body p,
+.article-card .article-card-body h3 {
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 .article-card-body p.article-card-category,
@@ -148,6 +163,7 @@ main a.article-card:any-link {
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
+    min-height: 4.7rem;
   }
 }
 
@@ -164,5 +180,6 @@ main a.article-card:any-link {
 @media (min-width: 600px) {
   .article-card .article-card-body p:not(:first-child) {
     display: -webkit-box;
+    min-height: 2.6rem;
   }
 }
