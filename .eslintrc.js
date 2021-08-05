@@ -4,6 +4,7 @@ module.exports = {
   globals: {
     document: true,
     window: true,
+    fetch: true,
   },
   parser: '@babel/eslint-parser',
   parserOptions: {

@@ -77,7 +77,6 @@ a.button:any-link {
   font-size: var(--body-font-size-s);
   font-style: normal; 
   font-weight: 600;
-  line-height: var(--body-line-height);
   cursor: pointer;
   color: var(--color-white);
   background-color: var(--color-info-accent);
@@ -160,6 +159,7 @@ a.button > svg > use {
 main h1, main h2, main h3, main h4, main h5, main h6 {
   font-weight: var(--heading-font-weight);
   line-height: var(--heading-line-height);
+  font-weight: 600;
 }
 
 main h1 {
@@ -208,6 +208,7 @@ main p {
 
 main a:any-link {
   color: var(--body-color);
+  line-height: var(--body-line-height);
 }
 main a.cta-link {
   color: var(--color-info-accent);
@@ -306,39 +307,6 @@ header {
   border-bottom: 1px solid #EAEAEA;
   height: 64px;
   background-color: #FFF;
-}
-
-/* feature img */
-
-main .feature-image {
-  width: 100%;
-  padding: 0;
-  margin: auto;
-  max-width: 1000px;
-}
-
-main .feature-image .feature-image-figure {
-  margin: 0;
-}
-
-main .feature-image .feature-image-figure img {
-  width: 100%;
-  max-height: 438px;
-  object-fit: cover;
-}
-
-main .feature-image .feature-image-figure .caption {
-  padding: 0 32px;
-  max-width: 830px;
-  margin: auto;
-}
-
-@media (max-width: 900px) {
-  main .feature-image .feature-image-figure .caption {
-    margin: auto;
-    max-width: 375px;
-    padding: 0 32px;
-  }
 }
 
 /* caption styling */

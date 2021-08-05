@@ -54,6 +54,49 @@ export function addPublishDependencies(url) {
 }
 
 /**
+ * Returns an image URL with optimization parameters
+ * @param {string} url The image URL
+ */
+export function getOptimizedImageURL(src) {
+  const url = new URL(src, window.location.href);
+  let result = src;
+  const { pathname, search } = url;
+  if (pathname.includes('media_')) {
+    const usp = new URLSearchParams(search);
+    usp.delete('auto');
+    if (!window.webpSupport) {
+      if (pathname.endsWith('.png')) {
+        usp.set('format', 'png');
+      } else if (pathname.endsWith('.gif')) {
+        usp.set('format', 'gif');
+      } else {
+        usp.set('format', 'pjpg');
+      }
+    } else {
+      usp.set('format', 'webply');
+    }
+    result = `${src.split('?')[0]}?${usp.toString()}`;
+  }
+  return (result);
+}
+
+/**
+ * Resets an element's attribute to the optimized image URL.
+ * @see getOptimizedImageURL
+ * @param {Element} $elem The element
+ * @param {string} attrib The attribute
+ */
+function resetOptimizedImageURL($elem, attrib) {
+  const src = $elem.getAttribute(attrib);
+  if (src) {
+    const oSrc = getOptimizedImageURL(src);
+    if (oSrc !== src) {
+      $elem.setAttribute(attrib, oSrc);
+    }
+  }
+}
+
+/**
  * Sanitizes a name for use as class name.
  * @param {*} name The unsanitized name
  * @returns {string} The class name
@@ -96,10 +139,41 @@ export function decorateBlock($block) {
 }
 
 /**
- * Decorates all default images in a container element.
+ * Builds a block DOM Element from a two dimensional array
+ * @param {string} blockName name of the block
+ * @param {any} content two dimensional array or string or object of content
+ */
+function buildBlock(blockName, content) {
+  const table = Array.isArray(content) ? content : [[content]];
+  const blockEl = document.createElement('div');
+  // build image block nested div structure
+  blockEl.classList.add(blockName);
+  table.forEach((row) => {
+    const rowEl = document.createElement('div');
+    row.forEach((col) => {
+      const colEl = document.createElement('div');
+      const vals = col.elems ? col.elems : [col];
+      vals.forEach((val) => {
+        if (val) {
+          if (typeof val === 'string') {
+            colEl.innerHTML += val;
+          } else {
+            colEl.appendChild(val);
+          }
+        }
+      });
+      rowEl.appendChild(colEl);
+    });
+    blockEl.appendChild(rowEl);
+  });
+  return (blockEl);
+}
+
+/**
+ * removes formatting from images.
  * @param {Element} mainEl The container element
  */
-function buildImageBlocks(mainEl) {
+function removeStylingFromImages(mainEl) {
   // remove styling from images, if any
   const styledImgEls = [...mainEl.querySelectorAll('strong picture'), ...mainEl.querySelectorAll('em picture')];
   styledImgEls.forEach((imgEl) => {
@@ -107,29 +181,54 @@ function buildImageBlocks(mainEl) {
     parentEl.prepend(imgEl);
     parentEl.lastChild.remove();
   });
+}
+
+/**
+ * returns an image caption of a picture elements
+ * @param {Element} picture picture element
+ */
+function getImageCaption(picture) {
+  const parentEl = picture.parentNode;
+  const parentSiblingEl = parentEl.nextElementSibling;
+  return (parentSiblingEl && parentSiblingEl.firstChild.nodeName === 'EM' ? parentSiblingEl : undefined);
+}
+
+/**
+ * builds images blocks from default content.
+ * @param {Element} mainEl The container element
+ */
+function buildImageBlocks(mainEl) {
   // select all non-featured, default (non-images block) images
-  const imgEls = Array.from(mainEl.querySelectorAll('div.section-wrapper:not(:first-of-type) > div > p > picture'));
+  const imgEls = [...mainEl.querySelectorAll(':scope > div > p > picture')];
   imgEls.forEach((imgEl) => {
     const parentEl = imgEl.parentNode;
-    const parentSiblingEl = parentEl.nextElementSibling;
-    let imgCaptionEl;
-    // check for caption immediately following image
-    if (parentSiblingEl.firstChild.nodeName === 'EM') {
-      imgCaptionEl = parentSiblingEl;
-    }
-    const blockEl = document.createElement('div');
-    // build image block nested div structure
-    blockEl.classList.add('images');
-    const firstNestEl = document.createElement('div');
-    const secondNestEl = document.createElement('div');
-    // populate images block
-    firstNestEl.append(parentEl.cloneNode(true));
-    if (imgCaptionEl) { firstNestEl.append(imgCaptionEl); }
-    secondNestEl.append(firstNestEl);
-    blockEl.append(secondNestEl);
-    parentEl.parentNode.insertBefore(blockEl, parentEl);
+    const imagesBlockEl = buildBlock('images', {
+      elems: [parentEl.cloneNode(true), getImageCaption(imgEl)],
+    });
+    parentEl.parentNode.insertBefore(imagesBlockEl, parentEl);
     parentEl.remove();
   });
+}
+
+/**
+ * builds article header block from meta and default content.
+ * @param {Element} mainEl The container element
+ */
+function buildArticleHeader(mainEl) {
+  const h1 = mainEl.querySelector('h1');
+  const picture = mainEl.querySelector('picture');
+  const category = getMetadata('category');
+  const author = getMetadata('author');
+  const publicationDate = getMetadata('publication-date');
+
+  const articleHeaderBlockEl = buildBlock('article-header', [
+    [`<p>${category}</p>`],
+    [h1],
+    [`<p><a href="/blog/authors/${toClassName(author)}">${author}</a></p>
+      <p>${publicationDate}</p>`],
+    [{ elems: [picture.closest('p'), getImageCaption(picture)] }],
+  ]);
+  mainEl.firstChild.prepend(articleHeaderBlockEl);
 }
 
 /**
@@ -142,8 +241,21 @@ function decorateBlocks($main) {
     .forEach(($block) => decorateBlock($block));
 }
 
+/**
+ * Builds all synthetic blocks in a container element.
+ * @param {Element} $main The container element
+ */
 function buildAutoBlocks(mainEl) {
-  buildImageBlocks(mainEl);
+  removeStylingFromImages(mainEl);
+  try {
+    if (getMetadata('author') && getMetadata('publication-date') && !mainEl.querySelector('.article-header')) {
+      buildArticleHeader(mainEl);
+    }
+    buildImageBlocks(mainEl);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Auto Blocking failed', error);
+  }
 }
 
 /**
@@ -188,38 +300,6 @@ export function buildFigure(blockEl) {
     });
   }
   return figEl;
-}
-
-/**
- * Decorates feature image.
- */
-function decorateFeatureImg() {
-  const h1 = document.querySelector('main h1');
-  // create container to pass to buildFigure func
-  const containerEl = document.createElement('div');
-  if (h1) {
-    // check for feature image
-    const hasFeatureImg = h1.parentElement.querySelector('p picture') || false;
-    if (hasFeatureImg) {
-      const featureImgEl = hasFeatureImg.parentNode;
-      // check for hero caption
-      const featureImgSiblingEl = featureImgEl.nextElementSibling;
-      const featureImgCaption = featureImgSiblingEl || false;
-      // populate container to pass to buildFigure func
-      if (featureImgEl) { containerEl.append(featureImgEl); }
-      if (featureImgCaption) { containerEl.append(featureImgCaption); }
-      const figContainerEl = document.createElement('div');
-      figContainerEl.classList.add('feature-image');
-      const figEl = buildFigure(containerEl);
-      figEl.classList.add('feature-image-figure');
-      figContainerEl.append(figEl);
-      h1.parentNode.parentNode.parentNode.append(figContainerEl);
-      // insert feature img div below H1 parent
-      h1.parentNode.parentNode.parentNode.insertBefore(
-        figContainerEl, h1.parentNode.parentNode.nextSibling,
-      );
-    }
-  }
 }
 
 /**
@@ -317,49 +397,6 @@ function checkWebpFeature(callback) {
 }
 
 /**
- * Returns an image URL with optimization parameters
- * @param {string} url The image URL
- */
-export function getOptimizedImageURL(src) {
-  const url = new URL(src, window.location.href);
-  let result = src;
-  const { pathname, search } = url;
-  if (pathname.includes('media_')) {
-    const usp = new URLSearchParams(search);
-    usp.delete('auto');
-    if (!window.webpSupport) {
-      if (pathname.endsWith('.png')) {
-        usp.set('format', 'png');
-      } else if (pathname.endsWith('.gif')) {
-        usp.set('format', 'gif');
-      } else {
-        usp.set('format', 'pjpg');
-      }
-    } else {
-      usp.set('format', 'webply');
-    }
-    result = `${src.split('?')[0]}?${usp.toString()}`;
-  }
-  return (result);
-}
-
-/**
- * Resets an elelemnt's attribute to the optimized image URL.
- * @see getOptimizedImageURL
- * @param {Element} $elem The element
- * @param {string} attrib The attribute
- */
-function resetOptimizedImageURL($elem, attrib) {
-  const src = $elem.getAttribute(attrib);
-  if (src) {
-    const oSrc = getOptimizedImageURL(src);
-    if (oSrc !== src) {
-      $elem.setAttribute(attrib, oSrc);
-    }
-  }
-}
-
-/**
  * WEBP Polyfill for older browser versions.
  * @param {Element} $elem The container element
  */
@@ -407,12 +444,11 @@ export function normalizeHeadings($elem, allowedHeadings) {
  * @param {Element} $main The main element
  */
 export function decorateMain($main) {
+  buildAutoBlocks($main);
   wrapSections($main.querySelectorAll(':scope > div'));
   checkWebpFeature(() => {
     webpPolyfill($main);
   });
-  decorateFeatureImg();
-  buildAutoBlocks($main);
   decorateBlocks($main);
 }
 
