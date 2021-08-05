@@ -2,24 +2,42 @@
 main .pull-quote {
     --color-quote: #367ea8;
 }
-/**/
-main .pull-quote {
+
+@media (min-width: 700px) {
+    main .pull-quote {
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+main .pull-quote > div {
     border-left: 3px solid var(--color-quote);
-    padding: 12px 24px;
-    margin: 64px 0;
+    margin: 40px 32px 40px 64px;
+    padding: 16px 2rem;
 }
+
+@media (min-width: 700px) {
+    main .pull-quote > div {
+        margin: 40px 0;
+    }
+}
+
 main .pull-quote p {
-    margin: .5em 0;
+    margin: 0;
+    padding: 0;
 }
+
 main .pull-quote img {
     height: 96px;
     width: 96px;
     object-fit: cover;
     border-radius: 100%;
-    margin: 0;
+    margin-bottom: 40px;
 }
+
 main .pull-quote blockquote {
-    margin: 32px 0 0 0;
+    margin: 0 0 16px 0;
     color: var(--color-quote);
     font-weight: var(--heading-font-weight);
     line-height: var(--heading-line-height);
