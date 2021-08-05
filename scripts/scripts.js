@@ -226,19 +226,21 @@ function decorateFeatureImg() {
  * Loads JS and CSS for a block.
  * @param {Element} $block The block element
  */
-export async function loadBlock($block) {
-  const blockName = $block.getAttribute('data-block-name');
-  try {
-    const mod = await import(`/blocks/${blockName}/${blockName}.js`);
-    if (mod.default) {
-      await mod.default($block, blockName, document);
+export async function loadBlock($block, callback) {
+  if (!$block.getAttribute('data-block-loaded')) {
+    $block.setAttribute('data-block-loaded', true);
+    const blockName = $block.getAttribute('data-block-name');
+    try {
+      const mod = await import(`/blocks/${blockName}/${blockName}.js`);
+      if (mod.default) {
+        await mod.default($block, blockName, document, callback);
+      }
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.log(`failed to load module for ${blockName}`, err);
     }
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.log(`failed to load module for ${blockName}`, err);
+    loadCSS(`/blocks/${blockName}/${blockName}.css`);
   }
-
-  loadCSS(`/blocks/${blockName}/${blockName}.css`);
 }
 
 /**
@@ -465,24 +467,56 @@ export async function getBlogArticle(path, locale = '') {
 /**
  * Sets the trigger for the LCP (Largest Contentful Paint) event.
  * @see https://web.dev/lcp/
- * @param {Document} doc The document
+ * @param {Element} lcpCandidateElement The document
  * @param {Function} postLCP The callback function
  */
-function setLCPTrigger(doc, postLCP) {
-  const $lcpCandidate = doc.querySelector('main > div:first-of-type img');
-  if ($lcpCandidate) {
-    if ($lcpCandidate.complete) {
+function setLCPTrigger(lcpCandidateEl, postLCP) {
+  if (lcpCandidateEl) {
+    if (lcpCandidateEl.complete) {
       postLCP();
     } else {
-      $lcpCandidate.addEventListener('load', () => {
+      lcpCandidateEl.addEventListener('load', () => {
         postLCP();
       });
-      $lcpCandidate.addEventListener('error', () => {
+      lcpCandidateEl.addEventListener('error', () => {
         postLCP();
       });
     }
   } else {
     postLCP();
+  }
+}
+
+/**
+ * Gets the LCP Candidate.
+ * @param {Function} callback
+ */
+
+function getLCPCandidate(callback) {
+  const usp = new URLSearchParams(window.location.search);
+  const lcp = usp.get('lcp');
+  const lcpBlocks = ['featured-article'];
+  let candidate = document.querySelector('main img');
+  const block = document.querySelector('.block');
+  if (block) {
+    if (lcp !== 'simple' && lcpBlocks.includes(block.getAttribute('data-block-name'))) {
+      loadBlock(block, () => {
+        candidate = block.querySelector('img');
+        // eslint-disable-next-line no-console
+        console.log('LCP block found', candidate);
+        callback(candidate);
+      });
+    } else {
+      // not an LCP block
+      // eslint-disable-next-line no-console
+      console.log('first block is not LCP block', candidate);
+      callback(candidate);
+    }
+  } else {
+    // no blocks found
+    // eslint-disable-next-line no-console
+    console.log('no blocks found', candidate);
+    callback(candidate);
   }
 }
 
@@ -495,21 +529,23 @@ async function decoratePage(win = window) {
   const $main = doc.querySelector('main');
   if ($main) {
     decorateMain($main);
-    setLCPTrigger(doc, async () => {
-      // post LCP actions go here
+    getLCPCandidate((lcpCandidateEl) => {
+      setLCPTrigger(lcpCandidateEl, async () => {
+        // post LCP actions go here
 
-      /* load gnav */
-      const header = document.querySelector('header');
-      header.setAttribute('data-block-name', 'gnav');
-      header.setAttribute('data-gnav-source', '/blog/gnav');
-      loadBlock(header);
+        /* load gnav */
+        const header = document.querySelector('header');
+        header.setAttribute('data-block-name', 'gnav');
+        header.setAttribute('data-gnav-source', '/blog/gnav');
+        loadBlock(header);
 
-      await loadBlocks($main);
-      loadCSS('/styles/lazy-styles.css');
-      addFavIcon('/styles/favicon.svg');
+        await loadBlocks($main);
+        loadCSS('/styles/lazy-styles.css');
+        addFavIcon('/styles/favicon.svg');
+      });
     });
+    document.querySelector('body').classList.add('appear');
   }
-  doc.querySelector('body').classList.add('appear');
 }
 
 decoratePage(window);
