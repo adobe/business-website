@@ -32,20 +32,24 @@ main .article-feature-image .caption {
   }
 }
 
-main .article-header .article-category,
+main .article-header .article-category p,
 main .article-header .article-category a {
+  margin: 0;
+  margin-bottom: 16px;
+  padding-left: 2rem;
+  padding-right: 2rem;
   font-weight: var(--detail-font-weight);
   color: var(--detail-color);
-  font-size: var(--detail-font-size-m);
+  font-size: var(--detail-font-size-s);
   line-height: var(--detail-line-height);
   text-transform: uppercase;
-  letter-spacing: .1em;
   text-decoration: none;
-  padding: 0 1rem;
+  letter-spacing: .1em;
+  
 }
 
 @media (min-width: 700px) {
-  main .article-header .article-category,
+  main .article-header .article-category p,
   main .article-header .article-category a {
     padding: 0;
   }
