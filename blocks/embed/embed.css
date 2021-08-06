@@ -17,14 +17,6 @@ main .embed {
     width: unset;
 }
 
-main .embed+* {
-    margin-top: 64px;
-}
-
-main .embed+p.legend {
-    margin-top: 16px;
-}
-
 main .embed img {
     max-width: 100%;
 }
@@ -43,8 +35,4 @@ main .embed.embed-twitter {
 }
 main .embed.embed-tiktok {
     max-height: unset;
-}
-
-main .embed-soundcloud>iframe {
-    height: 200px ! important;
 }
