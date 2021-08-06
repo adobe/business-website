@@ -523,8 +523,9 @@ function setLCPTrigger(lcpCandidateEl, postLCP) {
 }
 
 /**
- * Gets the LCP Candidate.
- * @param {Function} callback
+ * Gets the LCP (Largest Contentful Paint) candidate element.
+ * @see https://web.dev/lcp/
+ * @param {Function} callback The function called with the LCP candidate element
  */
 
 function getLCPCandidate(callback) {
