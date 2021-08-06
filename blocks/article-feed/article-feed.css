@@ -1,4 +1,4 @@
-main .article-feed {
+main .article-feed.appear {
   visibility: unset;
   min-height: unset;
   text-align: center;

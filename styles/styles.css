@@ -176,8 +176,6 @@ main h1, main h2, main h3, main h4, main h5, main h6 {
 
 main h1 {
   font-size: var(--heading-font-size-xl);
-  margin-top: 48px;
-  margin-bottom: 24px;
 }
 
 main h2 {
@@ -345,8 +343,7 @@ main .caption {
 header .gnav,
 main .recommended-articles,
 main .featured-article,
-main .featured-feed,
-main .article-header {
+main .article-feed {
   visibility: hidden;
 }
 
@@ -357,4 +354,12 @@ main .featured-article {
 
 main .article-feed {
   min-height: 900px;  
+}
+
+body {
+  visibility: hidden;
+}
+
+body.appear {
+  visibility: unset;
 }

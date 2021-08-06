@@ -94,6 +94,7 @@ async function decorateArticleFeed(articleFeedEl, config, offset = 0) {
       decorateArticleFeed(articleFeedEl, config, pageEnd);
     });
   }
+  articleFeedEl.classList.add('appear');
 }
 
 export default function decorate(block) {
