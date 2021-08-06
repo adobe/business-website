@@ -210,25 +210,27 @@ export function buildFigure(blockEl) {
   const figEl = document.createElement('figure');
   figEl.classList.add('figure');
   // content is picture only, no caption or link
-  if (blockEl.firstChild.nodeName === 'PICTURE' || blockEl.firstChild.nodeName === 'VIDEO') {
-    figEl.append(blockEl.firstChild);
-  } else if (blockEl.firstChild.nodeName === 'P') {
-    const pEls = Array.from(blockEl.children);
-    pEls.forEach((pEl) => {
-      if (pEl.firstChild.nodeName === 'PICTURE' || pEl.firstChild.nodeName === 'VIDEO') {
-        figEl.append(pEl.firstChild);
-      } else if (pEl.firstChild.nodeName === 'EM') {
-        const figCapEl = buildCaption(pEl);
-        figEl.append(figCapEl);
-      } else if (pEl.firstChild.nodeName === 'A') {
-        const picEl = figEl.querySelector('picture');
-        if (picEl) {
-          pEl.firstChild.textContent = '';
-          pEl.firstChild.append(picEl);
+  if(blockEl.firstChild) {
+    if (blockEl.firstChild.nodeName === 'PICTURE' || blockEl.firstChild.nodeName === 'VIDEO') {
+      figEl.append(blockEl.firstChild);
+    } else if (blockEl.firstChild.nodeName === 'P') {
+      const pEls = Array.from(blockEl.children);
+      pEls.forEach((pEl) => {
+        if (pEl.firstChild.nodeName === 'PICTURE' || pEl.firstChild.nodeName === 'VIDEO') {
+          figEl.append(pEl.firstChild);
+        } else if (pEl.firstChild.nodeName === 'EM') {
+          const figCapEl = buildCaption(pEl);
+          figEl.append(figCapEl);
+        } else if (pEl.firstChild.nodeName === 'A') {
+          const picEl = figEl.querySelector('picture');
+          if (picEl) {
+            pEl.firstChild.textContent = '';
+            pEl.firstChild.append(picEl);
+          }
+          figEl.prepend(pEl.firstChild);
         }
-        figEl.prepend(pEl.firstChild);
-      }
-    });
+      });
+    }
   }
   return figEl;
 }

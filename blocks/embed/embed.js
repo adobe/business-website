@@ -177,8 +177,8 @@ const EMBEDS_CONFIG = {
         embed: embedSlidShare,
     },
   };
-  
-export default function decorate($block) {
+
+const loadEmbed = ($block) => {
     const $figure = buildFigure($block.firstChild.firstChild);
     const $a = $figure.querySelector('a');
     if($a) {
@@ -194,4 +194,29 @@ export default function decorate($block) {
         }
         $block.innerHTML = $figure.outerHTML;
     }
+};
+
+export default function decorate($block) {
+    window.addEventListener('load', (event) => {
+        // if current scrollY is already ready to load the block:
+        if(window.scrollY > $block.offsetTop - 1500) {
+            $block.classList.add('is-loaded');
+            loadEmbed($block);
+            return;
+        }
+        else {
+            document.addEventListener('scroll', (e) => {
+                // do nothing if block is already loaded.
+                if($block.classList.contains('is-loaded')) {
+                    return;
+                }
+                // load block as scroll.
+                if(window.scrollY > $block.offsetTop - 1500) {
+                    $block.classList.add('is-loaded');
+                    loadEmbed($block);
+                    return;
+                }
+            },{ passive: true });
+        }
+    });
 }
