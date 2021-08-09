@@ -502,7 +502,7 @@ export async function getBlogArticle(path, locale = '') {
 /**
  * Sets the trigger for the LCP (Largest Contentful Paint) event.
  * @see https://web.dev/lcp/
- * @param {Element} lcpCandidateElement The document
+ * @param {Element} lcpCandidateElement The LCP candidate element
  * @param {Function} postLCP The callback function
  */
 function setLCPTrigger(lcpCandidateEl, postLCP) {
@@ -523,8 +523,9 @@ function setLCPTrigger(lcpCandidateEl, postLCP) {
 }
 
 /**
- * Gets the LCP Candidate.
- * @param {Function} callback
+ * Gets the LCP (Largest Contentful Paint) candidate element.
+ * @see https://web.dev/lcp/
+ * @param {Function} callback The function called with the LCP candidate element
  */
 
 function getLCPCandidate(callback) {
