@@ -169,8 +169,8 @@ function getGnav(nav) {
   const searchTerms = gnav.querySelector('#gnav-search-terms');
 
   searchIcon.addEventListener('click', () => {
+    const expanded = (search.getAttribute('aria-expanded') === 'true');
     collapseAll(gnav);
-    const expanded = search.getAttribute('aria-expanded') === 'true';
     search.setAttribute('aria-expanded', !expanded);
     if (!expanded) {
       searchTerms.focus();
@@ -191,6 +191,12 @@ function getGnav(nav) {
       const href = new URL(a.href);
       href.searchParams.set('q', searchTerms.value);
       a.href = href.toString();
+    }
+  });
+
+  searchTerms.addEventListener('keydown', (evt) => {
+    if (evt.code === 'Escape') {
+      collapseAll(gnav);
     }
   });
 
