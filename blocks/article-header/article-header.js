@@ -3,19 +3,20 @@ import {
   getOptimizedImageURL,
 } from '../../scripts/scripts.js';
 
-async function populateAuthorImg(imgEl, url, name) {
+async function populateAuthorImg(imgContainer, url, name) {
   const resp = await fetch(`${url}.plain.html`);
   const text = await resp.text();
   if (resp.status === 200) {
     const placeholder = document.createElement('div');
     placeholder.innerHTML = text;
-    const placeholderImg = placeholder.querySelector('img');
-    const src = placeholderImg.src.replace('width=2000', 'width=200');
-    imgEl.src = getOptimizedImageURL(src);
+    const imgEl = placeholder.querySelector('img');
+    imgEl.src.replace('width=2000', 'width=200');
     imgEl.alt = name;
-    imgEl.onerror = () => {
-      imgEl.src = '/blocks/gnav/adobe-logo.svg';
-      imgEl.removeAttribute('alt');
+    imgEl.src = getOptimizedImageURL(imgEl.src);
+    imgContainer.append(imgEl);
+    imgEl.onerror = (e) => {
+      // removing 404 img will reveal fallback background img
+      e.srcElement.remove();
     };
   }
 }
@@ -42,9 +43,9 @@ export default function decorateArticleHeader(blockEl) {
   const date = bylineContainer.firstChild.lastChild;
   date.classList.add('article-date');
   // author img
-  const authorImg = document.createElement('img');
+  const authorImg = document.createElement('div');
   authorImg.classList = 'article-author-image';
-  authorImg.src = '/blocks/gnav/adobe-logo.svg';
+  authorImg.style.backgroundImage = 'url(/blocks/article-header/adobe-logo.svg)';
   bylineContainer.prepend(authorImg);
   populateAuthorImg(authorImg, authorURL, authorName);
   // feature img
