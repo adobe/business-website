@@ -179,21 +179,31 @@ const EMBEDS_CONFIG = {
   };
 
 const loadEmbed = (entries) => {
-    const $block = entries[0].target;
-    const $figure = buildFigure($block.firstChild.firstChild);
-    const $a = $figure.querySelector('a');
-    if($a) {
-        const url = new URL($a.href.replace(/\/$/, ''));
-        const config = EMBEDS_CONFIG[url.hostname];
-        if (config) {
-            $a.outerHTML = config.embed(url);
-            $block.classList = `block embed embed-${config.type}`;
+    const entry = entries[0]
+    if (entry.isIntersecting) {
+        if (entry.intersectionRatio >= 0.25) {
+            const $block = entry.target;
+            const $figure = buildFigure($block.firstChild.firstChild);
+            const $a = $figure.querySelector('a');
+            if($a) {
+                const url = new URL($a.href.replace(/\/$/, ''));
+                const config = EMBEDS_CONFIG[url.hostname];
+                if (config) {
+                    $a.outerHTML = config.embed(url);
+                    $block.classList = `block embed embed-${config.type}`;
+                }
+                else {
+                    $a.outerHTML = getDefaultEmbed(url);
+                    $block.classList = `block embed embed-${getServer(url)}`;
+                }
+                $block.innerHTML = $figure.outerHTML;
+            }
         }
-        else {
-            $a.outerHTML = getDefaultEmbed(url);
-            $block.classList = `block embed embed-${getServer(url)}`;
-        }
-        $block.innerHTML = $figure.outerHTML;
+    } else {
+        // visibleAds.delete(adBox);
+        // if ((entry.intersectionRatio === 0.0) && (adBox.dataset.totalViewTime >= 60000)) {
+        //   replaceAd(adBox);
+        // }
     }
 };
 
@@ -203,6 +213,7 @@ export default function decorate($block) {
         let options = {
             root: null,
             rootMargin: "0px",
+            threshold: [0.0, 0.25]
         };
         
         observer = new IntersectionObserver(loadEmbed, options);
