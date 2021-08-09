@@ -14,36 +14,47 @@
   --color-gray-800: #242424;
   --color-black: #000;
   --color-brand-title: #000B1D;
-  --color-info-accent: #1473e6;
-  --color-info-accent-hover: #1473e6; /* needs to be fixed */
-  --color-info-accent-down: #1473e6; /* needs to be fixed */
+  --color-info-accent: #5C5CE0;
+  --color-info-accent-hover: #4646C6;
+  --color-info-accent-down: #3D3DB4;
   --color-info-accent-light: #DEDEF9;
 
   /* body */
   --body-background-color: var(--color-white);
-  --body-alt-background-color: var(--color-gray-200);
+  --body-alt-background-color: var(--color-gray-600);
   --body-font-family: 'adobe-clean', 'Adobe Clean', sans-serif;
-  --body-font-weight: normal;
-  --body-color: var(--color-gray-800);
+  --body-font-weight: 300;
+  --body-color: var(--color-black);
   --body-line-height: 1.5;
-  --body-font-size-xxl: 1.5rem; /* 24px */
-  --body-font-size-xl: 1.25rem; /* 20px */
-  --body-font-size-l: 1.125rem; /* 18px */
-  --body-font-size-m: 1rem; /* 16px */
-  --body-font-size-s: 0.875rem; /* 14px */
-  --body-font-size-xs: 0.75rem; /* 12px */
+  --body-font-size-xxl: 1.75rem; /* 28px */
+  --body-font-size-xl: 1.375rem; /* 22px */
+  --body-font-size-l: 1.25rem; /* 20px */
+  --body-font-size-m: 1.125rem; /* 18px */
+  --body-font-size-s: 1rem; /* 16px */
+  --body-font-size-xs: 0.875rem; /* 14px */
+  --body-font-size-xxs: 0.75rem; /* 12px */
 
   /* headings */
-  --heading-font-weight: 800;
+  --heading-font-weight: 700;
   --heading-color: var(--color-gray-800);
   --heading-line-height: 1.25;
   --heading-font-size-xxxl: 5rem; /* 80px */
-  --heading-font-size-xxl: 3.75rem; /* 60px */
-  --heading-font-size-xl: 2.8125rem; /* 45px */
-  --heading-font-size-l: 2.25rem; /* 36px */
-  --heading-font-size-m: 1.75rem; /* 28px */
-  --heading-font-size-s: 1.375rem; /* 22px */
+  --heading-font-size-xxl: 2.75rem; /* 44px */
+  --heading-font-size-xl: 2.25rem; /* 36px */
+  --heading-font-size-l: 1.75rem; /* 28px */
+  --heading-font-size-m: 1.5rem; /* 24px */
+  --heading-font-size-s: 1.25rem; /* 20px */
+  --heading-font-size-xs: 1.125rem; /* 18px */
+  
+  /* details */
+  --detail-font-weight: 700;
+  --detail-color: var(--color-gray-600);
+  --detail-line-height: 1.25;
+  --detail-font-size-l: 1.25rem; /* 20px */
+  --detail-font-size-m: 1rem; /* 16px */
+  --detail-font-size-s: 0.75rem; /* 12px */
 }
+
 
 @media (min-width: 900px) {
   :root {
@@ -53,7 +64,7 @@
 
 @media (min-width: 1200px) {
   :root {
-    --heading-font-size-xxxl: 2.8125rem; /* 45px */
+    --heading-font-size-xxxl: 2.75rem; /* 44px */
   }
 }
 
@@ -72,7 +83,7 @@ a.button:any-link {
   text-decoration: none;
   border-radius: 18px;
   padding: 5px 1.2em 6px 1.2em;
-  /*outline: none; (keep outline for a11n) */
+  /* outline: none; (keep outline for a11n) */
   text-align: center;
   font-size: var(--body-font-size-s);
   font-style: normal; 
@@ -81,7 +92,7 @@ a.button:any-link {
   color: var(--color-white);
   background-color: var(--color-info-accent);
   transition: background-color .4s;
-  margin: 10px;
+  margin: 16px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -159,7 +170,8 @@ a.button > svg > use {
 main h1, main h2, main h3, main h4, main h5, main h6 {
   font-weight: var(--heading-font-weight);
   line-height: var(--heading-line-height);
-  font-weight: 600;
+  margin-top: 48px;
+  margin-bottom: 16px;
 }
 
 main h1 {
@@ -174,14 +186,23 @@ main h3 {
   font-size: var(--heading-font-size-m);
 }
 
-main h4,
-main h5 {
+main h4 {
   font-size: var(--heading-font-size-s);
 }
 
+main h5, main h6 {
+  font-size: var(--heading-font-size-xs);
+}
+
 main p {
-  font-size: var(--body-font-size-xl);
+  font-size: var(--body-font-size-m);
   line-height: var(--body-line-height);
+  margin: inherit;
+  font-weight: var(--body-font-weight);
+}
+
+main p:not(:last-of-type) {
+  margin-bottom: 32px;
 }
 
 @media (min-width:600px) {
@@ -203,37 +224,41 @@ main p {
   }
 }
 
-
 /* links */
 
 main a:any-link {
   color: var(--body-color);
   line-height: var(--body-line-height);
 }
+
 main a.cta-link {
   color: var(--color-info-accent);
   font-weight: 700;
   text-decoration: none;
 }
+
 main a.cta-link:after {
   content: " >";
 }
+
 main a.cta-link:hover {
   color: var(--color-info-accent-hover);
 }
+
 main a.cta-link:active,
 main a.cta-link:focus {
   color: var(--color-info-accent-down);
 }
 
-main img {
+main img,
+main video {
   max-width: 100%;
 }
 
 /* section wrapper */
 
 main .section-wrapper {
-  padding-top: 40px;
+  margin-top: 64px;
 }
 
 main .section-wrapper:first-of-type {
@@ -244,24 +269,18 @@ main .section-wrapper:last-of-type {
   margin-bottom: 0;
 }
 
-/* section wrapper */
-
-main .section-wrapper {
-  padding-top: 60px;
-}
-
-main .section-wrapper:first-of-type {
-  padding-top: 120px;
-}
-
 main .section-wrapper:first-of-type {
   padding: 0;
 }
 
 main .section-wrapper > div {
   margin: auto;
-  max-width: 375px;
-  padding: 0 32px;
+}
+
+@media (min-width:600px) {
+  main .section-wrapper > div {
+    max-width: unset;
+  }
 }
 
 main .section-wrapper > div:empty {
@@ -272,12 +291,26 @@ main .section-wrapper h1,
 main .section-wrapper h2,
 main .section-wrapper h3,
 main .section-wrapper h4,
-main .section-wrapper h5 {
-  margin: 0;
+main .section-wrapper h5,
+main .section-wrapper h6,
+main .section-wrapper p {
+  margin-left: 32px;
+  margin-right: 32px;
+  padding: 0 2rem;
 }
 
-main .section-wrapper p {
-    margin: 32px 0;
+@media (min-width: 700px) {
+  main .section-wrapper h1,
+  main .section-wrapper h2,
+  main .section-wrapper h3,
+  main .section-wrapper h4,
+  main .section-wrapper h5,
+  main .section-wrapper h6,
+  main .section-wrapper p {
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
 main .section-wrapper p.button-container {
@@ -286,44 +319,32 @@ main .section-wrapper p.button-container {
   margin-bottom: 0;
 }
 
-
-@media (min-width:600px) {
-  main .section-wrapper > div {
-    max-width: unset;
-  }
-}
-
-@media (min-width:1200px) {
-  main .section-wrapper > div {
-    max-width: 1024px;
-  }
-}
-
-
 /* gnav placeholder */
 
 header {
   box-sizing: border-box;
   border-bottom: 1px solid #EAEAEA;
   height: 64px;
-  background-color: #FFF;
+  background-color: var(--color-white);
 }
 
 /* caption styling */
+
 main .caption {
-  margin-top: 1.5em;
-  margin-bottom: 0.5em;
+  margin-top: 16px !important;
   text-align: left;
   font-style: italic;
-  font-size: var(--body-font-size-s);
+  font-size: var(--body-font-size-xs);
   color: var(--color-gray-700);
 } 
 
 /* CLS and FOUC protection for lazy loaded content/styles */
+
 header .gnav,
 main .recommended-articles,
 main .featured-article,
-main .article-feed {
+main .article-feed,
+main .article-header {
   visibility: hidden;
 }
 

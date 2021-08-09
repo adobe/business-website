@@ -43,7 +43,7 @@ export default function decorateArticleHeader(blockEl) {
   date.classList.add('article-date');
   // author img
   const authorImg = document.createElement('img');
-  authorImg.classList.add('article-author-image');
+  authorImg.classList = 'article-author-image';
   authorImg.src = '/blocks/gnav/adobe-logo.svg';
   bylineContainer.prepend(authorImg);
   populateAuthorImg(authorImg, authorURL, authorName);

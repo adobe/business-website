@@ -1,11 +1,43 @@
 main .infographic {
-    text-align: center;
+    margin: 40px 0;
 }
 
 main .infographic .figure {
-    margin: 1.5em auto 0.5em;
+    margin-top: 16px;
+    margin-bottom: 16px;
+    line-height: 0;
+    text-align: center;
+}
+
+@media (min-width: 700px) {
+    main .infographic .figure {
+        margin: 0 auto;
+        max-width: 800px;
+    }
 }
 
 main .infographic .figure img {
-    max-height: 100%;
+    width: 100%;
+    max-width: 600px;
+}
+
+main .infographic .figure .caption {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    margin: 0;
+}
+
+@media (min-width: 700px) {
+    main .infographic .figure .caption {
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}     
+
+@media (min-width: 900px) {
+    main .infographic .figure .caption {
+        /* max-width: unset; */
+        padding: 0;
+    }
 }

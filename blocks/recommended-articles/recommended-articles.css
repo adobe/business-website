@@ -1,11 +1,36 @@
 main .recommended-articles {
-    visibility: unset;
+  visibility: unset;
+  min-height: unset;
+  text-align: center;
+  background: var(--color-gray-200);
 }
-  
-main .recommended-articles {
-    text-align: center;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+
+main .recommended-articles .article-cards {
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 2rem;
+  padding-bottom: 0;
+  justify-content: center;
+}
+
+@media (min-width: 600px) {
+  main .recommended-articles .article-cards {
+    padding-left: 0;
+    padding-right: 0;
+    width: calc(100% - 64px);
   }
-    
+}
+
+main .recommended-articles::before {
+  content: 'Recommended for you';
+  display: block;
+  width: 100%;
+  font-size: var(--heading-font-size-m);
+  font-weight: var(--heading-font-weight);
+  text-align: center;
+  padding-top: 64px;
+  /* color: red; */
+  /* background: gold; */
+  /* height: 10px; */
+}
