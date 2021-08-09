@@ -131,48 +131,28 @@ const embedSlidShare = (url) => {
 }
   
 const EMBEDS_CONFIG = {
-    'www.youtube.com': {
-        type: 'youtube',
+    'youtube': {
         embed: embedYoutube,
     },
-    'video.tv.adobe.com': {
-        type: 'adobe-tv',
+    'adobe-tv': {
         embed: getDefaultEmbed,
     },
-    'www.instagram.com': {
-        type: 'instagram',
-        embed: embedInstagram,
-    },
-    'vimeo.com': {
-        type: 'vimeo-player',
-        embed: embedVimeo,
-    },
-    'www.vimeo.com': {
-        type: 'vimeo-player',
-        embed: embedVimeo,
-      },
-    'player.vimeo.com': {
-        type: 'vimeo-player',
-        embed: embedVimeo,
-    },
-    'spark.adobe.com': {
-        type: 'adobe-spark',
+    'adobe-spark': {
         embed: embedSpark,
     },
-    'twitter.com': {
-        type: 'twitter',
+    'instagram': {
+        embed: embedInstagram,
+    },
+    'vimeo': {
+        embed: embedVimeo,
+    },
+    'twitter': {
         embed: embedTwitter,
     },
-    'tiktok.com': {
-        type: 'tiktok',
+    'tiktok': {
         embed: embedTiktok,
     },
-    'www.tiktok.com': {
-        type: 'tiktok',
-        embed: embedTiktok,
-    },
-    'www.slideshare.net': {
-        type: 'slideshare',
+    'slideshare': {
         embed: embedSlidShare,
     },
   };
@@ -182,12 +162,25 @@ const loadEmbed = ($block) => {
     const $a = $figure.querySelector('a');
     if($a) {
         const url = new URL($a.href.replace(/\/$/, ''));
-        const config = EMBEDS_CONFIG[url.hostname];
+        const hostnameArr = url.hostname.split('.');
+        
+        // getting config
+        let config = EMBEDS_CONFIG[hostnameArr[hostnameArr.length-2]];
+        // for different config for same domain:
+        if(url.hostname.includes('adobe')) {
+            if(url.hostname.includes('spark.adobe.com')) {
+                config = EMBEDS_CONFIG['adobe-spark'];
+            }
+            else {
+                config = EMBEDS_CONFIG['adobe-tv'];
+            }
+        }
+        
+        // loading embed function for given config and url.
         if (config) {
             $a.outerHTML = config.embed(url);
             $block.classList = `block embed embed-${config.type}`;
-        }
-        else {
+        } else {
             $a.outerHTML = getDefaultEmbed(url);
             $block.classList = `block embed embed-${getServer(url)}`;
         }
