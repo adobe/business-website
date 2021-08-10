@@ -25,12 +25,6 @@ const loadScript = (url, callback, type) => {
     $script.onload = callback;
     return $script;
 }
-
-// 'open.spotify.com' returns 'spotify'
-const getServer = (url) => {
-    const l = url.hostname.lastIndexOf('.');
-    return url.hostname.substring(url.hostname.lastIndexOf('.', l - 1) + 1, l);
-}
   
 const getDefaultEmbed = (url) => {
     return `<div style="left: 0; width: 100%; height: 0; position: relative; padding-bottom: 56.25%;">
@@ -132,27 +126,35 @@ const embedSlideShare = (url) => {
   
 const EMBEDS_CONFIG = {
     'youtube': {
+        type: 'youtube',
         embed: embedYoutube,
     },
     'adobe-tv': {
+        type: 'adobe-tv',
         embed: getDefaultEmbed,
     },
     'adobe-spark': {
+        type: 'adobe-spark',
         embed: embedSpark,
     },
     'instagram': {
+        type: 'instagram',
         embed: embedInstagram,
     },
     'vimeo': {
+        type: 'vimeo',
         embed: embedVimeo,
     },
     'twitter': {
+        type: 'twitter',
         embed: embedTwitter,
     },
     'tiktok': {
+        type: 'tiktok',
         embed: embedTiktok,
     },
     'slideshare': {
+        type: 'slideshare',
         embed: embedSlideShare,
     },
   };
@@ -164,8 +166,12 @@ const loadEmbed = ($block) => {
         const url = new URL($a.href.replace(/\/$/, ''));
         const hostnameArr = url.hostname.split('.');
         
+        // trimed domain name (ex, www.google.com -> google)
+        const simpleDomain = hostnameArr[hostnameArr.length-2];
+        
         // getting config
-        let config = EMBEDS_CONFIG[hostnameArr[hostnameArr.length-2]];
+        let config = EMBEDS_CONFIG[simpleDomain];
+        
         // for different config for same domain:
         if(url.hostname.includes('adobe')) {
             if(url.hostname.includes('spark.adobe.com')) {
@@ -182,7 +188,7 @@ const loadEmbed = ($block) => {
             $block.classList = `block embed embed-${config.type}`;
         } else {
             $a.outerHTML = getDefaultEmbed(url);
-            $block.classList = `block embed embed-${getServer(url)}`;
+            $block.classList = `block embed embed-${simpleDomain}`;
         }
         $block.innerHTML = $figure.outerHTML;
     }
