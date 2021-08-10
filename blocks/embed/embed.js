@@ -106,7 +106,7 @@ const embedTiktok = (url) => {
     return resultHtml.outerHTML;
 }
 
-const embedSlidShare = (url) => {
+const embedSlideShare = (url) => {
     let resultHtml = document.createElement('div');
     resultHtml.setAttribute('id', 'slideShare');
     fetch(url)
@@ -153,7 +153,7 @@ const EMBEDS_CONFIG = {
         embed: embedTiktok,
     },
     'slideshare': {
-        embed: embedSlidShare,
+        embed: embedSlideShare,
     },
   };
 
