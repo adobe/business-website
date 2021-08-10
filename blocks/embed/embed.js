@@ -87,43 +87,41 @@ const embedTwitter = (url) => {
 }
 
 const embedTiktok = (url) => {
-    let resultHtml = document.createElement('div');
-    resultHtml.setAttribute('id', 'tiktok');
-    fetch(`https://www.tiktok.com/oembed?url=${url}`)
-    .then(response => response.json())
-    .then(data => {
+    const $resultHtml = document.createElement('div');
+    $resultHtml.setAttribute('id', 'tiktok');
+    
+    const tiktokBuild = async (fetchUrl) => {
         loadScript('https://www.tiktok.com/embed.js');
+        const response = await fetch(fetchUrl);
+        const json = await response.json();
         const $tiktok = document.getElementById('tiktok')
-        $tiktok.outerHTML = data.html;
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-    });
+        $tiktok.outerHTML = json.html;
+    };
 
-    return resultHtml.outerHTML;
+    tiktokBuild(`https://www.tiktok.com/oembed?url=${url}`);
+
+    return $resultHtml.outerHTML;
 }
 
 const embedSlideShare = (url) => {
     let resultHtml = document.createElement('div');
     resultHtml.setAttribute('id', 'slideShare');
-    fetch(url)
-    .then(data => {
-        data.text().then( data => {
-            const $el = document.createElement('div');
-            $el.innerHTML = data;
-            const embedUrl = $el.querySelector('.slideshow-info meta[itemprop="embedURL"]').content;
-            if(embedUrl) {
-                const $slideShare = document.getElementById('slideShare')
-                $slideShare.outerHTML = `<div style="left: 0; width: 100%; height: 0; position: relative; padding-bottom: 56.25%;">
-                <iframe src="${embedUrl}" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%; top: 0; left: 0; width: 100%; height: 100%; position: absolute;" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" allowfullscreen loading="lazy"> </iframe>
-                </div>`;
-            }
-        });
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-    });
-    
+
+    const slideShareBuild = async (fetchUrl) => {
+        const response = await fetch(url);
+        const body = await response.text();
+        const $el = document.createElement('div');
+        $el.innerHTML = body;
+        const embedUrl = $el.querySelector('.slideshow-info meta[itemprop="embedURL"]').content;
+        if(embedUrl) {
+            const $slideShare = document.getElementById('slideShare')
+            $slideShare.outerHTML = `<div style="left: 0; width: 100%; height: 0; position: relative; padding-bottom: 56.25%;">
+            <iframe src="${embedUrl}" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%; top: 0; left: 0; width: 100%; height: 100%; position: absolute;" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" allowfullscreen loading="lazy"> </iframe>
+            </div>`;
+        }
+    };
+    slideShareBuild(url);
+
     return resultHtml.outerHTML;
 }
   
