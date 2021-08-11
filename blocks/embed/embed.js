@@ -181,6 +181,9 @@ const loadEmbed = ($block) => {
                 config = EMBEDS_CONFIG['adobe-tv'];
             }
         }
+        else if(url.hostname.includes('youtu')) {
+            config = EMBEDS_CONFIG['youtube'];
+        }
         
         // loading embed function for given config and url.
         if (config) {
