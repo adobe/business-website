@@ -111,8 +111,9 @@ const embedSlideShare = (url) => {
         const body = await response.text();
         const $el = document.createElement('div');
         $el.innerHTML = body;
-        const embedUrl = $el.querySelector('.slideshow-info meta[itemprop="embedURL"]').content;
-        if(embedUrl) {
+        const $slideShowInfo = $el.querySelector('.slideshow-info meta[itemprop="embedURL"]');
+        if($slideShowInfo) {
+            const embedUrl = $el.querySelector('.slideshow-info meta[itemprop="embedURL"]').content;
             const $slideShare = document.getElementById('slideShare')
             $slideShare.outerHTML = `<div style="left: 0; width: 100%; height: 0; position: relative; padding-bottom: 56.25%;">
             <iframe src="${embedUrl}" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%; top: 0; left: 0; width: 100%; height: 100%; position: absolute;" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" allowfullscreen loading="lazy"> </iframe>
@@ -160,6 +161,9 @@ const EMBEDS_CONFIG = {
   };
 
 const loadEmbed = ($block) => {
+    if($block.classList.contains('is-loaded')) {
+        return;
+    }
     const $figure = buildFigure($block.firstChild.firstChild);
     const $a = $figure.querySelector('a');
     if($a) {
@@ -194,6 +198,7 @@ const loadEmbed = ($block) => {
             $block.classList = `block embed embed-${simpleDomain}`;
         }
         $block.innerHTML = $figure.outerHTML;
+        $block.classList.add('is-loaded');
     }
 }
 
