@@ -278,7 +278,7 @@ export function buildFigure(blockEl) {
   const figEl = document.createElement('figure');
   figEl.classList.add('figure');
   // content is picture only, no caption or link
-  if(blockEl.firstChild) {
+  if (blockEl.firstChild) {
     if (blockEl.firstChild.nodeName === 'PICTURE' || blockEl.firstChild.nodeName === 'VIDEO') {
       figEl.append(blockEl.firstChild);
     } else if (blockEl.firstChild.nodeName === 'P') {
@@ -297,7 +297,7 @@ export function buildFigure(blockEl) {
               pEl.firstChild.append(picEl);
             }
             figEl.prepend(pEl.firstChild);
-          }  
+          }
         }
       });
     }
