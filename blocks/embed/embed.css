@@ -15,7 +15,7 @@ main .embed {
     width: unset;
     text-align: center;
     max-width: 800px;
-    margin: 64px auto 0;
+    margin: 0 auto 64px;
 }
 
 main .embed img {
