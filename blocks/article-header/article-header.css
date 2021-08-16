@@ -77,11 +77,16 @@ main .article-byline {
 }
 
 main .article-author-image {
+  background: #fa0f00;
   margin-right: 16px;
   height: 64px;
   width: 64px;
   border-radius: 50%;
   object-fit: cover;
+}
+
+main .article-author-image img {
+  border-radius: 50%;
 }
 
 main .article-byline-info {
