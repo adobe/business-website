@@ -1,6 +1,6 @@
 import {
   buildFigure,
-  getOptimizedImageURL,
+  createOptimizedPicture,
 } from '../../scripts/scripts.js';
 
 async function populateAuthorImg(imgEl, url, name) {
@@ -10,8 +10,8 @@ async function populateAuthorImg(imgEl, url, name) {
     const placeholder = document.createElement('div');
     placeholder.innerHTML = text;
     const placeholderImg = placeholder.querySelector('img');
-    const src = placeholderImg.src.replace('width=2000', 'width=200');
-    imgEl.src = getOptimizedImageURL(src);
+    const picture = createOptimizedPicture(placeholderImg.src, name, false, [{ width: 200 }]);
+    imgEl.src = picture.querySelector('img').src;
     imgEl.alt = name;
     imgEl.onerror = () => {
       imgEl.src = '/blocks/gnav/adobe-logo.svg';

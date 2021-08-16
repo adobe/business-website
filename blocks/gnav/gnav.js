@@ -1,4 +1,4 @@
-import { fetchBlogArticleIndex, getOptimizedImageURL } from '../../scripts/scripts.js';
+import { fetchBlogArticleIndex, createOptimizedPicture } from '../../scripts/scripts.js';
 
 function highlightTextElements(terms, elements) {
   elements.forEach((e) => {
@@ -61,11 +61,8 @@ async function populateSearchResults(searchTerms, searchResultsEl) {
 
       const path = e.path.split('.')[0];
 
-      const imagePath = image.split('?')[0].split('_')[1];
-      const imageSrc = getOptimizedImageURL(`./media_${imagePath}?format=webply&optimize=medium&width=2000`);
-      const pictureTag = `<picture>
-        <img src="${imageSrc}">
-      </picture>`;
+      const picture = createOptimizedPicture(image, title, false, [{ width: '750' }]);
+      const pictureTag = picture.outerHTML;
       const card = document.createElement('a');
       card.className = 'article-card';
       card.href = path;
