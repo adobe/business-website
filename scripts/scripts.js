@@ -608,6 +608,7 @@ function registerPerformanceLogger() {
     const pols = new PerformanceObserver((entryList) => {
       const entries = entryList.getEntries();
       stamp(JSON.stringify(entries));
+      // eslint-disable-next-line no-console
       console.log(entries[0].sources[0].node);
     });
     pols.observe({ type: 'layout-shift', buffered: true });
