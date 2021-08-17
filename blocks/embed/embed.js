@@ -1,15 +1,3 @@
-/*
- * Copyright 2021 Adobe. All rights reserved.
- * This file is licensed to you under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License. You may obtain a copy
- * of the License at http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under
- * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
- * OF ANY KIND, either express or implied. See the License for the specific language
- * governing permissions and limitations under the License.
- */
-
 import { buildFigure } from '../../scripts/scripts.js';
 
 const loadScript = (url, callback, type) => {
@@ -107,8 +95,9 @@ const embedSlideShare = (url) => {
     const body = await response.text();
     const $el = document.createElement('div');
     $el.innerHTML = body;
-    const embedUrl = $el.querySelector('.slideshow-info meta[itemprop="embedURL"]').content;
-    if (embedUrl) {
+    const $slideShowInfo = $el.querySelector('.slideshow-info meta[itemprop="embedURL"]');
+    if ($slideShowInfo) {
+      const embedUrl = $el.querySelector('.slideshow-info meta[itemprop="embedURL"]').content;
       const $slideShare = document.getElementById('slideShare');
       $slideShare.outerHTML = `<div style="left: 0; width: 100%; height: 0; position: relative; padding-bottom: 56.25%;">
             <iframe src="${embedUrl}" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%; top: 0; left: 0; width: 100%; height: 100%; position: absolute;" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" allowfullscreen loading="lazy"> </iframe>
@@ -156,6 +145,9 @@ const EMBEDS_CONFIG = {
 };
 
 const loadEmbed = ($block) => {
+  if ($block.classList.contains('is-loaded')) {
+    return;
+  }
   const $figure = buildFigure($block.firstChild.firstChild);
   const $a = $figure.querySelector('a');
   if ($a) {
@@ -188,6 +180,7 @@ const loadEmbed = ($block) => {
       $block.classList = `block embed embed-${simpleDomain}`;
     }
     $block.innerHTML = $figure.outerHTML;
+    $block.classList.add('is-loaded');
   }
 };
 

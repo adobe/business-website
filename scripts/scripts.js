@@ -84,12 +84,22 @@ function wrapSections($sections) {
  */
 export function decorateBlock($block) {
   const classes = Array.from($block.classList.values());
-  const blockName = classes[0];
+  let blockName = classes[0];
   if (!blockName) return;
   const $section = $block.closest('.section-wrapper');
   if ($section) {
     $section.classList.add(`${blockName}-container`.replace(/--/g, '-'));
   }
+  const blocksWithVariants = ['recommended-articles'];
+  blocksWithVariants.forEach((b) => {
+    if (blockName.startsWith(`${b}-`)) {
+      const options = blockName.substring(b.length + 1).split('-').filter((opt) => !!opt);
+      blockName = b;
+      $block.classList.add(b);
+      $block.classList.add(...options);
+    }
+  });
+
   $block.classList.add('block');
   $block.setAttribute('data-block-name', blockName);
 }
