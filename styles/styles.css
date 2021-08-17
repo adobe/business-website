@@ -167,6 +167,17 @@ a.button > svg > use {
 
 /* headings and body */
 
+main {
+  font-size: var(--body-font-size-m);
+  line-height: var(--body-line-height);
+  margin: inherit;
+  font-weight: var(--body-font-weight);
+}
+
+main p:not(:last-of-type) {
+  margin-bottom: 32px;
+}
+
 main h1, main h2, main h3, main h4, main h5, main h6 {
   font-weight: var(--heading-font-weight);
   line-height: var(--heading-line-height);
@@ -194,18 +205,10 @@ main h5, main h6 {
   font-size: var(--heading-font-size-xs);
 }
 
-main p {
-  font-size: var(--body-font-size-m);
-  line-height: var(--body-line-height);
-  margin: inherit;
-  font-weight: var(--body-font-weight);
-}
-
-main p:not(:last-of-type) {
-  margin-bottom: 32px;
-}
-
 @media (min-width:600px) {
+  main {
+    font-size: var(--body-font-size-l);
+  }
 
   main h2 {
     font-size: var(--heading-font-size-l);
@@ -217,10 +220,6 @@ main p:not(:last-of-type) {
 
   main h4 {
     font-size: var(--heading-font-size-m);
-  }
-
-  main p {
-    font-size: var(--body-font-size-l);
   }
 }
 
@@ -287,26 +286,14 @@ main .section-wrapper > div:empty {
   padding: 0;
 }
 
-main .section-wrapper h1,
-main .section-wrapper h2,
-main .section-wrapper h3,
-main .section-wrapper h4,
-main .section-wrapper h5,
-main .section-wrapper h6,
-main .section-wrapper p {
+main .section-wrapper > div {
   margin-left: 32px;
   margin-right: 32px;
   padding: 0 2rem;
 }
 
 @media (min-width: 700px) {
-  main .section-wrapper h1,
-  main .section-wrapper h2,
-  main .section-wrapper h3,
-  main .section-wrapper h4,
-  main .section-wrapper h5,
-  main .section-wrapper h6,
-  main .section-wrapper p {
+  main .section-wrapper > div {
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
