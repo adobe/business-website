@@ -1,7 +1,14 @@
 /* article header */
 
-main .article-header {
+main .section-wrapper:first-child > div {
+  max-width: unset;
+  padding: 0;
+  margin: 0 auto;
+}
+
+main .section-wrapper .article-header {
   visibility: unset;
+  max-width: unset;
 }
 
 @media (min-width: 700px) {
@@ -60,6 +67,8 @@ main .article-title h1 {
   font-size: var(--heading-font-size-l);
   margin: 0;
   margin-top: 16px;
+  padding-left: 2rem;
+  padding-right: 2rem;
 }
 
 @media (min-width: 700px) {
@@ -76,7 +85,8 @@ main .article-byline {
   padding: 0 2rem;
 }
 
-main .article-author-image {
+main .article-byline .article-author-image {
+  margin: 0;
   background: #fa0f00;
   margin-right: 16px;
   height: 64px;
@@ -85,11 +95,12 @@ main .article-author-image {
   object-fit: cover;
 }
 
-main .article-author-image img {
+main .article-byline .article-author-image img {
   border-radius: 50%;
 }
 
-main .article-byline-info {
+main .article-byline .article-byline-info {
+  margin: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -112,7 +123,7 @@ main .article-date {
 
 /* feature img */
 
-main .article-feature-image {
+main .article-header .article-feature-image {
   padding: 0;
   margin: auto;
   width: 100%;
