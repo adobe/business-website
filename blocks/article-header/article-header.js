@@ -1,6 +1,6 @@
 import {
   buildFigure,
-  getOptimizedImageURL,
+  createOptimizedPicture,
 } from '../../scripts/scripts.js';
 
 async function populateAuthorImg(imgContainer, url, name) {
@@ -9,15 +9,16 @@ async function populateAuthorImg(imgContainer, url, name) {
   if (resp.status === 200) {
     const placeholder = document.createElement('div');
     placeholder.innerHTML = text;
-    const imgEl = placeholder.querySelector('img');
-    imgEl.src.replace('width=2000', 'width=200');
-    imgEl.alt = name;
-    imgEl.src = getOptimizedImageURL(imgEl.src);
-    imgContainer.append(imgEl);
-    imgEl.onerror = (e) => {
-      // removing 404 img will reveal fallback background img
-      e.srcElement.remove();
-    };
+    const placeholderImg = placeholder.querySelector('img');
+    if (placeholderImg) {
+      const src = new URL(placeholderImg.getAttribute('src'), new URL(url));
+      const picture = createOptimizedPicture(src, name, false, [{ width: 200 }]);
+      imgContainer.append(picture);
+      picture.querySelector('img').onerror = (e) => {
+        // removing 404 img will reveal fallback background img
+        e.srcElement.remove();
+      };
+    }
   }
 }
 

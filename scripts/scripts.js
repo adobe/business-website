@@ -53,49 +53,6 @@ export function addPublishDependencies(url) {
 }
 
 /**
- * Returns an image URL with optimization parameters
- * @param {string} url The image URL
- */
-export function getOptimizedImageURL(src) {
-  const url = new URL(src, window.location.href);
-  let result = src;
-  const { pathname, search } = url;
-  if (pathname.includes('media_')) {
-    const usp = new URLSearchParams(search);
-    usp.delete('auto');
-    if (!window.webpSupport) {
-      if (pathname.endsWith('.png')) {
-        usp.set('format', 'png');
-      } else if (pathname.endsWith('.gif')) {
-        usp.set('format', 'gif');
-      } else {
-        usp.set('format', 'pjpg');
-      }
-    } else {
-      usp.set('format', 'webply');
-    }
-    result = `${src.split('?')[0]}?${usp.toString()}`;
-  }
-  return (result);
-}
-
-/**
- * Resets an element's attribute to the optimized image URL.
- * @see getOptimizedImageURL
- * @param {Element} $elem The element
- * @param {string} attrib The attribute
- */
-function resetOptimizedImageURL($elem, attrib) {
-  const src = $elem.getAttribute(attrib);
-  if (src) {
-    const oSrc = getOptimizedImageURL(src);
-    if (oSrc !== src) {
-      $elem.setAttribute(attrib, oSrc);
-    }
-  }
-}
-
-/**
  * Sanitizes a name for use as class name.
  * @param {*} name The unsanitized name
  * @returns {string} The class name
@@ -383,48 +340,6 @@ export function readBlockConfig($block) {
 }
 
 /**
- * Official Google WEBP detection.
- * @param {Function} callback The callback function
- */
-function checkWebpFeature(callback) {
-  const webpSupport = sessionStorage.getItem('webpSupport');
-  if (!webpSupport) {
-    const kTestImages = 'UklGRiIAAABXRUJQVlA4IBYAAAAwAQCdASoBAAEADsD+JaQAA3AAAAAA';
-    const img = new Image();
-    img.onload = () => {
-      const result = (img.width > 0) && (img.height > 0);
-      window.webpSupport = result;
-      sessionStorage.setItem('webpSupport', result);
-      callback();
-    };
-    img.onerror = () => {
-      sessionStorage.setItem('webpSupport', false);
-      window.webpSupport = false;
-      callback();
-    };
-    img.src = `data:image/webp;base64,${kTestImages}`;
-  } else {
-    window.webpSupport = (webpSupport === 'true');
-    callback();
-  }
-}
-
-/**
- * WEBP Polyfill for older browser versions.
- * @param {Element} $elem The container element
- */
-export function webpPolyfill($elem) {
-  if (!window.webpSupport) {
-    $elem.querySelectorAll('img').forEach(($img) => {
-      resetOptimizedImageURL($img, 'src');
-    });
-    $elem.querySelectorAll('picture source').forEach(($source) => {
-      resetOptimizedImageURL($source, 'srcset');
-    });
-  }
-}
-
-/**
  * Normalizes all headings within a container element.
  * @param {Element} $elem The container element
  * @param {[string]]} allowedHeadings The list of allowed headings (h1 ... h6)
@@ -453,15 +368,67 @@ export function normalizeHeadings($elem, allowedHeadings) {
 }
 
 /**
+ * Returns a picture element with webp and fallbacks
+ * @param {string} src The image URL
+ * @param {boolean} eager load image eager
+ * @param {Array} breakpoints breakpoints and corresponding params (eg. width)
+ */
+
+export function createOptimizedPicture(src, alt = '', eager = false, breakpoints = [{ media: 'min-width: 400px', width: '2000' }, { width: '750' }]) {
+  const url = new URL(src, window.location.href);
+  const picture = document.createElement('picture');
+  const { pathname } = url;
+  const ext = pathname.substring(pathname.lastIndexOf('.') + 1);
+
+  // webp
+  breakpoints.forEach((br) => {
+    const source = document.createElement('source');
+    if (br.media) source.setAttribute('media', br.media);
+    source.setAttribute('type', 'image/webp');
+    source.setAttribute('srcset', `${pathname}?width=${br.width}&format=webply&optimize=medium`);
+    picture.appendChild(source);
+  });
+
+  // fallback
+  breakpoints.forEach((br, i) => {
+    if (i < breakpoints.length - 1) {
+      const source = document.createElement('source');
+      if (br.media) source.setAttribute('media', br.media);
+      source.setAttribute('srcset', `${pathname}?width=${br.width}&format=${ext}&optimize=medium`);
+      picture.appendChild(source);
+    } else {
+      const img = document.createElement('img');
+      img.setAttribute('src', `${pathname}?width=${br.width}&format=${ext}&optimize=medium`);
+      img.setAttribute('loading', eager ? 'eager' : 'lazy');
+      img.setAttribute('alt', alt);
+      picture.appendChild(img);
+    }
+  });
+
+  return picture;
+}
+
+/**
+ * Decorates the main element.
+ * @param {Element} $main The main element
+ */
+function decoratePictures($main) {
+  $main.querySelectorAll('img[src*="/media_"').forEach((img, i) => {
+    const newPicture = createOptimizedPicture(img.src, img.alt, !i);
+    const picture = img.closest('picture');
+    if (picture) picture.parentElement.replaceChild(newPicture, picture);
+  });
+}
+
+/**
  * Decorates the main element.
  * @param {Element} $main The main element
  */
 export function decorateMain($main) {
+  // forward compatible pictures redecoration
+  decoratePictures($main);
   buildAutoBlocks($main);
   wrapSections($main.querySelectorAll(':scope > div'));
-  checkWebpFeature(() => {
-    webpPolyfill($main);
-  });
   decorateBlocks($main);
 }
 

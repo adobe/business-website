@@ -1,7 +1,7 @@
 /* eslint-disable import/named, import/extensions */
 
 import {
-  getOptimizedImageURL,
+  createOptimizedPicture,
   getBlogArticle,
 } from '../../scripts/scripts.js';
 
@@ -13,13 +13,9 @@ async function decorateFeaturedArticle(featuredArticleEl, articlePath, callback)
 
   const path = article.path.split('.')[0];
 
-  const imagePath = image.split('?')[0].split('_')[1];
-  const imageSrcDesktop = getOptimizedImageURL(`./media_${imagePath}?format=webply&optimize=medium&width=750`);
-  const imageSrcMobile = getOptimizedImageURL(`./media_${imagePath}?format=webply&optimize=medium&width=750`);
-  const pictureTag = `<picture>
-    <source media="(max-width: 400px)" srcset="${imageSrcMobile}">
-    <img loading="eager" src="${imageSrcDesktop}">
-  </picture>`;
+  const picture = createOptimizedPicture(image, title, true, [{ width: '750' }]);
+  const pictureTag = picture.outerHTML;
+
   const card = document.createElement('a');
   card.className = 'featured-article-card';
   card.href = path;
