@@ -4,6 +4,19 @@ main .featured-article-container > div {
   padding: 0;
 }
 
+main .featured-article-container > div > :not(div) {
+  margin-left: 32px;
+  margin-right: 32px;
+  padding: 0; 
+}
+
+@media (min-width: 1200px) {
+  main .featured-article-container > div > :not(div) {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
 main .featured-article {
   visibility: unset;
 }
