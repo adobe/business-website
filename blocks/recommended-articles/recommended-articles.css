@@ -68,8 +68,15 @@ main .recommended-articles-small-container .article-card {
 .recommended-articles-small-container .article-card .article-card-image {
   width: 30%;
   height: 130px;
+  border-radius: 4px 0 0 4px;
 }
+
+.recommended-articles-small-container .article-card .article-card-image img {
+  border-radius: 4px 0 0 4px;
+}
+
 .recommended-articles-small-container .article-card .article-card-body {
+  border-radius: 0 4px 4px 0;
   height: 130px;
   width: 70%;
   box-sizing: border-box;
