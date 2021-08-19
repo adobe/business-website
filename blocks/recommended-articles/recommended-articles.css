@@ -16,6 +16,7 @@ main .recommended-articles .article-cards {
   margin: 0 auto;
   display: flex;
   flex-wrap: wrap;
+  /* padding: 2rem; */
   padding-bottom: 0;
   justify-content: center;
   width: 100%;
@@ -25,6 +26,7 @@ main .recommended-articles .article-cards {
   main .recommended-articles .article-cards {
     padding-left: 0;
     padding-right: 0;
+    /* width: calc(100% - 64px); */
   }
 }
 
@@ -33,6 +35,19 @@ main .recommended-articles-small-container > div {
   padding-top: 0.1px;
   max-width: 1200px;
   margin: 0 auto;
+}
+@media (min-width: 700px) {
+  main .recommended-articles-small-container > div {
+    width: calc(100% - 64px);
+    min-width: 568px;
+    max-width: 790px;
+  }
+}
+@media (min-width: 1200px) {
+  main .recommended-articles-small-container > div {
+    width: calc(100% - 64px);
+    max-width: 1200px;
+  }
 }
 main .recommended-articles-small-container .article-card {
   display: flex;
