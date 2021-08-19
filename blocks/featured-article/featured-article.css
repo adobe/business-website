@@ -1,3 +1,9 @@
+main .featured-article-container > div {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0;
+}
+
 main .featured-article {
   visibility: unset;
 }
@@ -5,7 +11,8 @@ main .featured-article {
 main .featured-article-card {
   display: flex;
   flex-direction: column;
-  margin: 0 auto;
+  margin: 0;
+  width: 100%;
 }
 
 @media (min-width: 600px) {
@@ -18,7 +25,6 @@ main .featured-article-card {
 
 @media (min-width: 1200px) {
   main .featured-article-card {
-    width: calc(100% - 64px);
     max-width: 1200px;
   }
 }
