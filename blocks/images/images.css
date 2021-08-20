@@ -3,9 +3,7 @@ main .images {
 }
 
 main .images .figure {
-  margin-top: 16px;
-  margin-bottom: 16px;
-  line-height: 0;
+  margin: 16px 0;
   text-align: center;
 }
 
