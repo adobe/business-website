@@ -7,8 +7,6 @@ indices:
     fetch: https://{ref}--{repo}--{owner}.hlx.live{path}
     include:
       - '/blog/**'
-    exclude:
-      - '**/Document.*'
     target: https://adobe.sharepoint.com/sites/BizWeb/Shared%20Documents/website/blog/query-index.xlsx
     properties:
       author:
