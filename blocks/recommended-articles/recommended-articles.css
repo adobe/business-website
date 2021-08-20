@@ -16,38 +16,49 @@ main .recommended-articles .article-cards {
   margin: 0 auto;
   display: flex;
   flex-wrap: wrap;
-  /* padding: 2rem; */
   padding-bottom: 0;
   justify-content: center;
   width: 100%;
 }
-
 @media (min-width: 600px) {
   main .recommended-articles .article-cards {
     padding-left: 0;
     padding-right: 0;
-    /* width: calc(100% - 64px); */
   }
 }
 
 /* small specific */
-main .recommended-articles-small-container > div {
+main div.recommended-articles-small-content-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
   padding-top: 0.1px;
   max-width: 1200px;
   margin: 0 auto;
 }
 @media (min-width: 700px) {
-  main .recommended-articles-small-container > div {
+  main div.recommended-articles-small-content-wrapper {
     width: calc(100% - 64px);
     min-width: 568px;
     max-width: 790px;
   }
 }
 @media (min-width: 1200px) {
-  main .recommended-articles-small-container > div {
+  main div.recommended-articles-small-content-wrapper {
     width: calc(100% - 64px);
     max-width: 1200px;
   }
+}
+main div.recommended-articles-small-content-wrapper h3 {
+  width: 100%;
+}
+main div.recommended-articles-small-content-wrapper p {
+  margin: 0;
+}
+main div.recommended-articles-small-content-wrapper a.button {
+  margin-left: 0;
+  margin-right: 0;
 }
 main .recommended-articles-small-container .article-card {
   display: flex;
