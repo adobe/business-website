@@ -144,7 +144,7 @@ header .gnav .gnav-selected {
   font-weight: 700;
 }
 
-header .gnav-search > svg {
+header .gnav-search-icon > svg {
   display: none;
 }
 
@@ -309,7 +309,7 @@ header .gnav .gnav-search-highlight {
     fill: currentColor;
   }
 
-  header .gnav-search > svg {
+  header .gnav-search-icon > svg {
     display: unset;
   }
   
@@ -368,6 +368,16 @@ header .gnav .gnav-search-highlight {
     top: 64px;
     left: 0;
   }
+
+  header .gnav .gnav-search[aria-expanded=true] .gnav-search-icon::before {
+    font-size: 19px;
+    content: "\2715";
+  }
+
+  header .gnav .gnav-search[aria-expanded=true] .gnav-search-icon svg {
+    display: none;
+  }
+
 
   header .gnav img {
     max-width: 100%;
