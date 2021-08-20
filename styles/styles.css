@@ -132,11 +132,13 @@ a.button.light:any-link {
 }
 
 a.button.primary.light:any-link,
-a.button.secondary.light:any-link {
+a.button.secondary.light:any-link,
+a.button.action.light:any-link {
   color: var(--color---color-gray-800);
 }
 
-a.button.primary.light:any-link {
+a.button.primary.light:any-link,
+a.button.action.light:any-link {
   border-color: var(--color-gray-800);
 }
 
@@ -148,6 +150,17 @@ a.button.dark:any-link {
   color: var(--color-white);
   border: solid 2px var(--color-white);
   background-color: transparent;
+}
+
+a.button.action.light:any-link {
+  background-color: transparent;
+}
+
+a.button.action.light:any-link:hover,
+a.button.action.light:any-link:active,
+a.button.action.light:any-link:focus {
+  color: var(--color-white);
+  background-color: var(--color-gray-800);
 }
 
 a.button > svg {

@@ -4,6 +4,12 @@ import {
 } from '../../scripts/scripts.js';
 
 async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
+  if (recommendedArticlesEl.classList.contains('small')) {
+    recommendedArticlesEl.parentNode.querySelectorAll('a').forEach((aEl) => {
+      aEl.classList.add('button', 'action', 'light');
+    });
+    recommendedArticlesEl.parentNode.classList.add('recommended-articles-small-content-wrapper');
+  }
   const articleCardsContainer = document.createElement('div');
   articleCardsContainer.className = 'article-cards';
   for (let i = 0; i < paths.length; i += 1) {
@@ -34,9 +40,9 @@ async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
   }
 }
 
-export default function decorate(block) {
-  const anchors = [...block.querySelectorAll('a')];
-  block.innerHTML = '';
+export default function decorate(blockEl) {
+  const anchors = [...blockEl.querySelectorAll('a')];
+  blockEl.innerHTML = '';
   const paths = anchors.map((a) => new URL(a.href).pathname);
-  decorateRecommendedArticles(block, paths);
+  decorateRecommendedArticles(blockEl, paths);
 }
