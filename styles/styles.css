@@ -317,17 +317,14 @@ header {
 
 /* caption styling */
 
-main .caption {
-  margin-top: 16px !important;
+main .block .figure figcaption .caption {
+  margin-top: 16px;
+  padding: 0;
   text-align: left;
   font-style: italic;
   font-size: var(--body-font-size-xs);
   color: var(--color-gray-700);
 } 
-main .figure .caption {
-  padding: 0;
-  margin: 0;
-}
 
 /* CLS and FOUC protection for lazy loaded content/styles */
 
