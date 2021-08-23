@@ -5,7 +5,6 @@ main .animation {
 main .animation .figure {
   margin-top: 16px;
   margin-bottom: 16px;
-  line-height: 0;
   text-align: center;
 }
 
@@ -13,30 +12,5 @@ main .animation .figure {
   main .animation .figure {
     margin: 0 auto;
     max-width: 800px;
-  }
-  main .animation .figure img,
-  main .animation .figure video {
-    min-width: 600px;
-  }
-}
-
-main .animation .figure .caption {
-  padding-left: 2rem;
-  padding-right: 2rem;
-  margin: 0;
-}
-
-@media (min-width: 700px) {
-  main .animation .figure .caption {
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-}
-
-@media (min-width: 900px) {
-  main .animation .figure .caption {
-    max-width: unset;
-    padding: 0;
   }
 }
