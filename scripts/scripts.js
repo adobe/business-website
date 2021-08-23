@@ -181,6 +181,7 @@ function buildImageBlocks(mainEl) {
  * @param {Element} mainEl The container element
  */
 function buildArticleHeader(mainEl) {
+  const div = document.createElement('div');
   const h1 = mainEl.querySelector('h1');
   const picture = mainEl.querySelector('picture');
   const category = getMetadata('category');
@@ -194,7 +195,8 @@ function buildArticleHeader(mainEl) {
       <p>${publicationDate}</p>`],
     [{ elems: [picture.closest('p'), getImageCaption(picture)] }],
   ]);
-  mainEl.firstChild.prepend(articleHeaderBlockEl);
+  div.append(articleHeaderBlockEl);
+  mainEl.prepend(div);
 }
 
 /**
