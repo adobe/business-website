@@ -302,6 +302,9 @@ export function buildFigure(blockEl) {
           }
         }
       });
+    // catch link-only figures (like embed blocks);
+    } else if (blockEl.firstChild.nodeName === 'A') {
+      figEl.append(blockEl.firstChild);
     }
   }
   return figEl;
