@@ -1,14 +1,20 @@
 import {
   createOptimizedPicture,
   getBlogArticle,
+  fetchVariables,
 } from '../../scripts/scripts.js';
 
 async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
   if (recommendedArticlesEl.classList.contains('small')) {
     recommendedArticlesEl.parentNode.querySelectorAll('a').forEach((aEl) => {
-      aEl.classList.add('button', 'action', 'light');
+      aEl.classList.add('button', 'small', 'action', 'light');
     });
     recommendedArticlesEl.parentNode.classList.add('recommended-articles-small-content-wrapper');
+  } else {
+    const title = document.createElement('h3');
+    const vars = await fetchVariables();
+    title.textContent = vars['recommended-for-you'];
+    recommendedArticlesEl.prepend(title);
   }
   const articleCardsContainer = document.createElement('div');
   articleCardsContainer.className = 'article-cards';
