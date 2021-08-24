@@ -13,8 +13,8 @@ main .pull-quote {
 
 main .pull-quote > div {
     border-left: 3px solid var(--color-quote);
-    margin: 40px 32px 40px 64px;
-    padding: 16px 2rem;
+    margin: 48px 0;
+    padding: 16px 0 16px 2rem;
 }
 
 @media (min-width: 700px) {
