@@ -226,6 +226,39 @@ function buildAutoBlocks(mainEl) {
   }
 }
 
+function unwrapBlock(block) {
+  const section = block.parentNode;
+  const els = [...section.children];
+  const blockSection = document.createElement('div');
+  const postBlockSection = document.createElement('div');
+  const nextSection = section.nextSibling;
+  section.parentNode.insertBefore(blockSection, nextSection);
+  section.parentNode.insertBefore(postBlockSection, nextSection);
+
+  let $appendTo;
+  els.forEach((el) => {
+    if (el === block) $appendTo = blockSection;
+    if ($appendTo) {
+      $appendTo.appendChild(el);
+      $appendTo = postBlockSection;
+    }
+  });
+
+  if (!postBlockSection.hasChildNodes()) {
+    postBlockSection.remove();
+  }
+}
+
+function splitSections() {
+  document.querySelectorAll('main > div > div').forEach((block) => {
+    const blocksToSplit = ['article-feed', 'article-header', 'recommended-articles'];
+
+    if (blocksToSplit.includes(block.className)) {
+      unwrapBlock(block);
+    }
+  });
+}
+
 /**
  * Build figcaption element
  * @param {Element} pEl The original element to be placed in figcaption.
@@ -430,6 +463,7 @@ export function decorateMain($main) {
   // forward compatible pictures redecoration
   decoratePictures($main);
   buildAutoBlocks($main);
+  splitSections();
   wrapSections($main.querySelectorAll(':scope > div'));
   decorateBlocks($main);
 }
@@ -480,6 +514,22 @@ export async function getBlogArticle(path, locale = '') {
   }
   const index = window.blogIndex;
   return (index.byPath[path]);
+}
+
+/**
+ * fetches locale-specific string variables.
+ * @param {string} locale prefix used for path to index
+ * @returns {object} localized variables
+ */
+
+export async function fetchVariables(locale = '') {
+  const resp = await fetch(`${locale}/blog/variables.json`);
+  const json = await resp.json();
+  const vars = {};
+  json.data.forEach((v) => {
+    vars[v.Key] = v.Text;
+  });
+  return (vars);
 }
 
 /**

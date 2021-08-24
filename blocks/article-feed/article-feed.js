@@ -28,8 +28,6 @@ async function filterArticles(config, locale) {
       if (!Array.isArray(vals)) {
         v = [vals];
       }
-      // eslint-disable-next-line no-console
-      console.log(v);
       filters[key] = v.map((e) => e.toLowerCase().trim());
     }
   });
