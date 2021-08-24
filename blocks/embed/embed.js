@@ -147,8 +147,10 @@ const loadEmbed = ($block) => {
   if ($block.classList.contains('is-loaded')) {
     return;
   }
+
+  const $a = $block.querySelector('a');
   const $figure = buildFigure($block.firstChild.firstChild);
-  const $a = $figure.querySelector('a');
+
   if ($a) {
     const url = new URL($a.href.replace(/\/$/, ''));
     const hostnameArr = url.hostname.split('.');
