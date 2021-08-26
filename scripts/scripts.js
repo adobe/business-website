@@ -593,6 +593,26 @@ function getLCPCandidate(callback) {
 }
 
 /**
+ * loads a script by adding a script tag to the head.
+ * @param {string} url URL of the js file
+ * @param {Function} callback callback on load
+ * @param {string} type type attribute of script tag
+ * @returns {Element} script element
+ */
+
+export function loadScript(url, callback, type) {
+  const head = document.querySelector('head');
+  const script = document.createElement('script');
+  script.setAttribute('src', url);
+  if (type) {
+    script.setAttribute('type', type);
+  }
+  head.append(script);
+  script.onload = callback;
+  return script;
+}
+
+/**
  * Decorates the page.
  * @param {Window} win The window
  */
@@ -614,6 +634,20 @@ async function decoratePage(win = window) {
         await loadBlocks($main);
         loadCSS('/styles/lazy-styles.css');
         addFavIcon('/styles/favicon.svg');
+
+        /* trigger martech.js load */
+        const martechUrl = '/scripts/martech.js';
+        const usp = new URLSearchParams(window.location.search);
+        const martech = usp.get('martech');
+
+        if (!(martech === 'off' || document.querySelector(`head script[src="${martechUrl}"]`))) {
+          let ms = 3000;
+          const delay = usp.get('delay');
+          if (delay) ms = +delay;
+          setTimeout(() => {
+            loadScript(martechUrl, null, 'module');
+          }, ms);
+        }
       });
     });
     document.querySelector('body').classList.add('appear');
