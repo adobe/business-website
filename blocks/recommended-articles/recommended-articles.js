@@ -44,6 +44,7 @@ async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
     articleCardsContainer.append(card);
     recommendedArticlesEl.append(articleCardsContainer);
   }
+  recommendedArticlesEl.closest('.section-wrapper').classList.add('ready');
 }
 
 export default function decorate(blockEl) {

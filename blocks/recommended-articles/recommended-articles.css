@@ -10,7 +10,7 @@ main .recommended-articles-container > div {
   padding-top: 16px;
 }
 
-main .recommended-articles {
+main .recommended-articles, main .recommended-articles-small-container.ready {
   visibility: unset;
   min-height: unset;
 }
@@ -37,7 +37,7 @@ main div.recommended-articles-small-content-wrapper {
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  max-width: 1200px;
+  max-width: 1100px;
   margin: 0 auto;
 }
 
@@ -55,7 +55,6 @@ main div.recommended-articles-small-content-wrapper {
 
 @media (min-width: 1200px) {
   main div.recommended-articles-small-content-wrapper {
-    width: calc(100% - 64px);
     max-width: 1200px;
   }
 }
@@ -96,7 +95,7 @@ main .recommended-articles-small-container .article-card {
   main .recommended-articles-small-container .article-card {
     max-width: 378px;
     margin-right: 32px;
-    width: calc(100%/3 - 22px);
+    width: 378px;
   }
 
   main .recommended-articles-small-container .article-card:last-child {
