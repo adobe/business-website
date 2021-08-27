@@ -11,26 +11,14 @@
  */
 import { loadScript } from './scripts.js';
 
-window.dexter = window.dexter || {};
-window.dexter.Analytics = window.dexter.Analytics || {};
-window.dexter.Analytics.language = 'en_us';
-window.dexter.Analytics.geoRegion = 'us';
-window.dexter.Analytics.launchLoaded = true;
-window.dexter.Analytics.audienceManagerEnabled = '' !== 'disabled';
-window.dexter.Analytics.environment = 'production';
 window.marketingtech = window.marketingtech || {};
 window.marketingtech.adobe = {
   target: true,
-  audienceManager: window.dexter.Analytics.audienceManagerEnabled,
+  audienceManager: true,
   launch: {
     property: 'global',
-    environment: window.dexter.Analytics.environment,
-    controlPageLoad: true,
+    environment: 'production',
   },
-  analytics: {
-    additionalAccounts: '',
-  },
-  targetControlDxf: false,
 };
 window.targetGlobalSettings = window.targetGlobalSettings || {};
 window.targetGlobalSettings.bodyHidingEnabled = false;
