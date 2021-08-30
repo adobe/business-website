@@ -35,7 +35,6 @@ export function loadCSS(href) {
 export function getMetadata(name) {
   const attr = name && name.includes(':') ? 'property' : 'name';
   const meta = [...document.head.querySelectorAll(`meta[${attr}="${name}"]`)].map((el) => el.content).join(', ');
-  // console.log(meta);
   return meta;
 }
 
