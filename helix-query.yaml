@@ -3,11 +3,15 @@ version: 1
 indices:
   blog:
     # note, the following 2 properties are no longer used with Helix3
-    source: html 
+    source: html
     fetch: https://{ref}--{repo}--{owner}.hlx.live{path}
     include:
       - '/blog/**'
     target: https://adobe.sharepoint.com/sites/BizWeb/Shared%20Documents/website/blog/query-index.xlsx
+    sitemap:
+      source: /blog/query-index.json
+      path: /blog/sitemap.xml
+      origin: https://business.adobe.com
     properties:
       author:
         select: head > meta[name="author"]
