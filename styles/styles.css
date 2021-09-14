@@ -359,7 +359,8 @@ header .gnav,
 main .recommended-articles,
 main .featured-article,
 main .article-feed,
-main .article-header {
+main .article-header,
+main .tag-header-container {
   visibility: hidden;
 }
 
