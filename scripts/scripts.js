@@ -199,6 +199,28 @@ function buildArticleHeader(mainEl) {
   mainEl.prepend(div);
 }
 
+function buildTagHeader(mainEl) {
+  const div = document.createElement('div');
+  const h1 = mainEl.querySelector('h1');
+  const picture = mainEl.querySelector('picture');
+  const tagHeaderBlockEl = buildBlock('tag-header', [
+    [h1],
+    [{ elems: [picture.closest('p')] }],
+  ]);
+  div.append(tagHeaderBlockEl);
+  mainEl.prepend(div);
+}
+
+function buildArticleFeed(mainEl) {
+  const div = document.createElement('div');
+  const title = mainEl.querySelector('h1').textContent.trim();
+  const articleFeedEl = buildBlock('article-feed', [
+    ['Category', title],
+  ]);
+  div.append(articleFeedEl);
+  mainEl.append(div);
+}
+
 /**
  * Decorates all blocks in a container element.
  * @param {Element} $main The container element
@@ -218,6 +240,10 @@ function buildAutoBlocks(mainEl) {
   try {
     if (getMetadata('author') && getMetadata('publication-date') && !mainEl.querySelector('.article-header')) {
       buildArticleHeader(mainEl);
+    }
+    if (window.location.pathname.includes('/tags/')) {
+      buildTagHeader(mainEl);
+      buildArticleFeed(mainEl);
     }
     buildImageBlocks(mainEl);
   } catch (error) {
