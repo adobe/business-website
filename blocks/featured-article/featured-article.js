@@ -27,7 +27,12 @@ async function decorateFeaturedArticle(featuredArticleEl, articlePath, callback)
     <h3>${title}</h3>
       <p>${description}</p>
     </div>`;
-  featuredArticleEl.append(card);
+  const tagHeader = document.querySelector('.tag-header-container > div');
+  if (tagHeader) {
+    tagHeader.append(card);
+  } else {
+    featuredArticleEl.append(card);
+  }
   if (callback) callback();
 }
 
