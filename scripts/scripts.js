@@ -34,8 +34,8 @@ export function loadCSS(href) {
  */
 export function getMetadata(name) {
   const attr = name && name.includes(':') ? 'property' : 'name';
-  const $meta = document.head.querySelector(`meta[${attr}="${name}"]`);
-  return $meta && $meta.content;
+  const meta = [...document.head.querySelectorAll(`meta[${attr}="${name}"]`)].map((el) => el.content).join(', ');
+  return meta;
 }
 
 /**
@@ -221,6 +221,21 @@ function buildArticleFeed(mainEl) {
   mainEl.append(div);
 }
 
+function buildTagsBlock(mainEl) {
+  const tags = getMetadata('article:tag');
+  if (tags) {
+    const tagsBlock = buildBlock('tags', [
+      [`<p>${tags}</p>`],
+    ]);
+    const recBlock = mainEl.querySelector('.recommended-articles');
+    if (recBlock) {
+      recBlock.parentNode.insertBefore(tagsBlock, recBlock);
+    } else {
+      mainEl.append(tagsBlock);
+    }
+  }
+}
+
 /**
  * Decorates all blocks in a container element.
  * @param {Element} $main The container element
@@ -240,6 +255,7 @@ function buildAutoBlocks(mainEl) {
   try {
     if (getMetadata('author') && getMetadata('publication-date') && !mainEl.querySelector('.article-header')) {
       buildArticleHeader(mainEl);
+      buildTagsBlock(mainEl);
     }
     if (window.location.pathname.includes('/tags/')) {
       buildTagHeader(mainEl);
