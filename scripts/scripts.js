@@ -215,7 +215,7 @@ function buildArticleFeed(mainEl) {
   const div = document.createElement('div');
   const title = mainEl.querySelector('h1').textContent.trim();
   const articleFeedEl = buildBlock('article-feed', [
-    ['Category', title],
+    ['Topics', title],
   ]);
   div.append(articleFeedEl);
   mainEl.append(div);
