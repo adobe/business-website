@@ -171,6 +171,12 @@ main .tag-header-container .featured-article-card {
   }
 }
 
+@media (min-width: 1200px) {
+  main .tag-header-container .featured-article-card {
+    max-width: calc(1200px - 2rem);
+  }
+}
+
 main .tag-header-container .featured-article-card div {
   text-align: left;
   padding: 0;

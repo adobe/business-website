@@ -38,3 +38,9 @@ main .tag-header h1 {
     max-width: 800px;
   }
 }
+
+@media (min-width: 1200px) {
+  main .tag-header h1 {
+    max-width: calc(1200px - 2rem);
+  }
+}
