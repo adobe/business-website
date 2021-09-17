@@ -303,10 +303,16 @@ function splitSections() {
 
 function removeEmptySections() {
   document.querySelectorAll('main > div').forEach((div) => {
+    // if div is empty
     if (!div.hasChildNodes()) {
       div.remove();
-    } else if (!div.firstElementChild.hasChildNodes() && !div.firstElementChild.hasChildNodes()) {
-      div.remove();
+    // else if all div children are empty
+    } else {
+      let empty = true;
+      div.childNodes.forEach((child) => {
+        if (child.hasChildNodes()) { empty = false; }
+      });
+      if (empty) { div.remove(); }
     }
   });
 }
