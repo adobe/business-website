@@ -199,6 +199,29 @@ function buildArticleHeader(mainEl) {
   mainEl.prepend(div);
 }
 
+function buildTagHeader(mainEl) {
+  const div = document.createElement('div');
+  const h1 = mainEl.querySelector('h1');
+  const picture = mainEl.querySelector('picture');
+  const tagHeaderBlockEl = buildBlock('tag-header', [
+    [h1],
+    [{ elems: [picture.closest('p')] }],
+  ]);
+  div.append(tagHeaderBlockEl);
+  mainEl.prepend(div);
+}
+
+function buildArticleFeed(mainEl) {
+  const { pathname } = window.location;
+  const div = document.createElement('div');
+  const title = mainEl.querySelector('h1').textContent.trim();
+  const articleFeedEl = buildBlock('article-feed', [
+    [`${pathname.includes('/tags/') ? 'tags' : 'category'}`, title],
+  ]);
+  div.append(articleFeedEl);
+  mainEl.append(div);
+}
+
 function buildTagsBlock(mainEl) {
   const tags = getMetadata('article:tag');
   if (tags) {
@@ -234,6 +257,10 @@ function buildAutoBlocks(mainEl) {
     if (getMetadata('author') && getMetadata('publication-date') && !mainEl.querySelector('.article-header')) {
       buildArticleHeader(mainEl);
       buildTagsBlock(mainEl);
+    }
+    if (window.location.pathname.includes('/categories/') || window.location.pathname.includes('/tags/')) {
+      buildTagHeader(mainEl);
+      buildArticleFeed(mainEl);
     }
     buildImageBlocks(mainEl);
   } catch (error) {
