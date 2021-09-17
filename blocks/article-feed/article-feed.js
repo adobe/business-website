@@ -1,6 +1,6 @@
 import {
   readBlockConfig,
-  createOptimizedPicture,
+  buildArticleCard,
   fetchBlogArticleIndex,
 } from '../../scripts/scripts.js';
 
@@ -58,27 +58,8 @@ async function decorateArticleFeed(articleFeedEl, config, offset = 0) {
   const max = pageEnd > articles.length ? articles.length : pageEnd;
   for (let i = offset; i < max; i += 1) {
     const article = articles[i];
-    const {
-      title, description, image, category,
-    } = article;
+    const card = buildArticleCard(article, 'article');
 
-    const path = article.path.split('.')[0];
-
-    const picture = createOptimizedPicture(image, title, false, [{ width: '750' }]);
-    const pictureTag = picture.outerHTML;
-    const card = document.createElement('a');
-    card.className = 'article-card';
-    card.href = path;
-    card.innerHTML = `<div class="article-card-image">
-          ${pictureTag}
-        </div>
-        <div class="article-card-body">
-          <p class="article-card-category">
-            <a href="${window.location.origin}/blog/categories/${category}">${category}</a>
-          </p>
-          <h3>${title}</h3>
-          <p>${description}</p>
-        </div>`;
     articleCards.append(card);
   }
   if (articles.length > pageEnd) {

@@ -1,34 +1,13 @@
 /* eslint-disable import/named, import/extensions */
 
 import {
-  createOptimizedPicture,
+  buildArticleCard,
   getBlogArticle,
 } from '../../scripts/scripts.js';
 
 async function decorateFeaturedArticle(featuredArticleEl, articlePath, callback) {
   const article = await getBlogArticle(articlePath);
-  const {
-    title, description, image, category,
-  } = article;
-
-  const path = article.path.split('.')[0];
-
-  const picture = createOptimizedPicture(image, title, true, [{ width: '750' }]);
-  const pictureTag = picture.outerHTML;
-
-  const card = document.createElement('a');
-  card.className = 'featured-article-card';
-  card.href = path;
-  card.innerHTML = `<div class="featured-article-card-image">
-      ${pictureTag}
-    </div>
-    <div class="featured-article-card-body">
-      <p class="featured-article-card-category">
-        <a href="${window.location.origin}/blog/categories/${category}">${category}</a>
-      </p>
-      <h3>${title}</h3>
-      <p>${description}</p>
-    </div>`;
+  const card = buildArticleCard(article, 'featured-article');
   featuredArticleEl.append(card);
   if (callback) callback();
 }

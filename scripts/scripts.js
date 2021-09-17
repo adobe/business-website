@@ -463,6 +463,36 @@ export function createOptimizedPicture(src, alt = '', eager = false, breakpoints
 }
 
 /**
+ * Build article card
+ * @param {Element} article The article data to be placed in card.
+ * @returns card Generated card
+ */
+export function buildArticleCard(article, type) {
+  const {
+    title, description, image, category,
+  } = article;
+
+  const path = article.path.split('.')[0];
+
+  const picture = createOptimizedPicture(image, title, false, [{ width: '750' }]);
+  const pictureTag = picture.outerHTML;
+  const card = document.createElement('a');
+  card.className = `${type}-card`;
+  card.href = path;
+  card.innerHTML = `<div class="${type}-card-image">
+      ${pictureTag}
+    </div>
+    <div class="${type}-card-body">
+      <p class="${type}-card-category">
+        <a href="${window.location.origin}/blog/categories/${category}">${category}</a>
+      </p>
+      <h3>${title}</h3>
+      <p>${description}</p>
+    </div>`;
+  return card;
+}
+
+/**
  * Decorates the main element.
  * @param {Element} $main The main element
  */
