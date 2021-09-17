@@ -305,7 +305,7 @@ function removeEmptySections() {
   document.querySelectorAll('main > div').forEach((div) => {
     if (!div.hasChildNodes()) {
       div.remove();
-    } else if (!div.firstChild.hasChildNodes() && !div.firstChild.hasChildNodes()) {
+    } else if (!div.firstElementChild.hasChildNodes() && !div.firstElementChild.hasChildNodes()) {
       div.remove();
     }
   });
