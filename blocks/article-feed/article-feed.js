@@ -21,7 +21,7 @@ async function filterArticles(config, locale) {
   /* filter posts by category, tag and author */
   const filters = {};
   Object.keys(config).forEach((key) => {
-    const filterNames = ['tag', 'author', 'category'];
+    const filterNames = ['tags', 'author', 'category'];
     if (filterNames.includes(key)) {
       const vals = config[key];
       let v = vals;
