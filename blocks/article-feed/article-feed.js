@@ -58,7 +58,7 @@ async function decorateArticleFeed(articleFeedEl, config, offset = 0) {
   const max = pageEnd > articles.length ? articles.length : pageEnd;
   for (let i = offset; i < max; i += 1) {
     const article = articles[i];
-    const card = buildArticleCard(article, 'article');
+    const card = buildArticleCard(article);
 
     articleCards.append(card);
   }

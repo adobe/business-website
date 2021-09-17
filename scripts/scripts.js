@@ -467,7 +467,7 @@ export function createOptimizedPicture(src, alt = '', eager = false, breakpoints
  * @param {Element} article The article data to be placed in card.
  * @returns card Generated card
  */
-export function buildArticleCard(article, type) {
+export function buildArticleCard(article, type = 'article') {
   const {
     title, description, image, category,
   } = article;
