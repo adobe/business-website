@@ -37,8 +37,10 @@ async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
         ${pictureTag}
       </div>
       <div class="article-card-body">
-      <p class="article-card-category">${category}</p>
-      <h3>${title}</h3>
+        <p class="article-card-category">
+          <a href="${window.location.origin}/blog/categories/${category}">${category}</a>
+        </p>
+        <h3>${title}</h3>
         <p>${description}</p>
       </div>`;
     articleCardsContainer.append(card);
