@@ -31,13 +31,12 @@ launchScriptEl.setAttribute('data-seed-adobelaunch', 'true');
 /* Core Web Vitals RUM collection */
 
 function storeCWV(measurement) {
-  const rum = { checkpoint: 'cwv', cwv: { } };
+  const rum = { cwv: { } };
   rum.cwv[measurement.name] = measurement.value;
-  sampleRUM(rum);
+  sampleRUM('cwv', rum);
 }
 
-const { random, weight } = window.hlx.rum;
-if (random && (random * weight < 1)) {
+if (window.hlx.rum.isSelected) {
   const script = document.createElement('script');
   script.src = 'https://unpkg.com/web-vitals';
   script.onload = () => {

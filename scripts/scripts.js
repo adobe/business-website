@@ -12,7 +12,11 @@
 
 /**
  * RUM Microfunnel instrumentation.
- *
+ */
+
+/**
+ * send data to RUM collector service.
+ * @param {Object} data RUM data
  */
 
 function sendRUMData(data) {
@@ -26,12 +30,17 @@ function sendRUMData(data) {
   || fetch(url, { body, method: 'POST', keepalive: true });
 }
 
+/**
+ * send data to RUM collector service.
+ * @returns {Object} base rum object containing weight, id, random and isSelected
+ */
+
 function rumInit() {
   const usp = new URLSearchParams(window.location.search);
-  const rum = usp.get('rum');
+  const rumParam = usp.get('rum');
 
   // with parameter, weight is 1. Defaults to 100.
-  const weight = (rum === 'on') ? 1 : 100;
+  const weight = (rumParam === 'on') ? 1 : 100;
 
   // eslint-disable-next-line no-bitwise
   const hashCode = (s) => s.split('').reduce((a, b) => (((a << 5) - a) + b.charCodeAt(0)) | 0, 0);
@@ -40,15 +49,21 @@ function rumInit() {
   const random = Math.random();
   const isSelected = (random * weight < 1);
 
-  window.hlx.rum = {
+  const rum = {
     weight,
     id,
     random,
     isSelected,
   };
 
-  return window.hlx.rum;
+  return rum;
 }
+
+/**
+ * log RUM if part of the sample.
+ * @param {string} checkpoint identifies the checkpoint in funnel
+ * @param {Object} data additional data for RUM sample
+ */
 
 export function sampleRUM(checkpoint, data = {}) {
   window.hlx = window.hlx || {};
