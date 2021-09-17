@@ -22,9 +22,14 @@ async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
     const articlePath = paths[i];
     // eslint-disable-next-line no-await-in-loop
     const article = await getBlogArticle(articlePath);
-    const card = buildArticleCard(article);
-    articleCardsContainer.append(card);
-    recommendedArticlesEl.append(articleCardsContainer);
+    if (article) {
+      const card = buildArticleCard(article);
+      articleCardsContainer.append(card);
+      recommendedArticlesEl.append(articleCardsContainer);
+    }
+  }
+  if (!articleCardsContainer.hasChildNodes()) {
+    recommendedArticlesEl.parentNode.parentNode.remove();
   }
 }
 
