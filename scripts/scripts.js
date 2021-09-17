@@ -295,9 +295,16 @@ function unwrapBlock(block) {
 function splitSections() {
   document.querySelectorAll('main > div > div').forEach((block) => {
     const blocksToSplit = ['article-feed', 'article-header', 'recommended-articles'];
-
     if (blocksToSplit.includes(block.className)) {
       unwrapBlock(block);
+    }
+  });
+}
+
+function removeEmptySections() {
+  document.querySelectorAll('main > div').forEach((div) => {
+    if (!div.hasChildNodes()) {
+      div.remove();
     }
   });
 }
@@ -510,6 +517,7 @@ export function decorateMain($main) {
   decoratePictures($main);
   buildAutoBlocks($main);
   splitSections();
+  removeEmptySections();
   wrapSections($main.querySelectorAll(':scope > div'));
   decorateBlocks($main);
 }
