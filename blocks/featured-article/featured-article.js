@@ -23,8 +23,10 @@ async function decorateFeaturedArticle(featuredArticleEl, articlePath, callback)
       ${pictureTag}
     </div>
     <div class="featured-article-card-body">
-    <p class="featured-article-card-category">${category}</p>
-    <h3>${title}</h3>
+      <p class="featured-article-card-category">
+        <a href="${window.location.origin}/blog/categories/${category}">${category}</a>
+      </p>
+      <h3>${title}</h3>
       <p>${description}</p>
     </div>`;
   featuredArticleEl.append(card);
