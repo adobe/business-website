@@ -11,6 +11,67 @@
  */
 
 /**
+ * RUM Microfunnel instrumentation.
+ *
+ */
+
+function sendRUMData(data) {
+  const body = JSON.stringify(data);
+  const url = `https://rum.hlx3.page/.rum/${data.weight}`;
+
+  // Use `navigator.sendBeacon()` if available, falling back to `fetch()`.
+  // we should probably use XHR instead of fetch
+  // eslint-disable-next-line no-unused-expressions
+  (navigator.sendBeacon && navigator.sendBeacon(url, body))
+  || fetch(url, { body, method: 'POST', keepalive: true });
+}
+
+function rumInit() {
+  const usp = new URLSearchParams(window.location.search);
+  const rum = usp.get('rum');
+
+  // with parameter, weight is 1. Defaults to 100.
+  const weight = (rum === 'on') ? 1 : 100;
+
+  // eslint-disable-next-line no-bitwise
+  const hashCode = (s) => s.split('').reduce((a, b) => (((a << 5) - a) + b.charCodeAt(0)) | 0, 0);
+  const id = `${hashCode(window.location.href)}-${new Date().getTime()}-${Math.random().toString(16).substr(2, 14)}`;
+
+  const random = Math.random();
+  const isSelected = (random * weight < 1);
+
+  window.hlx.rum = {
+    weight,
+    id,
+    random,
+    isSelected,
+  };
+
+  return window.hlx.rum;
+}
+
+export function sampleRUM(checkpoint, data = {}) {
+  window.hlx = window.hlx || {};
+  window.hlx.rum = window.hlx.rum || rumInit();
+  const { random, weight, id } = window.hlx.rum;
+  if (random && (random * weight < 1)) {
+    // store a page view
+    sendRUMData({
+      weight,
+      id,
+      referer: window.location.href,
+      generation: 'biz-gen1',
+      checkpoint,
+      ...data,
+    });
+  }
+}
+
+sampleRUM('top');
+window.addEventListener('load', () => sampleRUM('load'));
+document.addEventListener('click', () => sampleRUM('click'));
+
+/**
  * Loads a CSS file.
  * @param {string} href The path to the CSS file
  */
@@ -667,6 +728,7 @@ async function decoratePage(win = window) {
     getLCPCandidate((lcpCandidateEl) => {
       setLCPTrigger(lcpCandidateEl, async () => {
         // post LCP actions go here
+        sampleRUM('lcp');
 
         /* load gnav */
         const header = document.querySelector('header');
