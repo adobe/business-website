@@ -17,7 +17,7 @@
  */
 
 // eslint-disable-next-line object-curly-newline
-if (!navigator.sendBeacon) { window.data = JSON.stringify({ referer: window.location.href, generation: 'biz-gen1', checkpoint: 'unsupported', weight: 1 }); new Image().src = `https://rum.hlx3.page/.rum/1?data=${data}`; }
+if (!navigator.sendBeacon) { window.data = JSON.stringify({ referer: window.location.href, generation: 'biz-gen1', checkpoint: 'unsupported', weight: 1 }); new Image().src = `https://rum.hlx3.page/.rum/1?data=${window.data}`; }
 
 export function sampleRUM(checkpoint, data = {}) {
   try {
