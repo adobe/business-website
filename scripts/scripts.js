@@ -11,74 +11,30 @@
  */
 
 /**
- * RUM Microfunnel instrumentation.
- */
-
-/**
- * send data to RUM collector service.
- * @param {Object} data RUM data
- */
-
-function sendRUMData(data) {
-  const body = JSON.stringify(data);
-  const url = `https://rum.hlx3.page/.rum/${data.weight}`;
-
-  // Use `navigator.sendBeacon()` if available, falling back to `fetch()`.
-  // we should probably use XHR instead of fetch
-  // eslint-disable-next-line no-unused-expressions
-  (navigator.sendBeacon && navigator.sendBeacon(url, body))
-  || fetch(url, { body, method: 'POST', keepalive: true });
-}
-
-/**
- * send data to RUM collector service.
- * @returns {Object} base rum object containing weight, id, random and isSelected
- */
-
-function rumInit() {
-  const usp = new URLSearchParams(window.location.search);
-  const rumParam = usp.get('rum');
-
-  // with parameter, weight is 1. Defaults to 100.
-  const weight = (rumParam === 'on') ? 1 : 100;
-
-  // eslint-disable-next-line no-bitwise
-  const hashCode = (s) => s.split('').reduce((a, b) => (((a << 5) - a) + b.charCodeAt(0)) | 0, 0);
-  const id = `${hashCode(window.location.href)}-${new Date().getTime()}-${Math.random().toString(16).substr(2, 14)}`;
-
-  const random = Math.random();
-  const isSelected = (random * weight < 1);
-
-  const rum = {
-    weight,
-    id,
-    random,
-    isSelected,
-  };
-
-  return rum;
-}
-
-/**
  * log RUM if part of the sample.
  * @param {string} checkpoint identifies the checkpoint in funnel
  * @param {Object} data additional data for RUM sample
  */
-
 export function sampleRUM(checkpoint, data = {}) {
   window.hlx = window.hlx || {};
-  window.hlx.rum = window.hlx.rum || rumInit();
+  if (!window.hlx.rum) {
+    const usp = new URLSearchParams(window.location.search);
+    const weight = (usp.get('rum') === 'on') ? 1 : 100; // with parameter, weight is 1. Defaults to 100.
+    // eslint-disable-next-line no-bitwise
+    const hashCode = (s) => s.split('').reduce((a, b) => (((a << 5) - a) + b.charCodeAt(0)) | 0, 0);
+    const id = `${hashCode(window.location.href)}-${new Date().getTime()}-${Math.random().toString(16).substr(2, 14)}`;
+    const random = Math.random();
+    const isSelected = (random * weight < 1);
+    // eslint-disable-next-line object-curly-newline
+    window.hlx.rum = { weight, id, random, isSelected };
+  }
   const { random, weight, id } = window.hlx.rum;
   if (random && (random * weight < 1)) {
-    // store a page view
-    sendRUMData({
-      weight,
-      id,
-      referer: window.location.href,
-      generation: 'biz-gen1',
-      checkpoint,
-      ...data,
-    });
+    // eslint-disable-next-line object-curly-newline
+    const body = JSON.stringify({ weight, id, referer: window.location.href, generation: 'biz-gen1', checkpoint, ...data });
+    const url = `https://rum.hlx3.page/.rum/${data.weight}`;
+    // eslint-disable-next-line no-unused-expressions
+    (navigator.sendBeacon && navigator.sendBeacon(url, body)) || fetch(url, { body, method: 'POST', keepalive: true }); // we should probably use XHR instead of fetch
   }
 }
 
