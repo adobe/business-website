@@ -32,7 +32,7 @@ export function sampleRUM(checkpoint, data = {}) {
   if (random && (random * weight < 1)) {
     // eslint-disable-next-line object-curly-newline
     const body = JSON.stringify({ weight, id, referer: window.location.href, generation: 'biz-gen1', checkpoint, ...data });
-    const url = `https://rum.hlx3.page/.rum/${data.weight}`;
+    const url = `https://rum.hlx3.page/.rum/${weight}`;
     // eslint-disable-next-line no-unused-expressions
     (navigator.sendBeacon && navigator.sendBeacon(url, body)) || fetch(url, { body, method: 'POST', keepalive: true }); // we should probably use XHR instead of fetch
   }
