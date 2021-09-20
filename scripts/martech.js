@@ -30,6 +30,8 @@ launchScriptEl.setAttribute('data-seed-adobelaunch', 'true');
 
 /* Core Web Vitals RUM collection */
 
+sampleRUM('cwv');
+
 function storeCWV(measurement) {
   const rum = { cwv: { } };
   rum.cwv[measurement.name] = measurement.value;
