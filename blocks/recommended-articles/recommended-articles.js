@@ -1,5 +1,5 @@
 import {
-  createOptimizedPicture,
+  buildArticleCard,
   getBlogArticle,
   fetchVariables,
 } from '../../scripts/scripts.js';
@@ -22,27 +22,14 @@ async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
     const articlePath = paths[i];
     // eslint-disable-next-line no-await-in-loop
     const article = await getBlogArticle(articlePath);
-    const {
-      title, description, image, category,
-    } = article;
-
-    const path = article.path.split('.')[0];
-
-    const picture = createOptimizedPicture(image, title, false, [{ width: '750' }]);
-    const pictureTag = picture.outerHTML;
-    const card = document.createElement('a');
-    card.className = 'article-card';
-    card.href = path;
-    card.innerHTML = `<div class="article-card-image">
-        ${pictureTag}
-      </div>
-      <div class="article-card-body">
-      <p class="article-card-category">${category}</p>
-      <h3>${title}</h3>
-        <p>${description}</p>
-      </div>`;
-    articleCardsContainer.append(card);
-    recommendedArticlesEl.append(articleCardsContainer);
+    if (article) {
+      const card = buildArticleCard(article);
+      articleCardsContainer.append(card);
+      recommendedArticlesEl.append(articleCardsContainer);
+    }
+  }
+  if (!articleCardsContainer.hasChildNodes()) {
+    recommendedArticlesEl.parentNode.parentNode.remove();
   }
 }
 
