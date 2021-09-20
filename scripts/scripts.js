@@ -719,8 +719,8 @@ async function decoratePage(win = window) {
         loadCSS('/styles/lazy-styles.css');
         addFavIcon('/styles/favicon.svg');
 
-        /* trigger martech.js load */
-        const martechUrl = '/scripts/martech.js';
+        /* trigger delayed.js load */
+        const martechUrl = '/scripts/delayed.js';
         const usp = new URLSearchParams(window.location.search);
         const martech = usp.get('martech');
 
