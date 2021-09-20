@@ -11,6 +11,46 @@
  */
 
 /**
+ * log RUM if part of the sample.
+ * @param {string} checkpoint identifies the checkpoint in funnel
+ * @param {Object} data additional data for RUM sample
+ */
+
+// eslint-disable-next-line object-curly-newline
+if (!navigator.sendBeacon) { window.data = JSON.stringify({ referer: window.location.href, checkpoint: 'unsupported', weight: 1 }); new Image().src = `https://rum.hlx3.page/.rum/1?data=${window.data}`; }
+
+export function sampleRUM(checkpoint, data = {}) {
+  try {
+    window.hlx = window.hlx || {};
+    if (!window.hlx.rum) {
+      const usp = new URLSearchParams(window.location.search);
+      const weight = (usp.get('rum') === 'on') ? 1 : 100; // with parameter, weight is 1. Defaults to 100.
+      // eslint-disable-next-line no-bitwise
+      const hashCode = (s) => s.split('').reduce((a, b) => (((a << 5) - a) + b.charCodeAt(0)) | 0, 0);
+      const id = `${hashCode(window.location.href)}-${new Date().getTime()}-${Math.random().toString(16).substr(2, 14)}`;
+      const random = Math.random();
+      const isSelected = (random * weight < 1);
+      // eslint-disable-next-line object-curly-newline
+      window.hlx.rum = { weight, id, random, isSelected };
+    }
+    const { random, weight, id } = window.hlx.rum;
+    if (random && (random * weight < 1)) {
+      // eslint-disable-next-line object-curly-newline
+      const body = JSON.stringify({ weight, id, referer: window.location.href, generation: 'biz-gen1', checkpoint, ...data });
+      const url = `https://rum.hlx3.page/.rum/${weight}`;
+      // eslint-disable-next-line no-unused-expressions
+      navigator.sendBeacon(url, body); // we should probably use XHR instead of fetch
+    }
+  } catch (e) {
+    // somethign went wrong
+  }
+}
+
+sampleRUM('top');
+window.addEventListener('load', () => sampleRUM('load'));
+document.addEventListener('click', () => sampleRUM('click'));
+
+/**
  * Loads a CSS file.
  * @param {string} href The path to the CSS file
  */
@@ -697,6 +737,7 @@ async function decoratePage(win = window) {
     getLCPCandidate((lcpCandidateEl) => {
       setLCPTrigger(lcpCandidateEl, async () => {
         // post LCP actions go here
+        sampleRUM('lcp');
 
         /* load gnav */
         const header = document.querySelector('header');
@@ -708,8 +749,8 @@ async function decoratePage(win = window) {
         loadCSS('/styles/lazy-styles.css');
         addFavIcon('/styles/favicon.svg');
 
-        /* trigger martech.js load */
-        const martechUrl = '/scripts/martech.js';
+        /* trigger delayed.js load */
+        const martechUrl = '/scripts/delayed.js';
         const usp = new URLSearchParams(window.location.search);
         const martech = usp.get('martech');
 
