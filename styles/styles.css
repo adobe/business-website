@@ -91,7 +91,6 @@ a.button:any-link {
   cursor: pointer;
   color: var(--color-white);
   background-color: var(--color-info-accent);
-  transition: background-color .4s;
   margin: 16px;
   white-space: nowrap;
   overflow: hidden;
