@@ -82,7 +82,8 @@ body {
 a.button:any-link {
   text-decoration: none;
   border-radius: 2rem;
-  padding: 5px 1.2em 6px 1.2em;
+  border: 2px solid transparent;
+  padding: 6px 1rem;
   /* outline: none; (keep outline for a11n) */
   text-align: center;
   font-size: var(--body-font-size-s);
@@ -91,81 +92,79 @@ a.button:any-link {
   cursor: pointer;
   color: var(--color-white);
   background-color: var(--color-info-accent);
-  margin: 16px;
+  margin: 16px 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   display: inline-block;
 }
 
-a.button.xlarge:any-link {
-  padding: 13px 1.5em 13px 1.5em;
-  border-radius: 27px;
-  font-size: var(--body-font-size-m);
-}
-
-a.button.large:any-link {
-  padding: 10px 1.5em 10px 1.5em;
-  border-radius: 22px;
+a.button:hover, a.button:focus {
+  background-color: var(--color-info-accent-hover);
 }
 
 a.button.small:any-link {
-  padding: 4px 1em 4px 1em;
-  border-radius: 5px;
+  padding: 2px .8rem;
   font-size: var(--body-font-size-xs);
 }
 
+a.button.large:any-link {
+  padding: 8px 1.2rem;
+  font-size: var(--body-font-size-m);
+}
+
+a.button.xlarge:any-link {
+  padding: 10px 1.4rem;
+  font-size: var(--body-font-size-l);
+}
+
 a.button.primary:any-link {
+  background-color: var(--color-gray-700);
+}
+
+a.button.primary:hover, a.button.primary:focus {
   background-color: var(--color-gray-800);
 }
 
 a.button.secondary:any-link {
-  background-color: var(--color-white);
-  border: 2px solid var(--color-gray-700);
-  color: var(--color-gray-700);
+  background-color: var(--color-gray-600);
 }
 
-a.button.secondary:hover {
-  color: var(--color-white);
+a.button.secondary:hover, a.button.secondary:focus {
   background-color: var(--color-gray-700);
 }
 
 a.button.light:any-link {
-  background-color: var(--color-white);
+  background-color: transparent;
   color: var(--color-info-accent);
   border: solid 2px var(--color-info-accent);
 }
 
-a.button.primary.light:any-link,
-a.button.secondary.light:any-link,
-a.button.action.light:any-link {
-  color: var(--color---color-gray-800);
+a.button.light:hover, a.button.light:focus {
+  background-color: var(--color-info-accent-hover);
+  color: var(--color-white);
 }
 
-a.button.primary.light:any-link,
-a.button.action.light:any-link {
+a.button.primary.light:any-link {
+  color: var(--color-gray-700);
+  border-color: var(--color-gray-700);
+}
+
+a.button.primary.light:hover, a.button.primary.light:focus {
+  background-color: var(--color-gray-800);
   border-color: var(--color-gray-800);
+  color: var(--color-white);
 }
 
 a.button.secondary.light:any-link {
-  border-color: var(--color-gray-300);
+  color: var(--color-gray-600);
+  border-color: var(--color-gray-600);
 }
 
-a.button.dark:any-link {
+a.button.secondary.light:hover, a.button.secondary.light:focus {
+  background-color: var(--color-gray-700);
+  border-color: var(--color-gray-700);
   color: var(--color-white);
-  border: solid 2px var(--color-white);
-  background-color: transparent;
-}
-
-a.button.action.light:any-link {
-  background-color: transparent;
-}
-
-a.button.action.light:any-link:hover,
-a.button.action.light:any-link:active,
-a.button.action.light:any-link:focus {
-  color: var(--color-white);
-  background-color: var(--color-gray-800);
 }
 
 a.button > svg {
