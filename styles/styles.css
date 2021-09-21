@@ -81,7 +81,7 @@ body {
 
 a.button:any-link {
   text-decoration: none;
-  border-radius: 18px;
+  border-radius: 2rem;
   padding: 5px 1.2em 6px 1.2em;
   /* outline: none; (keep outline for a11n) */
   text-align: center;
@@ -111,7 +111,7 @@ a.button.large:any-link {
 
 a.button.small:any-link {
   padding: 4px 1em 4px 1em;
-  border-radius: 15px;
+  border-radius: 5px;
   font-size: var(--body-font-size-xs);
 }
 
@@ -120,8 +120,14 @@ a.button.primary:any-link {
 }
 
 a.button.secondary:any-link {
-  background-color: var(--color-gray-300);
-  color: var(--color-gray-800);
+  background-color: var(--color-white);
+  border: 2px solid var(--color-gray-700);
+  color: var(--color-gray-700);
+}
+
+a.button.secondary:hover {
+  color: var(--color-white);
+  background-color: var(--color-gray-700);
 }
 
 a.button.light:any-link {
