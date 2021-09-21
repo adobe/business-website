@@ -276,6 +276,14 @@ function buildTagsBlock(mainEl) {
   }
 }
 
+async function interlink() {
+  const blockName = 'interlinks';
+  const mod = await import(`/blocks/${blockName}/${blockName}.js`);
+  if (mod.default) {
+    await mod.default();
+  }
+}
+
 /**
  * Decorates all blocks in a container element.
  * @param {Element} $main The container element
@@ -296,6 +304,7 @@ function buildAutoBlocks(mainEl) {
     if (getMetadata('author') && getMetadata('publication-date') && !mainEl.querySelector('.article-header')) {
       buildArticleHeader(mainEl);
       buildTagsBlock(mainEl);
+      interlink(mainEl);
     }
     if (window.location.pathname.includes('/categories/') || window.location.pathname.includes('/tags/')) {
       buildTagHeader(mainEl);
