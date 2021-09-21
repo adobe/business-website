@@ -200,7 +200,7 @@ function buildArticleHeader(mainEl) {
 }
 
 function buildTagHeader(mainEl) {
-  const div = document.createElement('div');
+  const div = mainEl.querySelector('div');
   const h1 = mainEl.querySelector('h1');
   const picture = mainEl.querySelector('picture');
   const tagHeaderBlockEl = buildBlock('tag-header', [
@@ -208,7 +208,6 @@ function buildTagHeader(mainEl) {
     [{ elems: [picture.closest('p')] }],
   ]);
   div.append(tagHeaderBlockEl);
-  mainEl.prepend(div);
 }
 
 function buildArticleFeed(mainEl) {
@@ -286,7 +285,12 @@ function unwrapBlock(block) {
       $appendTo = postBlockSection;
     }
   });
-
+  if (!section.hasChildNodes()) {
+    section.remove();
+  }
+  if (!blockSection.hasChildNodes()) {
+    blockSection.remove();
+  }
   if (!postBlockSection.hasChildNodes()) {
     postBlockSection.remove();
   }
@@ -294,7 +298,7 @@ function unwrapBlock(block) {
 
 function splitSections() {
   document.querySelectorAll('main > div > div').forEach((block) => {
-    const blocksToSplit = ['article-feed', 'article-header', 'recommended-articles'];
+    const blocksToSplit = ['article-header', 'recommended-articles'];
     if (blocksToSplit.includes(block.className)) {
       unwrapBlock(block);
     }
@@ -302,18 +306,8 @@ function splitSections() {
 }
 
 function removeEmptySections() {
-  document.querySelectorAll('main > div').forEach((div) => {
-    // if div is empty
-    if (!div.hasChildNodes()) {
-      div.remove();
-    // else if all div children are empty
-    } else {
-      let empty = true;
-      div.childNodes.forEach((child) => {
-        if (child.hasChildNodes()) { empty = false; }
-      });
-      if (empty) { div.remove(); }
-    }
+  document.querySelectorAll('main > div:empty').forEach((div) => {
+    div.remove();
   });
 }
 
