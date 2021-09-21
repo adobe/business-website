@@ -9,7 +9,9 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import { loadScript } from './scripts.js';
+
+/* globals webVitals */
+import { loadScript, sampleRUM } from './scripts.js';
 
 window.marketingtech = window.marketingtech || {};
 window.marketingtech.adobe = {
@@ -25,3 +27,26 @@ window.targetGlobalSettings.bodyHidingEnabled = false;
 
 const launchScriptEl = loadScript('https://www.adobe.com/marketingtech/main.no-promise.min.js');
 launchScriptEl.setAttribute('data-seed-adobelaunch', 'true');
+
+/* Core Web Vitals RUM collection */
+
+sampleRUM('cwv');
+
+function storeCWV(measurement) {
+  const rum = { cwv: { } };
+  rum.cwv[measurement.name] = measurement.value;
+  sampleRUM('cwv', rum);
+}
+
+if (window.hlx.rum.isSelected) {
+  const script = document.createElement('script');
+  script.src = 'https://unpkg.com/web-vitals';
+  script.onload = () => {
+    // When loading `web-vitals` using a classic script, all the public
+    // methods can be found on the `webVitals` global namespace.
+    webVitals.getCLS(storeCWV);
+    webVitals.getFID(storeCWV);
+    webVitals.getLCP(storeCWV);
+  };
+  document.head.appendChild(script);
+}
