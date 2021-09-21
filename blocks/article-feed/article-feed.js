@@ -65,7 +65,7 @@ async function decorateArticleFeed(articleFeedEl, config, offset = 0) {
   }
   if (articles.length > pageEnd) {
     const loadMore = document.createElement('a');
-    loadMore.className = 'load-more button secondary';
+    loadMore.className = 'load-more button small primary light';
     loadMore.href = '#';
     const vars = await fetchVariables();
     loadMore.textContent = vars['load-more'];
