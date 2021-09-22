@@ -55,7 +55,6 @@ export default async function interlink(locale = '') {
     articleBody
       .querySelectorAll('div > p:not([class])')
       .forEach((p) => {
-        console.log(p);
         // set paragraph link limit: 1 every 40 words
         const paraLinks = p.querySelectorAll('a').length;
         const paraWords = p.textContent.split(/\s/).length;
