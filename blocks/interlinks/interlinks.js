@@ -28,7 +28,7 @@ export function checkAndAddMatch(matches, contender, maxMatches) {
  * The first occurrence of each keyword will be replaced with a link.
  */
 export default async function interlink(locale = '') {
-  const articleBody = document.querySelector('main > div.article-header-container + div');
+  const articleBody = document.querySelector('main > div + div');
   const resp = await fetch(`${locale}/blog/keywords.json`);
   if (articleBody && resp.ok) {
     const json = await resp.json();
@@ -85,7 +85,7 @@ export default async function interlink(locale = '') {
                   const a = document.createElement('a');
                   a.title = item.Keyword;
                   a.href = item.URL;
-                  a.classList.add('interlink');
+                  a.setAttribute('data-origin', 'interlink');
                   a.appendChild(document.createTextNode(text.substring(start, end)));
                   p.insertBefore(a, textNode.nextSibling);
                   p.insertBefore(document.createTextNode(text.substring(end)), a.nextSibling);
