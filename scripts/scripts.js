@@ -84,14 +84,15 @@ export function getLanguage() {
   if (language) return language;
   language = LANG.EN;
   const segs = window.location.pathname.split('/');
-  if (segs && segs.length > 0)
-  for (let [key, value] of Object.entries(LANG)) {
-    if (value === segs[1]) {
-      language = value;
-      break;
+  if (segs && segs.length > 0) {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const [, value] of Object.entries(LANG)) {
+      if (value === segs[1]) {
+        language = value;
+        break;
+      }
     }
   }
-  
   return language;
 }
 
@@ -106,7 +107,6 @@ export function getRootPath() {
   }
   return `/${loc}/blog`;
 }
-
 
 /**
  * Retrieves the content of a metadata tag.
