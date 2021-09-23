@@ -10,9 +10,9 @@ function isCardOnPage(article) {
   return !!document.querySelector(`.featured-article a.featured-article-card[href="${path}"], .recommended-articles a.article-card[href="${path}"]`);
 }
 
-async function filterArticles(config, locale) {
+async function filterArticles(config) {
   if (!window.blogIndex) {
-    window.blogIndex = await fetchBlogArticleIndex(locale);
+    window.blogIndex = await fetchBlogArticleIndex();
   }
   const index = window.blogIndex;
 
