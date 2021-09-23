@@ -7,7 +7,7 @@ import {
 async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
   if (recommendedArticlesEl.classList.contains('small')) {
     recommendedArticlesEl.parentNode.querySelectorAll('a').forEach((aEl) => {
-      aEl.classList.add('button', 'small', 'action', 'light');
+      aEl.classList.add('button', 'primary', 'small', 'light');
     });
     recommendedArticlesEl.parentNode.classList.add('recommended-articles-small-content-wrapper');
   } else {
