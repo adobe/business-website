@@ -86,7 +86,7 @@ export function getLanguage() {
   const segs = window.location.pathname.split('/');
   if (segs && segs.length > 0)
   for (let [key, value] of Object.entries(LANG)) {
-    if (value === segs[0]) {
+    if (value === segs[1]) {
       language = value;
       break;
     }
