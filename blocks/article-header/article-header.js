@@ -1,6 +1,7 @@
 import {
   buildFigure,
   createOptimizedPicture,
+  getRootPath,
 } from '../../scripts/scripts.js';
 
 async function populateAuthorImg(imgContainer, url, name) {
@@ -30,7 +31,7 @@ export default function decorateArticleHeader(blockEl) {
   const category = categoryContainer.querySelector('p');
   const categoryA = document.createElement('a');
   categoryA.textContent = category.textContent;
-  categoryA.href = `${window.location.origin}/blog/categories/${category.textContent}`;
+  categoryA.href = `${window.location.origin}${getRootPath()}/categories/${category.textContent}`;
   category.innerHTML = '';
   category.append(categoryA);
   // title

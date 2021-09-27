@@ -70,19 +70,11 @@ main div.recommended-articles-small-content-wrapper p {
   margin: 0;
 }
 
-main div.recommended-articles-small-content-wrapper a.button {
-  margin-left: 0;
-  margin-right: 0;
-}
-
 @media (min-width: 1200px) {
   main div.recommended-articles-small-content-wrapper h3 {
     margin-bottom: 0;
   }
 
-  main div.recommended-articles-small-content-wrapper a.button {
-    margin-top: 0;
-  }
 }
 
 main .recommended-articles-small-container .article-card {

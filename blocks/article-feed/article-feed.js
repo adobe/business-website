@@ -2,6 +2,7 @@ import {
   readBlockConfig,
   buildArticleCard,
   fetchBlogArticleIndex,
+  fetchVariables,
 } from '../../scripts/scripts.js';
 
 function isCardOnPage(article) {
@@ -10,9 +11,9 @@ function isCardOnPage(article) {
   return !!document.querySelector(`.featured-article a.featured-article-card[href="${path}"], .recommended-articles a.article-card[href="${path}"]`);
 }
 
-async function filterArticles(config, locale) {
+async function filterArticles(config) {
   if (!window.blogIndex) {
-    window.blogIndex = await fetchBlogArticleIndex(locale);
+    window.blogIndex = await fetchBlogArticleIndex();
   }
   const index = window.blogIndex;
 
@@ -64,9 +65,10 @@ async function decorateArticleFeed(articleFeedEl, config, offset = 0) {
   }
   if (articles.length > pageEnd) {
     const loadMore = document.createElement('a');
-    loadMore.className = 'load-more button secondary';
+    loadMore.className = 'load-more button small primary light';
     loadMore.href = '#';
-    loadMore.innerHTML = 'Load more articles';
+    const vars = await fetchVariables();
+    loadMore.textContent = vars['load-more'];
     articleFeedEl.append(loadMore);
     loadMore.addEventListener('click', (event) => {
       event.preventDefault();
