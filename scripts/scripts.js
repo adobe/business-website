@@ -67,6 +67,47 @@ export function loadCSS(href) {
   }
 }
 
+const LANG = {
+  EN: 'en',
+  DE: 'de',
+  FR: 'fr',
+  KO: 'ko',
+  ES: 'es',
+  IT: 'it',
+  JP: 'jp',
+  BR: 'br',
+};
+
+let language;
+
+export function getLanguage() {
+  if (language) return language;
+  language = LANG.EN;
+  const segs = window.location.pathname.split('/');
+  if (segs && segs.length > 0) {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const [, value] of Object.entries(LANG)) {
+      if (value === segs[1]) {
+        language = value;
+        break;
+      }
+    }
+  }
+  return language;
+}
+
+/**
+ * Returns the language dependent root path
+ * @returns {string} The computed root path
+ */
+export function getRootPath() {
+  const loc = getLanguage();
+  if (loc === LANG.EN) {
+    return '/blog';
+  }
+  return `/${loc}/blog`;
+}
+
 /**
  * Retrieves the content of a metadata tag.
  * @param {string} name The metadata name (or property)
@@ -231,7 +272,7 @@ function buildArticleHeader(mainEl) {
   const articleHeaderBlockEl = buildBlock('article-header', [
     [`<p>${category}</p>`],
     [h1],
-    [`<p><a href="/blog/authors/${toClassName(author)}">${author}</a></p>
+    [`<p><a href="${getRootPath()}/authors/${toClassName(author)}">${author}</a></p>
       <p>${publicationDate}</p>`],
     [{ elems: [picture.closest('p'), getImageCaption(picture)] }],
   ]);
@@ -551,7 +592,7 @@ export function buildArticleCard(article, type = 'article') {
     </div>
     <div class="${type}-card-body">
       <p class="${type}-card-category">
-        <a href="${window.location.origin}/blog/categories/${category}">${category}</a>
+        <a href="${window.location.origin}${getRootPath()}/categories/${category}">${category}</a>
       </p>
       <h3>${title}</h3>
       <p>${description}</p>
@@ -603,12 +644,11 @@ export function addFavIcon(href) {
 
 /**
  * fetches blog article index.
- * @param {string} locale prefix used for path to index
  * @returns {object} index with data and path lookup
  */
 
-export async function fetchBlogArticleIndex(locale = '') {
-  const resp = await fetch(`${locale}/blog/query-index.json`);
+export async function fetchBlogArticleIndex() {
+  const resp = await fetch(`${getRootPath()}/query-index.json`);
   const json = await resp.json();
   const byPath = {};
   json.data.forEach((post) => {
@@ -624,22 +664,21 @@ export async function fetchBlogArticleIndex(locale = '') {
  * @returns {object} article object
  */
 
-export async function getBlogArticle(path, locale = '') {
+export async function getBlogArticle(path) {
   if (!window.blogIndex) {
-    window.blogIndex = await fetchBlogArticleIndex(locale);
+    window.blogIndex = await fetchBlogArticleIndex();
   }
   const index = window.blogIndex;
   return (index.byPath[path]);
 }
 
 /**
- * fetches locale-specific string variables.
- * @param {string} locale prefix used for path to index
+ * fetches the string variables.
  * @returns {object} localized variables
  */
 
-export async function fetchVariables(locale = '') {
-  const resp = await fetch(`${locale}/blog/variables.json`);
+export async function fetchVariables() {
+  const resp = await fetch(`${getRootPath()}/variables.json`);
   const json = await resp.json();
   const vars = {};
   json.data.forEach((v) => {
@@ -742,7 +781,7 @@ async function decoratePage(win = window) {
         /* load gnav */
         const header = document.querySelector('header');
         header.setAttribute('data-block-name', 'gnav');
-        header.setAttribute('data-gnav-source', '/blog/gnav');
+        header.setAttribute('data-gnav-source', `${getRootPath()}/gnav`);
         loadBlock(header);
 
         await loadBlocks($main);
