@@ -13,7 +13,8 @@ footer .footer {
   footer .footer {
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
+    /* justify-content: space-between; // for blog */ 
   }
 }
 
@@ -30,6 +31,8 @@ footer a:any-link {
 footer .footer-region {
   position: relative;
   width: fit-content;
+  display: none; /* remove for blog */
+  visibility: hidden; /* remove for blog */
 } 
 
 @media (min-width: 600px) {
@@ -37,18 +40,6 @@ footer .footer-region {
     margin-right: 16px;
   }
 }
-
-/* <div class="footer-region">
-  <a href="#" class="footer-region-button" aria-haspopup="true" role="button">
-    <img class="footer-region-img" loading="lazy" src="/blocks/footer/globe.svg">
-    <span class="footer-region-text">
-      ${data.regionSelector.selected}
-    </span>
-  </a>
-  <div class="footer-region-options">
-    <ul class="footer-region-dropdown"></ul>
-  </div>
-</div> */
 
 footer .footer-region-button {
   display: flex;
@@ -134,7 +125,11 @@ footer .region-selected a::after {
   transform: rotate(45deg);
 }
 
-@media (min-width: 900px) {
+footer .footer-info {
+  right: 0;
+}
+
+@media (min-width: 1200px) {
   footer .footer-info {
     display: flex;
   }
@@ -144,7 +139,7 @@ footer .footer-copyright-text {
   padding: 6px 0;
 }
 
-@media (min-width: 900px) {
+@media (min-width: 1200px) {
   footer .footer-copyright-text {
     margin: 0;
     margin-right: 6px;
@@ -169,7 +164,7 @@ footer .footer-link {
   margin-bottom: 6px;
 }
 
-@media (min-width: 900px) {
+@media (min-width: 1200px) {
   footer .footer-link {
     margin-top: 6px;
   }

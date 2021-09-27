@@ -1,6 +1,5 @@
 import {
   fetchVariables,
-  getRootPath,
 } from '../../scripts/scripts.js';
 
 async function markupToFooter(url) {
@@ -123,7 +122,6 @@ async function getFooter(data) {
 
   regionBtn.onclick = () => {
     const regionsExpanded = regionBtn.getAttribute('aria-expanded');
-    // const btn = e.target.closest('a');
     if (regionsExpanded === 'false') {
       regionBtn.setAttribute('aria-expanded', true);
     } else {
@@ -157,85 +155,14 @@ async function getFooter(data) {
       const a = document.createElement('a');
       a.href = link.href;
       a.textContent = link.text;
-      if (
-        link.text.startsWith('Ad')
-        || link.text.startsWith('Choix')
-      ) {
-        li.innerHTML = '<img class="footer-region-img" loading="lazy" src="/blocks/footer/adchoices-small.svg">';
+      const { hash } = new URL(link.href);
+      if (hash === '#interest-based-ads') {
+        li.innerHTML = '<img class="footer-link-img" loading="lazy" src="/blocks/footer/adchoices-small.svg">';
       }
       li.append(a);
       linkContainer.append(li);
     }
   });
-
-  // const hamburger = footer.querySelector('.footer-hamburger');
-  // hamburger.addEventListener('click', () => {
-  //   const expanded = footer.getAttribute('aria-expanded') === 'true';
-  //   footer.setAttribute('aria-expanded', !expanded);
-  // });
-
-  // const search = footer.querySelector('.footer-search');
-  // const searchIcon = footer.querySelector('.footer-search-icon');
-  // const searchTerms = footer.querySelector('#footer-search-terms');
-
-  // searchIcon.addEventListener('click', () => {
-  //   const expanded = (search.getAttribute('aria-expanded') === 'true');
-  //   collapseAll(footer);
-  //   search.setAttribute('aria-expanded', !expanded);
-  //   if (!expanded) {
-  //     searchTerms.focus();
-  //   }
-  // });
-
-  // searchTerms.addEventListener('input', () => {
-  //   const searchResultsEl = footer.querySelector('#footer-search-results');
-  //   populateSearchResults(searchTerms.value, searchResultsEl);
-  //   const searchBox = footer.querySelector('.footer-search-box');
-  //   if (searchTerms.value.trim().length === 0) {
-  //     searchBox.classList.add('footer-nosearch');
-  //   } else {
-  //     searchBox.classList.remove('footer-nosearch');
-  //   }
-  //   const a = footer.querySelector('.footer-search-link a');
-  //   if (a) {
-  //     const href = new URL(a.href);
-  //     href.searchParams.set('q', searchTerms.value);
-  //     a.href = href.toString();
-  //   }
-  // });
-
-  // searchTerms.addEventListener('keydown', (evt) => {
-  //   if (evt.code === 'Escape') {
-  //     collapseAll(footer);
-  //   }
-  // });
-
-  // const sectionEl = footer.querySelector('.footer-section');
-
-  // nav.top.forEach((e) => {
-  //   const selected = isSelected(e) && !sectionEl.querySelector('.footer-selected');
-  //   const navItemEl = document.createElement('span');
-  //   if (selected) navItemEl.classList.add('footer-selected');
-  //   if (e.href) {
-  //     navItemEl.innerHTML = `<a href="${e.href}">${e.text}</a>`;
-  //   } else if (e.type === 'button') {
-  //     navItemEl.innerHTML = `<a href="#" class="footer-button footer-primary">${e.text}</a>`;
-  //   } else {
-  //     navItemEl.classList.add('footer-drop');
-  //     navItemEl.setAttribute('tabindex', '0');
-  //     navItemEl.innerHTML = `${e.text}`;
-  //     if (e.submenu) {
-  //       const submenuEl = getSubmenu(e.submenu);
-  //       navItemEl.appendChild(submenuEl);
-  //       navItemEl.addEventListener('click', () => {
-  //         const expanded = navItemEl.getAttribute('aria-expanded') === 'true';
-  //         collapseAll(footer);
-  //         navItemEl.setAttribute('aria-expanded', !expanded);
-  //       });
-  //     }
-  //   }
-  //   sectionEl.appendChild(navItemEl);
-  // });
 
   return (footer);
 }
