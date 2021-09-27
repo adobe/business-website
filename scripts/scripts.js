@@ -745,6 +745,11 @@ async function decoratePage(win = window) {
         header.setAttribute('data-gnav-source', '/blog/gnav');
         loadBlock(header);
 
+        const footer = document.querySelector('footer');
+        footer.setAttribute('data-block-name', 'footer');
+        footer.setAttribute('data-footer-source', '/blog/footer');
+        loadBlock(footer);
+
         await loadBlocks($main);
         loadCSS('/styles/lazy-styles.css');
         addFavIcon('/styles/favicon.svg');
