@@ -1,5 +1,6 @@
 import {
   fetchVariables,
+  getRootPath,
 } from '../../scripts/scripts.js';
 
 async function markupToFooter(url) {
@@ -102,17 +103,13 @@ async function getFooter(data) {
   footer.innerHTML = html;
 
   const regionOptionsContainer = footer.querySelector('.footer-region-options');
+  const { origin } = new URL(window.location);
 
   data.regionSelector.options.forEach((option) => {
     const li = document.createElement('li');
     li.className = 'footer-region-option';
     const a = document.createElement('a');
-    const { pathname } = new URL(window.location);
-    if (pathname === '/blog/') {
-      a.href = `./${option.path}`;
-    } else {
-      a.href = `../${option.path}`;
-    }
+    a.href = `${origin}/blog/${option.path}`;
     a.textContent = option.region;
     a.setAttribute('title', option.region);
     if (option.region === data.regionSelector.selected) {
