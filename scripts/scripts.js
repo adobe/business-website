@@ -784,9 +784,10 @@ async function decoratePage(win = window) {
         header.setAttribute('data-gnav-source', `${getRootPath()}/gnav`);
         loadBlock(header);
 
+        /* load footer */
         const footer = document.querySelector('footer');
         footer.setAttribute('data-block-name', 'footer');
-        footer.setAttribute('data-footer-source', '/blog/footer');
+        footer.setAttribute('data-footer-source', `${getRootPath()}/footer`);
         loadBlock(footer);
 
         await loadBlocks($main);
