@@ -68,6 +68,11 @@
   }
 }
 
+html,
+body {
+  height: 100%; /* For bottom aligned footer */
+}
+
 body {
   background-color: var(--body-background-color);
   font-family: var(--body-font-family);
@@ -75,6 +80,9 @@ body {
   color: var(--body-color);
   margin: 0;
   padding: 0;
+  /* For bottom aligned footer */
+  display: flex;
+  flex-direction: column;
 }
 
 /* buttons */
@@ -189,6 +197,7 @@ main {
   line-height: var(--body-line-height);
   margin: inherit;
   font-weight: var(--body-font-weight);
+  flex: 1 0 auto; /* For bottom aligned footer */
 }
 
 main p:not(:last-of-type) {
