@@ -1,6 +1,3 @@
-main .featured-article-container > div {
-  padding: 0;
-}
 
 @media (min-width: 600px) {
   main .featured-article-container > div {
