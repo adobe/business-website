@@ -338,7 +338,7 @@ main .section-wrapper p.button-container {
 header {
   box-sizing: border-box;
   border-bottom: 1px solid #EAEAEA;
-  height: 64px;
+  min-height: 64px;
   background-color: var(--color-white);
 }
 
