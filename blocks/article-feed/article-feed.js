@@ -2,7 +2,7 @@ import {
   readBlockConfig,
   buildArticleCard,
   fetchBlogArticleIndex,
-  fetchVariables,
+  fetchPlaceholders,
 } from '../../scripts/scripts.js';
 
 function isCardOnPage(article) {
@@ -67,8 +67,8 @@ async function decorateArticleFeed(articleFeedEl, config, offset = 0) {
     const loadMore = document.createElement('a');
     loadMore.className = 'load-more button small primary light';
     loadMore.href = '#';
-    const vars = await fetchVariables();
-    loadMore.textContent = vars['load-more'];
+    const placeholders = await fetchPlaceholders();
+    loadMore.textContent = placeholders['load-more'];
     articleFeedEl.append(loadMore);
     loadMore.addEventListener('click', (event) => {
       event.preventDefault();

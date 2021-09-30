@@ -1,7 +1,7 @@
 import {
   buildArticleCard,
   getBlogArticle,
-  fetchVariables,
+  fetchPlaceholders,
 } from '../../scripts/scripts.js';
 
 async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
@@ -12,8 +12,8 @@ async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
     recommendedArticlesEl.parentNode.classList.add('recommended-articles-small-content-wrapper');
   } else {
     const title = document.createElement('h3');
-    const vars = await fetchVariables();
-    title.textContent = vars['recommended-for-you'];
+    const placeholders = await fetchPlaceholders();
+    title.textContent = placeholders['recommended-for-you'];
     recommendedArticlesEl.prepend(title);
   }
   const articleCardsContainer = document.createElement('div');
