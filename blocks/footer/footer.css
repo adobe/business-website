@@ -104,7 +104,7 @@ footer li.footer-region-option {
   font-weight: 100;
 }
 
-footer li.footer-region-option:not(.region-selected) a {
+footer li.footer-region-option:not(.footer-region-selected) a {
   display: block;
   width: 100%;
 }
@@ -114,13 +114,13 @@ footer li.footer-region-option a:focus {
   color: var(--color-gray-500);
 }
 
-footer .region-selected a {
+footer .footer-region-selected a {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-footer .region-selected a::after {
+footer .footer-region-selected a::after {
   content: ' ';
   display: block;
   margin: 0 2px;
