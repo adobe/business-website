@@ -30,7 +30,7 @@ header .gnav a:any-link {
 }
 
 header {
-  height: 64px;
+  min-height: 64px;
   box-sizing: border-box;
   border-bottom: 1px solid #EAEAEA;
 }
