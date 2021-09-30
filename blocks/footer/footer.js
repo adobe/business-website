@@ -128,23 +128,20 @@ async function getFooter(data) {
       regionBtn.setAttribute('aria-expanded', false);
     }
 
-    window.onkeydown = (keyE) => {
-      if (keyE.code === 'Escape') {
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Escape' && regionsExpanded === 'true') {
         regionBtn.setAttribute('aria-expanded', false);
       }
-    };
+    });
   };
 
-  window.onclick = (e) => {
+  window.addEventListener('click', (e) => {
     const a = e.target.closest('a');
     const regionsExpanded = regionBtn.getAttribute('aria-expanded');
-    if (
-      a !== regionBtn
-      && regionsExpanded === 'true'
-    ) {
+    if (a !== regionBtn && regionsExpanded === 'true') {
       regionBtn.setAttribute('aria-expanded', false);
     }
-  };
+  });
 
   const linkContainer = footer.querySelector('.footer-links');
 
