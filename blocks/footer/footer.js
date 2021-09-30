@@ -112,7 +112,7 @@ async function getFooter(data) {
     a.textContent = option.region;
     a.setAttribute('title', option.region);
     if (option.region === data.regionSelector.selected) {
-      li.classList.add('region-selected');
+      li.classList.add('footer-region-selected');
     }
     li.append(a);
     regionOptionsContainer.append(li);
@@ -120,7 +120,7 @@ async function getFooter(data) {
 
   const regionBtn = footer.querySelector('.footer-region-button');
 
-  regionBtn.onclick = () => {
+  regionBtn.addEventListener('click', () => {
     const regionsExpanded = regionBtn.getAttribute('aria-expanded');
     if (regionsExpanded === 'false') {
       regionBtn.setAttribute('aria-expanded', true);
@@ -133,7 +133,7 @@ async function getFooter(data) {
         regionBtn.setAttribute('aria-expanded', false);
       }
     });
-  };
+  });
 
   window.addEventListener('click', (e) => {
     const a = e.target.closest('a');
