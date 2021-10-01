@@ -125,7 +125,7 @@ main a.article-card:any-link {
   object-fit: cover;
   height: 100%;
   width: 100%;
-  transition: .4s;
+  transition: opacity .4s;
 }
 
 .article-card .article-card-image img:hover {
