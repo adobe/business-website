@@ -1,5 +1,6 @@
 main .recommended-articles-container,
 main .recommended-articles-small-container {
+  visibility: unset;
   background: var(--color-gray-200);
   padding-bottom: 1rem;
 }

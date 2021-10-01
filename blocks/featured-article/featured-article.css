@@ -1,25 +1,3 @@
-main .featured-article-container > div {
-  padding: 0;
-}
-
-@media (min-width: 600px) {
-  main .featured-article-container > div {
-    max-width: unset;
-  }
-}
-
-main .featured-article-container div h1 {
-  padding: 0 2rem;
-  text-align: center;
-}
-
-@media (min-width: 600px) {
-  main .featured-article-container div h1 {
-    text-align: left;
-    max-width: 800px;
-  }
-}
-
 @media (min-width: 1200px) {
   main .featured-article-container div h1 {
     max-width: 1200px;
