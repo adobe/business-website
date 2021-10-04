@@ -11,6 +11,31 @@
  */
 
 /**
+ * Create an element with ID, class, children, and attributes
+ * @param {Object} props to create the element
+ * @returns {HTMLElement} the element created
+ */
+export function createEl({
+  tag, className, id, html, attributes,
+}) {
+  const el = document.createElement(tag);
+  if (id) { el.id = id; }
+  if (className) { el.className = className; }
+
+  if (html && html instanceof HTMLElement) {
+    el.append(html);
+  } else if (html && typeof html === 'string') {
+    el.innerHTML = html;
+  }
+  if (attributes) {
+    Object.keys(attributes).forEach((key) => {
+      el.setAttribute(key, attributes[key]);
+    });
+  }
+  return el;
+}
+
+/**
  * log RUM if part of the sample.
  * @param {string} checkpoint identifies the checkpoint in funnel
  * @param {Object} data additional data for RUM sample
@@ -56,13 +81,11 @@ document.addEventListener('click', () => sampleRUM('click'));
  */
 export function loadCSS(href) {
   if (!document.querySelector(`head > link[href="${href}"]`)) {
-    const link = document.createElement('link');
+    const link = createEl({ tag: 'link', attributes: { rel: 'stylesheet', href } });
     link.setAttribute('rel', 'stylesheet');
     link.setAttribute('href', href);
-    link.onload = () => {
-    };
-    link.onerror = () => {
-    };
+    link.onload = () => { };
+    link.onerror = () => { };
     document.head.appendChild(link);
   }
 }
@@ -117,6 +140,55 @@ export function getMetadata(name) {
   const attr = name && name.includes(':') ? 'property' : 'name';
   const meta = [...document.head.querySelectorAll(`meta[${attr}="${name}"]`)].map((el) => el.content).join(', ');
   return meta;
+}
+
+/**
+ * Get the current Helix environment
+ * @returns {Object} the env object
+ */
+export function getHelixEnv() {
+  let envName = sessionStorage.getItem('helix-env');
+  if (!envName) envName = 'prod';
+  const envs = {
+    stage: {
+      ims: 'stg1',
+      adminconsole: 'stage.adminconsole.adobe.com',
+      account: 'stage.account.adobe.com',
+      target: false,
+    },
+    prod: {
+      ims: 'prod',
+      adminconsole: 'adminconsole.adobe.com',
+      account: 'account.adobe.com',
+      target: true,
+    },
+  };
+  const env = envs[envName];
+
+  const overrideItem = sessionStorage.getItem('helix-env-overrides');
+  if (overrideItem) {
+    const overrides = JSON.parse(overrideItem);
+    const keys = Object.keys(overrides);
+    env.overrides = keys;
+
+    keys.forEach((value) => {
+      env[value] = overrides[value];
+    });
+  }
+
+  if (env) {
+    env.name = envName;
+  }
+  return env;
+}
+
+export function debug(message) {
+  const { hostname } = window.location;
+  const env = getHelixEnv();
+  if (env.name !== 'prod' || hostname === 'localhost') {
+    // eslint-disable-next-line no-console
+    console.log(message);
+  }
 }
 
 /**
@@ -466,8 +538,7 @@ export async function loadBlock($block, callback) {
         await mod.default($block, blockName, document, callback);
       }
     } catch (err) {
-      // eslint-disable-next-line no-console
-      console.log(`failed to load module for ${blockName}`, err);
+      debug(`failed to load module for ${blockName}`, err);
     }
     loadCSS(`/blocks/${blockName}/${blockName}.css`);
   }
@@ -745,20 +816,17 @@ function getLCPCandidate(callback) {
     if (lcp !== 'simple' && lcpBlocks.includes(block.getAttribute('data-block-name'))) {
       loadBlock(block, () => {
         candidate = block.querySelector('img');
-        // eslint-disable-next-line no-console
-        console.log('LCP block found', candidate);
+        debug('LCP block found', candidate);
         callback(candidate);
       });
     } else {
       // not an LCP block
-      // eslint-disable-next-line no-console
-      console.log('first block is not LCP block', candidate);
+      debug('first block is not LCP block', candidate);
       callback(candidate);
     }
   } else {
     // no blocks found
-    // eslint-disable-next-line no-console
-    console.log('no blocks found', candidate);
+    debug('no blocks found', candidate);
     callback(candidate);
   }
 }
@@ -799,8 +867,9 @@ async function decoratePage(win = window) {
 
         /* load gnav */
         const header = document.querySelector('header');
+        const gnavPath = getMetadata('gnav') || `${getRootPath()}/gnav`;
         header.setAttribute('data-block-name', 'gnav');
-        header.setAttribute('data-gnav-source', `${getRootPath()}/gnav`);
+        header.setAttribute('data-gnav-source', gnavPath);
         loadBlock(header);
 
         await loadBlocks($main);
@@ -813,7 +882,7 @@ async function decoratePage(win = window) {
         const martech = usp.get('martech');
 
         if (!(martech === 'off' || document.querySelector(`head script[src="${martechUrl}"]`))) {
-          let ms = 3000;
+          let ms = 3500;
           const delay = usp.get('delay');
           if (delay) ms = +delay;
           setTimeout(() => {
@@ -828,6 +897,41 @@ async function decoratePage(win = window) {
 
 decoratePage(window);
 
+function setHelixEnv(name, overrides) {
+  if (name) {
+    sessionStorage.setItem('helix-env', name);
+    if (overrides) {
+      sessionStorage.setItem('helix-env-overrides', JSON.stringify(overrides));
+    } else {
+      sessionStorage.removeItem('helix-env-overrides');
+    }
+  } else {
+    sessionStorage.removeItem('helix-env');
+    sessionStorage.removeItem('helix-env-overrides');
+  }
+}
+
+function displayEnv() {
+  try {
+    /* setup based on URL Params */
+    const usp = new URLSearchParams(window.location.search);
+    if (usp.has('helix-env')) {
+      const env = usp.get('helix-env');
+      setHelixEnv(env);
+    }
+
+    /* setup based on referrer */
+    if (document.referrer) {
+      const url = new URL(document.referrer);
+      if (window.location.hostname !== url.hostname) {
+        debug(`external referrer detected: ${document.referrer}`);
+      }
+    }
+  } catch (e) {
+    debug(`display env failed: ${e.message}`);
+  }
+}
+displayEnv();
 /*
  * lighthouse performance instrumentation helper
  * (needs a refactor)
@@ -835,8 +939,7 @@ decoratePage(window);
 
 function stamp(message) {
   if (window.name.includes('performance')) {
-    // eslint-disable-next-line no-console
-    console.log(`${new Date() - performance.timing.navigationStart}:${message}`);
+    debug(`${new Date() - performance.timing.navigationStart}:${message}`);
   }
 }
 
@@ -847,16 +950,14 @@ function registerPerformanceLogger() {
     const polcp = new PerformanceObserver((entryList) => {
       const entries = entryList.getEntries();
       stamp(JSON.stringify(entries));
-      // eslint-disable-next-line no-console
-      console.log(entries[0].element);
+      debug(entries[0].element);
     });
     polcp.observe({ type: 'largest-contentful-paint', buffered: true });
 
     const pols = new PerformanceObserver((entryList) => {
       const entries = entryList.getEntries();
       stamp(JSON.stringify(entries));
-      // eslint-disable-next-line no-console
-      console.log(entries[0].sources[0].node);
+      debug(entries[0].sources[0].node);
     });
     pols.observe({ type: 'layout-shift', buffered: true });
 
