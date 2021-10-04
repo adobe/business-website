@@ -696,14 +696,14 @@ export async function getBlogArticle(path) {
  * @returns {object} localized variables
  */
 
-export async function fetchVariables() {
-  const resp = await fetch(`${getRootPath()}/variables.json`);
+export async function fetchPlaceholders() {
+  const resp = await fetch(`${getRootPath()}/placeholders.json`);
   const json = await resp.json();
-  const vars = {};
-  json.data.forEach((v) => {
-    vars[v.Key] = v.Text;
+  const placeholders = {};
+  json.data.forEach((placeholder) => {
+    placeholders[placeholder.Key] = placeholder.Text;
   });
-  return (vars);
+  return (placeholders);
 }
 
 /**

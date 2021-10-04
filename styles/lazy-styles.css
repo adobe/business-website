@@ -126,6 +126,8 @@ main a.article-card:any-link {
   height: 100%;
   width: 100%;
   transition: opacity .4s;
+  color: var(--color-white);
+  line-height: var(--body-line-height);
 }
 
 .article-card .article-card-image img:hover {

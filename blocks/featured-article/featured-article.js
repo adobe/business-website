@@ -7,15 +7,21 @@ import {
 
 async function decorateFeaturedArticle(featuredArticleEl, articlePath, callback) {
   const article = await getBlogArticle(articlePath);
-  const card = buildArticleCard(article, 'featured-article');
-  const tagHeader = document.querySelector('.tag-header-container > div');
-  if (tagHeader) {
-    featuredArticleEl.append(card);
-    tagHeader.append(featuredArticleEl);
+  if (article) {
+    const card = buildArticleCard(article, 'featured-article');
+    const tagHeader = document.querySelector('.tag-header-container > div');
+    if (tagHeader) {
+      featuredArticleEl.append(card);
+      tagHeader.append(featuredArticleEl);
+    } else {
+      featuredArticleEl.append(card);
+    }
+    if (callback) callback();
   } else {
-    featuredArticleEl.append(card);
+    const { origin } = new URL(window.location.href);
+    // eslint-disable-next-line no-console
+    console.warn(`Featured article does not exist or is missing in index: ${origin}${articlePath}`);
   }
-  if (callback) callback();
 }
 
 export default function decorate(block, blockName, document, callback) {
