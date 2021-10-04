@@ -64,17 +64,29 @@ main .article-header .article-category a {
 
 main .article-title h1 {
   color: var(--color-gray-800);
-  font-size: var(--heading-font-size-l);
+  font-size: var(--heading-font-size-s);
   margin: 0;
   margin-top: 16px;
   padding-left: 2rem;
   padding-right: 2rem;
 }
 
+@media (min-width: 480px) {
+  main .article-title h1 {
+    font-size: var(--heading-font-size-m);
+  }
+}
+
 @media (min-width: 700px) {
   main .article-title h1 {
-    font-size: var(--heading-font-size-xl);
+    font-size: var(--heading-font-size-l);
     padding: 0;
+  }
+}
+
+@media (min-width: 1200px) {
+  main .article-title h1 {
+    font-size: var(--heading-font-size-xl);
   }
 }
 
