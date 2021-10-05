@@ -345,7 +345,6 @@ function buildAutoBlocks(mainEl) {
     if (getMetadata('author') && getMetadata('publication-date') && !mainEl.querySelector('.article-header')) {
       buildArticleHeader(mainEl);
       buildTagsBlock(mainEl);
-      interlink(mainEl);
     }
     if (window.location.pathname.includes('/categories/') || window.location.pathname.includes('/tags/')) {
       buildTagHeader(mainEl);
@@ -812,14 +811,18 @@ async function decoratePage(win = window) {
         const usp = new URLSearchParams(window.location.search);
         const martech = usp.get('martech');
 
-        if (!(martech === 'off' || document.querySelector(`head script[src="${martechUrl}"]`))) {
-          let ms = 3000;
-          const delay = usp.get('delay');
-          if (delay) ms = +delay;
-          setTimeout(() => {
+        let ms = 3000;
+        const delay = usp.get('delay');
+        if (delay) ms = +delay;
+        setTimeout(() => {
+          if (!(martech === 'off' || document.querySelector(`head script[src="${martechUrl}"]`))) {
             loadScript(martechUrl, null, 'module');
-          }, ms);
-        }
+          }
+
+          if (document.querySelector('.article-header') && !document.querySelector('[data-origin]')) {
+            interlink();
+          }
+        }, ms);
       });
     });
     document.querySelector('body').classList.add('appear');
