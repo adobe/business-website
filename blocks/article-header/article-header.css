@@ -108,13 +108,6 @@ main .article-byline .article-author-image img {
   object-fit: cover;
 }
 
-/* main .article-byline .article-author-image img {
-  border-radius: 50%;
-  height: 64px;
-  width: 64px;
-  object-fit: cover;
-} */
-
 main .article-byline .article-byline-info {
   margin: 0;
   display: flex;
