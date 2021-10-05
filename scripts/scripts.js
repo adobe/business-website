@@ -342,7 +342,7 @@ function decorateBlocks($main) {
 function buildAutoBlocks(mainEl) {
   removeStylingFromImages(mainEl);
   try {
-    if (getMetadata('author') && getMetadata('publication-date') && !mainEl.querySelector('.article-header')) {
+    if (getMetadata('publication-date') && !mainEl.querySelector('.article-header')) {
       buildArticleHeader(mainEl);
       buildTagsBlock(mainEl);
       interlink(mainEl);
