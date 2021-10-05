@@ -97,7 +97,8 @@ main .article-byline {
   padding: 0 2rem;
 }
 
-main .article-byline .article-author-image {
+main .article-byline .article-author-image,
+main .article-byline .article-author-image img {
   margin: 0;
   background: #fa0f00;
   margin-right: 16px;
@@ -107,9 +108,12 @@ main .article-byline .article-author-image {
   object-fit: cover;
 }
 
-main .article-byline .article-author-image img {
+/* main .article-byline .article-author-image img {
   border-radius: 50%;
-}
+  height: 64px;
+  width: 64px;
+  object-fit: cover;
+} */
 
 main .article-byline .article-byline-info {
   margin: 0;
