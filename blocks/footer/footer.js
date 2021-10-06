@@ -49,7 +49,6 @@ async function markupToFooter(url) {
     }
     return link;
   });
-  console.log(data);
   return data;
 }
 
