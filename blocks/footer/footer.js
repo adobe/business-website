@@ -10,56 +10,35 @@ async function markupToFooter(url) {
   const data = {};
 
   const regionEl = placeholder.querySelector('.region-selector');
-  const regions = [
-    {
-      region: 'Deutsch',
-      path: 'de',
-    },
-    {
-      region: 'Español',
-      path: 'es',
-    },
-    {
-      region: 'APAC (English)',
-      path: 'en_apac',
-    },
-    {
-      region: 'UK (English)',
-      path: 'en_uk',
-    },
-    {
-      region: 'US (English)',
-      path: '',
-    },
-    {
-      region: 'Français',
-      path: 'fr',
-    },
-    {
-      region: 'Italiano',
-      path: 'it',
-    },
-    {
-      region: '日本',
-      path: 'jp',
-    },
-    {
-      region: '한국어',
-      path: 'ko',
-    },
-    {
-      region: 'Português',
-      path: 'br',
-    },
-  ];
   if (regionEl) {
+    const regions = [];
+    let selected;
+    if (regionEl.querySelector('p')) { // multi-option
+      regionEl.querySelectorAll('p').forEach((p) => {
+        const region = p.textContent.split(' <<')[0];
+        const path = p.textContent
+          .match(/<<.*>>/)[0]
+          .replace(/[<>]/g, '');
+        regions.push({ region, path });
+        if (p.querySelector('strong')) {
+          selected = region;
+        }
+      });
+    } else { // single option
+      const region = regionEl.textContent.split(' <<')[0];
+      const path = regionEl.textContent
+        .match(/<<.*>>/)[0]
+        .replace(/[<>]/g, '');
+      regions.push({ region, path });
+      selected = region;
+    }
     data.regionSelector = {
-      selected: regionEl.textContent,
+      selected,
       options: regions,
     };
   }
 
-  data.copyright = placeholder.querySelector(':scope > div p').textContent;
+  data.copyright = placeholder.querySelector(':scope > div em').textContent;
 
   data.links = [...placeholder.querySelectorAll(':scope > div h2')].map((h2) => {
     const link = {};
@@ -70,7 +49,7 @@ async function markupToFooter(url) {
     }
     return link;
   });
-
+  console.log(data);
   return data;
 }
 
