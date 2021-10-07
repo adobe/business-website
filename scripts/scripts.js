@@ -554,7 +554,7 @@ export function normalizeHeadings($elem, allowedHeadings) {
  * @param {Array} breakpoints breakpoints and corresponding params (eg. width)
  */
 
-export function createOptimizedPicture(src, alt = '', eager = false, breakpoints = [{ media: 'min-width: 400px', width: '2000' }, { width: '750' }]) {
+export function createOptimizedPicture(src, alt = '', eager = false, breakpoints = [{ media: '(min-width: 400px)', width: '2000' }, { width: '750' }]) {
   const url = new URL(src, window.location.href);
   const picture = document.createElement('picture');
   const { pathname } = url;
@@ -624,12 +624,7 @@ export function buildArticleCard(article, type = 'article') {
  */
 function decoratePictures($main) {
   $main.querySelectorAll('img[src*="/media_"').forEach((img, i) => {
-    let newPicture;
-    if (i === 0) { // load larger first img
-      newPicture = createOptimizedPicture(img.src, img.alt, !i, [{ width: '2000' }]);
-    } else {
-      newPicture = createOptimizedPicture(img.src, img.alt, !i);
-    }
+    const newPicture = createOptimizedPicture(img.src, img.alt, !i);
     const picture = img.closest('picture');
     if (picture) picture.parentElement.replaceChild(newPicture, picture);
   });
