@@ -14,7 +14,6 @@ class Gnav {
   constructor(body, el) {
     this.el = el;
     this.body = body;
-    this.env = getHelixEnv();
     this.desktop = window.matchMedia('(min-width: 1200px)');
   }
 
@@ -79,10 +78,7 @@ class Gnav {
         nav.classList.add(IS_OPEN);
         this.desktop.addEventListener('change', onMediaChange);
         this.curtain.classList.add(IS_OPEN);
-        if (!this.onSearchInput) {
-          const gnavSearch = await import('./gnav-search.js');
-          this.onSearchInput = gnavSearch.default;
-        }
+        this.loadSearch();
       }
     });
     return toggle;
@@ -173,12 +169,8 @@ class Gnav {
       const searchButton = createEl({
         tag: 'button', className: 'gnav-search-button', html: SEARCH_ICON, attributes: { 'aria-label': label },
       });
-
-      searchButton.addEventListener('click', async () => {
-        if (!this.onSearchInput) {
-          const gnavSearch = await import('./gnav-search.js');
-          this.onSearchInput = gnavSearch.default;
-        }
+      searchButton.addEventListener('click', () => {
+        this.loadSearch(searchEl);
         this.toggleMenu(searchEl);
       });
       searchEl.append(searchButton, searchBar);
@@ -202,17 +194,25 @@ class Gnav {
     return searchBar;
   }
 
+  loadSearch = async () => {
+    if (this.onSearchInput) return;
+    const gnavSearch = await import('./gnav-search.js');
+    this.onSearchInput = gnavSearch.default;
+  }
+
   decorateProfile = () => {
     const blockEl = this.body.querySelector('.profile');
     if (!blockEl) return null;
+    const env = getHelixEnv();
     const profileEl = createEl({ tag: 'div', className: 'gnav-profile' });
-    const envSuffix = this.env.ims === 'stg1' ? `-${this.env.ims}` : '';
+    const envSuffix = env.ims === 'stg1' ? `-${env.ims}` : '';
 
     window.adobeid = {
       client_id: 'bizweb',
       scope: 'AdobeID,openid,gnav',
       locale: 'en_US',
-      environment: this.env.ims,
+      autoValidateToken: true,
+      environment: env.ims,
       useLocalStorage: false,
       onReady: () => { this.imsReady(blockEl, profileEl); },
     };
@@ -228,9 +228,8 @@ class Gnav {
         headers: new Headers({ Authorization: `Bearer ${accessToken.token}` }),
       });
       if (ioResp.status === 200) {
-        const imsProfile = await window.adobeIMS.getProfile();
-        const ioProfile = await ioResp.json();
-        this.decorateProfileMenu(blockEl, profileEl, imsProfile, ioProfile);
+        const profile = await import('./gnav-profile.js');
+        profile.default(blockEl, profileEl, this.toggleMenu, ioResp);
       } else {
         this.decorateSignIn(blockEl, profileEl);
       }
@@ -248,84 +247,6 @@ class Gnav {
       window.adobeIMS.signIn();
     });
   }
-
-  decorateProfileMenu = (blockEl, profileEl, imsProfile, ioProfile) => {
-    const { displayName, email } = imsProfile;
-    const displayEmail = this.decorateEmail(email);
-    const { user, sections } = ioProfile;
-    const { avatar } = user;
-    const avatarImg = createEl({ tag: 'img', className: 'gnav-profile-img', attributes: { src: avatar } });
-    const accountLink = blockEl.querySelector('div > div > p:nth-child(2) a');
-
-    const profileButton = createEl({
-      tag: 'button',
-      className: 'gnav-profile-button',
-      html: avatarImg,
-      attributes: { 'arial-label': displayName },
-    });
-    profileButton.addEventListener('click', () => {
-      this.toggleMenu(profileEl);
-    });
-
-    const profileMenu = createEl({ tag: 'div', className: 'gnav-profile-menu' });
-    const profileHeader = createEl({ tag: 'a', className: 'gnav-profile-header' });
-    const profileDetails = createEl({ tag: 'div', className: 'gnav-profile-details' });
-    const profileActions = createEl({ tag: 'ul', className: 'gnav-profile-actions' });
-
-    profileHeader.href = this.decorateProfileLink(accountLink.href, 'account');
-    profileHeader.setAttribute('aria-label', accountLink.textContent);
-
-    const profileImg = avatarImg.cloneNode(true);
-    const profileName = createEl({ tag: 'p', className: 'gnav-profile-name', html: displayName });
-    const profileEmail = createEl({ tag: 'p', className: 'gnav-profile-email', html: displayEmail });
-    const accountText = blockEl.querySelector('div > div > p:nth-child(2) a').innerHTML;
-    const profileViewAccount = createEl({ tag: 'p', className: 'gnav-profile-account', html: accountText });
-    profileDetails.append(profileName, profileEmail, profileViewAccount);
-
-    if (sections.manage.items.team?.id) {
-      const teamLink = blockEl.querySelector('div > div > p:nth-child(3) a');
-      teamLink.href = this.decorateProfileLink(teamLink.href, 'adminconsole');
-      const manageTeam = createEl({ tag: 'li', html: teamLink, className: 'gnav-profile-action' });
-      profileActions.append(manageTeam);
-    }
-
-    if (sections.manage.items.enterprise?.id) {
-      const manageLink = blockEl.querySelector('div > div > p:nth-child(4) a');
-      manageLink.href = this.decorateProfileLink(manageLink.href, 'adminconsole');
-      const manageEnt = createEl({ tag: 'li', html: manageLink, className: 'gnav-profile-action' });
-      profileActions.append(manageEnt);
-    }
-
-    const signOutLink = blockEl.querySelector('div > div > p:nth-child(5) a');
-    signOutLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      window.adobeIMS.signOut();
-    });
-    const signOut = createEl({ tag: 'li', html: signOutLink, className: 'gnav-profile-action' });
-    profileActions.append(signOut);
-
-    profileHeader.append(profileImg, profileDetails);
-    profileMenu.append(profileHeader, profileActions);
-    profileEl.append(profileButton, profileMenu);
-  }
-
-  decorateEmail = (email) => {
-    const MAX_CHAR = 12;
-    const emailParts = email.split('@');
-    const username = emailParts[0].length <= MAX_CHAR ? emailParts[0] : `${emailParts[0].slice(0, MAX_CHAR)}…`;
-    const domainArr = emailParts[1].split('.');
-    const tld = domainArr.pop();
-    let domain = domainArr.join('.');
-    domain = domain.length <= MAX_CHAR ? domain : `${domain.slice(0, MAX_CHAR)}…`;
-    return `${username}@${domain}.${tld}`;
-  }
-
-  decorateProfileLink = (href, service) => {
-    if (this.env.name === 'prod') return href;
-    const url = new URL(href);
-    url.hostname = this.env[service];
-    return url.href;
-  };
 
   /**
    * Toggles menus when clicked directly
@@ -384,7 +305,7 @@ class Gnav {
   }
 
   closeOnEscape = (e) => {
-    if (e.keyCode === 27) {
+    if (e.code === 'Escape') {
       this.toggleMenu(this.state.openMenu);
     }
   }

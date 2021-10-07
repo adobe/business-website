@@ -21,11 +21,12 @@ export function createEl({
   const el = document.createElement(tag);
   if (id) { el.id = id; }
   if (className) { el.className = className; }
-
-  if (html && html instanceof HTMLElement) {
-    el.append(html);
-  } else if (html && typeof html === 'string') {
-    el.innerHTML = html;
+  if (html) {
+    if (html instanceof HTMLElement) {
+      el.append(html);
+    } else {
+      el.insertAdjacentHTML('beforeend', html);
+    }
   }
   if (attributes) {
     Object.keys(attributes).forEach((key) => {
