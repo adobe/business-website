@@ -624,7 +624,12 @@ export function buildArticleCard(article, type = 'article') {
  */
 function decoratePictures($main) {
   $main.querySelectorAll('img[src*="/media_"').forEach((img, i) => {
-    const newPicture = createOptimizedPicture(img.src, img.alt, !i);
+    let newPicture;
+    if (i === 0) { // load larger first img
+      newPicture = createOptimizedPicture(img.src, img.alt, !i, [{ width: '2000' }]);
+    } else {
+      newPicture = createOptimizedPicture(img.src, img.alt, !i);
+    }
     const picture = img.closest('picture');
     if (picture) picture.parentElement.replaceChild(newPicture, picture);
   });
