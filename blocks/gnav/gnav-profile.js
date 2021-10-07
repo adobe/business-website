@@ -32,11 +32,15 @@ function decorateProfileMenu(blockEl, profileEl, profiles, toggle) {
     tag: 'button',
     className: 'gnav-profile-button',
     html: avatarImg,
-    attributes: { 'arial-label': displayName },
+    attributes: {
+      'aria-label': displayName,
+      'aria-expanded': false,
+      'aria-controls': 'gnav-profile-menu',
+    },
   });
   profileButton.addEventListener('click', () => { toggle(profileEl); });
 
-  const profileMenu = createEl({ tag: 'div', className: 'gnav-profile-menu' });
+  const profileMenu = createEl({ tag: 'div', id: 'gnav-profile-menu', className: 'gnav-profile-menu' });
   const profileHeader = createEl({ tag: 'a', className: 'gnav-profile-header' });
   const profileDetails = createEl({ tag: 'div', className: 'gnav-profile-details' });
   const profileActions = createEl({ tag: 'ul', className: 'gnav-profile-actions' });

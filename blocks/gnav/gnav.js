@@ -14,6 +14,7 @@ class Gnav {
   constructor(body, el) {
     this.el = el;
     this.body = body;
+    this.env = getHelixEnv();
     this.desktop = window.matchMedia('(min-width: 1200px)');
   }
 
@@ -151,6 +152,12 @@ class Gnav {
     } else if (childCount >= 3) {
       menu.classList.add('large-Variant');
     }
+    navLink.addEventListener('focus', () => {
+      window.addEventListener('keydown', this.toggleOnSpace);
+    });
+    navLink.addEventListener('blur', () => {
+      window.removeEventListener('keydown', this.toggleOnSpace);
+    });
     navLink.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -167,7 +174,14 @@ class Gnav {
       const searchEl = createEl({ tag: 'div', className: 'gnav-search' });
       const searchBar = this.decorateSearchBar(label, advancedLink);
       const searchButton = createEl({
-        tag: 'button', className: 'gnav-search-button', html: SEARCH_ICON, attributes: { 'aria-label': label },
+        tag: 'button',
+        className: 'gnav-search-button',
+        html: SEARCH_ICON,
+        attributes: {
+          'aria-label': label,
+          'aria-expanded': false,
+          'aria-controls': 'gnav-search-bar',
+        },
       });
       searchButton.addEventListener('click', () => {
         this.loadSearch(searchEl);
@@ -180,7 +194,7 @@ class Gnav {
   }
 
   decorateSearchBar = (label, advancedLink) => {
-    const searchBar = createEl({ tag: 'aside', className: 'gnav-search-bar' });
+    const searchBar = createEl({ tag: 'aside', id: 'gnav-search-bar', className: 'gnav-search-bar' });
     const searchField = createEl({ tag: 'div', className: 'gnav-search-field', html: SEARCH_ICON });
     const searchInput = createEl({ tag: 'input', className: 'gnav-search-input', attributes: { placeholder: label } });
     const searchResults = createEl({ tag: 'div', className: 'gnav-search-results' });
@@ -203,20 +217,18 @@ class Gnav {
   decorateProfile = () => {
     const blockEl = this.body.querySelector('.profile');
     if (!blockEl) return null;
-    const env = getHelixEnv();
     const profileEl = createEl({ tag: 'div', className: 'gnav-profile' });
-    const envSuffix = env.ims === 'stg1' ? `-${env.ims}` : '';
 
     window.adobeid = {
       client_id: 'bizweb',
       scope: 'AdobeID,openid,gnav',
       locale: 'en_US',
       autoValidateToken: true,
-      environment: env.ims,
+      environment: this.env.ims,
       useLocalStorage: false,
       onReady: () => { this.imsReady(blockEl, profileEl); },
     };
-    loadScript(`https://auth${envSuffix}.services.adobe.com/imslib/imslib.min.js`);
+    loadScript('https://auth.services.adobe.com/imslib/imslib.min.js');
 
     return profileEl;
   }
@@ -224,7 +236,7 @@ class Gnav {
   imsReady = async (blockEl, profileEl) => {
     const accessToken = window.adobeIMS.getAccessToken();
     if (accessToken) {
-      const ioResp = await fetch('https://cc-collab-stage.adobe.io/profile', {
+      const ioResp = await fetch(`https://${this.env.adobeIO}/profile`, {
         headers: new Headers({ Authorization: `Bearer ${accessToken.token}` }),
       });
       if (ioResp.status === 200) {
@@ -267,12 +279,18 @@ class Gnav {
     this.state.openMenu.classList.remove(IS_OPEN);
     document.removeEventListener('click', this.closeOnDocClick);
     window.removeEventListener('keydown', this.closeOnEscape);
+    const menuToggle = this.state.openMenu.querySelector('[aria-expanded]');
+    menuToggle.setAttribute('aria-expanded', false);
     this.curtain.classList.remove(IS_OPEN);
     this.state.openMenu = null;
   }
 
   openMenu = (el, isSearch) => {
     el.classList.add(IS_OPEN);
+
+    const menuToggle = el.querySelector('[aria-expanded]');
+    menuToggle.setAttribute('aria-expanded', true);
+
     document.addEventListener('click', this.closeOnDocClick);
     window.addEventListener('keydown', this.closeOnEscape);
     if (!isSearch) {
@@ -287,10 +305,20 @@ class Gnav {
     this.state.openMenu = el;
   }
 
+  toggleOnSpace = (e) => {
+    if (e.code === 'Space') {
+      e.preventDefault();
+      const parentEl = e.target.closest('.has-Menu');
+      this.toggleMenu(parentEl);
+    }
+  }
+
   closeOnScroll = () => {
     let scrolled;
     if (!scrolled) {
-      this.toggleMenu(this.state.openMenu);
+      if (this.state.openMenu) {
+        this.toggleMenu(this.state.openMenu);
+      }
       scrolled = true;
       document.removeEventListener('scroll', this.closeOnScroll);
     }

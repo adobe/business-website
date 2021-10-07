@@ -153,12 +153,14 @@ export function getHelixEnv() {
   const envs = {
     stage: {
       ims: 'stg1',
+      adobeIO: 'cc-collab-stage.adobe.io',
       adminconsole: 'stage.adminconsole.adobe.com',
       account: 'stage.account.adobe.com',
       target: false,
     },
     prod: {
       ims: 'prod',
+      adobeIO: 'cc-collab.adobe.io',
       adminconsole: 'adminconsole.adobe.com',
       account: 'account.adobe.com',
       target: true,
