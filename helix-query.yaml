@@ -9,9 +9,9 @@ indices:
       - '/blog/**'
     exclude:
       - '/blog/'
-      - '/blog/index**'
-      - '/blog/gnav**'
-      - '/blog/footer**'
+      - '/blog/index*'
+      - '/blog/gnav*'
+      - '/blog/footer*'
       - '/blog/authors/**'
       - '/blog/banners/**'
       - '/blog/categories/**'
