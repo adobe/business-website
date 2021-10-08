@@ -1,3 +1,7 @@
+import {
+  getRootPath,
+} from '../../scripts/scripts.js';
+
 /**
  * Checks if a given match intersects with an existing match
  * before adding it to the list of matches. In case of an
@@ -27,9 +31,9 @@ export function checkAndAddMatch(matches, contender, maxMatches) {
  * Loops through a list of keywords and looks for matches in the article text.
  * The first occurrence of each keyword will be replaced with a link.
  */
-export default async function interlink(locale = '') {
+export default async function interlink() {
   const articleBody = document.querySelector('main');
-  const resp = await fetch(`${locale}/blog/keywords.json`);
+  const resp = await fetch(`${getRootPath()}/keywords.json`);
   if (articleBody && resp.ok) {
     const json = await resp.json();
     const articleText = articleBody.textContent.toLowerCase();
@@ -98,3 +102,5 @@ export default async function interlink(locale = '') {
       });
   }
 }
+
+interlink();
