@@ -13,24 +13,16 @@ async function markupToFooter(url) {
   if (regionEl) {
     const regions = [];
     let selected;
-    if (regionEl.querySelector('p')) { // multi-option
-      regionEl.querySelectorAll('p').forEach((p) => {
-        const region = p.textContent.split(' <<')[0];
-        const path = p.textContent
-          .match(/<<.*>>/)[0]
-          .replace(/[<>]/g, '');
+    if (regionEl.querySelector('a')) { // multi-option
+      regionEl.querySelectorAll('a').forEach((a) => {
+        const { href, textContent: region } = a;
+        const { pathname: path } = new URL(href);
         regions.push({ region, path });
-        if (p.querySelector('strong')) {
+        const parentNode = a.parentNode.nodeName;
+        if (parentNode === 'STRONG') {
           selected = region;
         }
       });
-    } else { // single option
-      const region = regionEl.textContent.split(' <<')[0];
-      const path = regionEl.textContent
-        .match(/<<.*>>/)[0]
-        .replace(/[<>]/g, '');
-      regions.push({ region, path });
-      selected = region;
     }
     data.regionSelector = {
       selected,
@@ -57,7 +49,7 @@ async function getFooter(data) {
 
   const footer = document.createElement('div');
   footer.className = 'footer';
-  const html = `
+  const regionHtml = `
   <div class="footer-region">
     <a class="footer-region-button" id="region-button" aria-haspopup="true" aria-expanded="false" role="button">
       <img class="footer-region-img" loading="lazy" src="/blocks/footer/globe.svg">
@@ -68,58 +60,60 @@ async function getFooter(data) {
     <div class="footer-region-dropdown" aria-labelledby="region-button" role="menu">
       <ul class="footer-region-options"></ul>
     </div>
-  </div>
+  </div>`;
+  const infoHtml = `
   <div class="footer-info">
     <p class="footer-copyright-text">
       ${data.copyright}
     </p>
     <ul class="footer-links"></ul>
-  </div>
-  `;
+  </div>`;
+  if (data.regionSelector) {
+    footer.innerHTML = regionHtml;
 
-  footer.innerHTML = html;
+    const regionOptionsContainer = footer.querySelector('.footer-region-options');
 
-  const regionOptionsContainer = footer.querySelector('.footer-region-options');
-  const { origin } = new URL(window.location);
-
-  data.regionSelector.options.forEach((option) => {
-    const li = document.createElement('li');
-    li.className = 'footer-region-option';
-    const a = document.createElement('a');
-    a.href = `${origin}/blog/${option.path}`;
-    a.textContent = option.region;
-    a.setAttribute('title', option.region);
-    if (option.region === data.regionSelector.selected) {
-      li.classList.add('footer-region-selected');
-    }
-    li.append(a);
-    regionOptionsContainer.append(li);
-  });
+    data.regionSelector.options.forEach((option) => {
+      const li = document.createElement('li');
+      li.className = 'footer-region-option';
+      const a = document.createElement('a');
+      a.href = option.path;
+      a.textContent = option.region;
+      a.setAttribute('title', option.region);
+      if (option.region === data.regionSelector.selected) {
+        li.classList.add('footer-region-selected');
+      }
+      li.append(a);
+      regionOptionsContainer.append(li);
+    });
+  }
+  footer.innerHTML += infoHtml;
 
   const regionBtn = footer.querySelector('.footer-region-button');
+  if (regionBtn) {
+    regionBtn.addEventListener('click', () => {
+      const regionsExpanded = regionBtn.getAttribute('aria-expanded');
+      if (regionsExpanded === 'false') {
+        regionBtn.setAttribute('aria-expanded', true);
+      } else {
+        regionBtn.setAttribute('aria-expanded', false);
+      }
 
-  regionBtn.addEventListener('click', () => {
-    const regionsExpanded = regionBtn.getAttribute('aria-expanded');
-    if (regionsExpanded === 'false') {
-      regionBtn.setAttribute('aria-expanded', true);
-    } else {
-      regionBtn.setAttribute('aria-expanded', false);
-    }
+      window.addEventListener('keydown', (e) => {
+        if (e.code === 'Escape' && regionsExpanded === 'true') {
+          regionBtn.setAttribute('aria-expanded', false);
+        }
+      });
+    });
 
-    window.addEventListener('keydown', (e) => {
-      if (e.code === 'Escape' && regionsExpanded === 'true') {
+    window.addEventListener('click', (e) => {
+      const a = e.target.closest('a');
+      const regionsExpanded = regionBtn.getAttribute('aria-expanded');
+      if (a !== regionBtn && regionsExpanded === 'true') {
         regionBtn.setAttribute('aria-expanded', false);
       }
     });
-  });
-
-  window.addEventListener('click', (e) => {
-    const a = e.target.closest('a');
-    const regionsExpanded = regionBtn.getAttribute('aria-expanded');
-    if (a !== regionBtn && regionsExpanded === 'true') {
-      regionBtn.setAttribute('aria-expanded', false);
-    }
-  });
+  }
 
   const linkContainer = footer.querySelector('.footer-links');
 
