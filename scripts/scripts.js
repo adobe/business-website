@@ -799,16 +799,16 @@ async function decoratePage(win = window) {
         addFavIcon('/styles/favicon.svg');
 
         /* trigger delayed.js load */
-        const delayedUrl = '/scripts/delayed.js';
+        const delayedScript = '/scripts/delayed.js';
         const usp = new URLSearchParams(window.location.search);
-        const delayed = usp.get('martech');
+        const delayed = usp.get('delayed');
 
-        if (!(delayed === 'off' || document.querySelector(`head script[src="${delayedUrl}"]`))) {
+        if (!(delayed === 'off' || document.querySelector(`head script[src="${delayedScript}"]`))) {
           let ms = 3000;
           const delay = usp.get('delay');
           if (delay) ms = +delay;
           setTimeout(() => {
-            loadScript(delayedUrl, null, 'module');
+            loadScript(delayedScript, null, 'module');
           }, ms);
         }
       });
