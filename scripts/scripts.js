@@ -317,14 +317,6 @@ function buildTagsBlock(mainEl) {
   }
 }
 
-async function interlink() {
-  const blockName = 'interlinks';
-  const mod = await import(`/blocks/${blockName}/${blockName}.js`);
-  if (mod.default) {
-    await mod.default();
-  }
-}
-
 /**
  * Decorates all blocks in a container element.
  * @param {Element} $main The container element
@@ -345,7 +337,6 @@ function buildAutoBlocks(mainEl) {
     if (getMetadata('publication-date') && !mainEl.querySelector('.article-header')) {
       buildArticleHeader(mainEl);
       buildTagsBlock(mainEl);
-      interlink(mainEl);
     }
     if (window.location.pathname.includes('/categories/') || window.location.pathname.includes('/tags/')) {
       buildTagHeader(mainEl);
@@ -808,16 +799,16 @@ async function decoratePage(win = window) {
         addFavIcon('/styles/favicon.svg');
 
         /* trigger delayed.js load */
-        const martechUrl = '/scripts/delayed.js';
+        const delayedScript = '/scripts/delayed.js';
         const usp = new URLSearchParams(window.location.search);
-        const martech = usp.get('martech');
+        const delayed = usp.get('delayed');
 
-        if (!(martech === 'off' || document.querySelector(`head script[src="${martechUrl}"]`))) {
+        if (!(delayed === 'off' || document.querySelector(`head script[src="${delayedScript}"]`))) {
           let ms = 3000;
           const delay = usp.get('delay');
           if (delay) ms = +delay;
           setTimeout(() => {
-            loadScript(martechUrl, null, 'module');
+            loadScript(delayedScript, null, 'module');
           }, ms);
         }
       });
