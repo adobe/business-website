@@ -452,6 +452,7 @@ export async function loadBlock($block, callback) {
     $block.setAttribute('data-block-loaded', true);
     const blockName = $block.getAttribute('data-block-name');
     try {
+      loadCSS(`/blocks/${blockName}/${blockName}.css`);
       const mod = await import(`/blocks/${blockName}/${blockName}.js`);
       if (mod.default) {
         await mod.default($block, blockName, document, callback);
@@ -460,7 +461,6 @@ export async function loadBlock($block, callback) {
       // eslint-disable-next-line no-console
       console.log(`failed to load module for ${blockName}`, err);
     }
-    loadCSS(`/blocks/${blockName}/${blockName}.css`);
   }
 }
 
@@ -729,7 +729,7 @@ function setLCPTrigger(lcpCandidateEl, postLCP) {
 function getLCPCandidate(callback) {
   const usp = new URLSearchParams(window.location.search);
   const lcp = usp.get('lcp');
-  const lcpBlocks = ['featured-article'];
+  const lcpBlocks = ['featured-article', 'article-header'];
   let candidate = document.querySelector('main img');
   const block = document.querySelector('.block');
   if (block) {
