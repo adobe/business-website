@@ -158,8 +158,8 @@ button.gnav-toggle:after {
 }
 
 .gnav-promo {
-  grid-area: promo;
   width: 260px;
+  padding: 6px 0;
 }
 
 .gnav-promo picture,
@@ -224,6 +224,7 @@ button.gnav-toggle:after {
   bottom: 0;
   left: 0;
   background: rgba(0,0,0,0.75);
+  -webkit-backdrop-filter: blur(1em);
   backdrop-filter: blur(1em);
 }
 
@@ -488,13 +489,20 @@ button.gnav-toggle:after {
     line-height: unset;
   }
 
+  .gnav-navitem-menu.medium-Variant {
+    padding: 14px 20px 14px 0;
+  }
+
+  .gnav-navitem-menu > * {
+    grid-row: 1;
+  }
+
   .gnav-navitem-menu a {
     padding: 6px 20px;
   }
 
   .gnav-navitem.has-Menu.is-Open .gnav-navitem-menu {
     display: grid;
-    grid-template-areas: 'nav promo';
     position: absolute;
     top: 100%;
     border-top: 1px solid #EAEAEA;

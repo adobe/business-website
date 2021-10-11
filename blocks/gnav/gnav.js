@@ -1,5 +1,4 @@
 import {
-  createEl,
   loadScript,
   getHelixEnv,
   debug,
@@ -10,6 +9,32 @@ const SEARCH_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
 <path d="M14 2A8 8 0 0 0 7.4 14.5L2.4 19.4a1.5 1.5 0 0 0 2.1 2.1L9.5 16.6A8 8 0 1 0 14 2Zm0 14.1A6.1 6.1 0 1 1 20.1 10 6.1 6.1 0 0 1 14 16.1Z"></path>
 </svg>`;
 const IS_OPEN = 'is-Open';
+
+/**
+ * Create an element with ID, class, children, and attributes
+ * @param {Object} props to create the element
+ * @returns {HTMLElement} the element created
+ */
+function createTag({
+  tag, className, id, html, attributes,
+}) {
+  const el = document.createElement(tag);
+  if (id) { el.id = id; }
+  if (className) { el.className = className; }
+  if (html) {
+    if (html instanceof HTMLElement) {
+      el.append(html);
+    } else {
+      el.insertAdjacentHTML('beforeend', html);
+    }
+  }
+  if (attributes) {
+    Object.keys(attributes).forEach((key) => {
+      el.setAttribute(key, attributes[key]);
+    });
+  }
+  return el;
+}
 class Gnav {
   constructor(body, el) {
     this.el = el;
@@ -20,8 +45,8 @@ class Gnav {
 
   init = () => {
     this.state = {};
-    this.curtain = createEl({ tag: 'div', className: 'gnav-curtain' });
-    const nav = createEl({ tag: 'nav', className: 'gnav' });
+    this.curtain = createTag({ tag: 'div', className: 'gnav-curtain' });
+    const nav = createTag({ tag: 'nav', className: 'gnav' });
 
     const mobileToggle = this.decorateToggle(nav);
     nav.append(mobileToggle);
@@ -51,12 +76,12 @@ class Gnav {
       nav.append(logo);
     }
 
-    const wrapper = createEl({ tag: 'div', className: 'gnav-wrapper', html: nav });
+    const wrapper = createTag({ tag: 'div', className: 'gnav-wrapper', html: nav });
     this.el.append(this.curtain, wrapper);
   }
 
   decorateToggle = (nav) => {
-    const toggle = createEl({
+    const toggle = createTag({
       tag: 'button',
       className: 'gnav-toggle',
       attributes: {
@@ -118,9 +143,9 @@ class Gnav {
   }
 
   buildMainNav = (navLinks) => {
-    const mainNav = createEl({ tag: 'div', className: 'gnav-mainnav' });
+    const mainNav = createTag({ tag: 'div', className: 'gnav-mainnav' });
     navLinks.forEach((navLink, idx) => {
-      const navItem = createEl({ tag: 'div', className: 'gnav-navitem' });
+      const navItem = createTag({ tag: 'div', className: 'gnav-navitem' });
 
       const menu = navLink.closest('div');
       menu.querySelector('h2').remove();
@@ -151,6 +176,9 @@ class Gnav {
       menu.classList.add('medium-Variant');
     } else if (childCount >= 3) {
       menu.classList.add('large-Variant');
+      const container = createTag({ tag: 'div', className: 'gnav-menu-container' });
+      container.append(...Array.from(menu.children));
+      menu.append(container);
     }
     navLink.addEventListener('focus', () => {
       window.addEventListener('keydown', this.toggleOnSpace);
@@ -171,9 +199,9 @@ class Gnav {
     if (searchBlock) {
       const label = searchBlock.querySelector('p').textContent;
       const advancedLink = searchBlock.querySelector('a');
-      const searchEl = createEl({ tag: 'div', className: 'gnav-search' });
+      const searchEl = createTag({ tag: 'div', className: 'gnav-search' });
       const searchBar = this.decorateSearchBar(label, advancedLink);
-      const searchButton = createEl({
+      const searchButton = createTag({
         tag: 'button',
         className: 'gnav-search-button',
         html: SEARCH_ICON,
@@ -194,10 +222,10 @@ class Gnav {
   }
 
   decorateSearchBar = (label, advancedLink) => {
-    const searchBar = createEl({ tag: 'aside', id: 'gnav-search-bar', className: 'gnav-search-bar' });
-    const searchField = createEl({ tag: 'div', className: 'gnav-search-field', html: SEARCH_ICON });
-    const searchInput = createEl({ tag: 'input', className: 'gnav-search-input', attributes: { placeholder: label } });
-    const searchResults = createEl({ tag: 'div', className: 'gnav-search-results' });
+    const searchBar = createTag({ tag: 'aside', id: 'gnav-search-bar', className: 'gnav-search-bar' });
+    const searchField = createTag({ tag: 'div', className: 'gnav-search-field', html: SEARCH_ICON });
+    const searchInput = createTag({ tag: 'input', className: 'gnav-search-input', attributes: { placeholder: label } });
+    const searchResults = createTag({ tag: 'div', className: 'gnav-search-results' });
 
     searchInput.addEventListener('input', (e) => {
       this.onSearchInput(e.target.value, searchResults, advancedLink);
@@ -217,7 +245,7 @@ class Gnav {
   decorateProfile = () => {
     const blockEl = this.body.querySelector('.profile');
     if (!blockEl) return null;
-    const profileEl = createEl({ tag: 'div', className: 'gnav-profile' });
+    const profileEl = createTag({ tag: 'div', className: 'gnav-profile' });
 
     window.adobeid = {
       client_id: 'bizweb',
