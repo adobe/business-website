@@ -303,8 +303,10 @@ function buildArticleFeed(mainEl) {
 }
 
 function buildTagsBlock(mainEl) {
+  console.log('building tags block');
   const tags = getMetadata('article:tag');
   if (tags) {
+    console.log(tags);
     const tagsBlock = buildBlock('tags', [
       [`<p>${tags}</p>`],
     ]);
@@ -312,8 +314,9 @@ function buildTagsBlock(mainEl) {
     if (recBlock) {
       recBlock.parentNode.insertBefore(tagsBlock, recBlock);
     } else {
-      mainEl.append(tagsBlock);
+      mainEl.lastElementChild.append(tagsBlock);
     }
+    console.log(tagsBlock);
   }
 }
 
