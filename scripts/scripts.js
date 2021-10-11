@@ -312,7 +312,7 @@ function buildTagsBlock(mainEl) {
     if (recBlock) {
       recBlock.parentNode.insertBefore(tagsBlock, recBlock);
     } else {
-      mainEl.append(tagsBlock);
+      mainEl.lastElementChild.append(tagsBlock);
     }
   }
 }
