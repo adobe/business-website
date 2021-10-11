@@ -586,12 +586,12 @@ export function createOptimizedPicture(src, alt = '', eager = false, breakpoints
  */
 export function buildArticleCard(article, type = 'article') {
   const {
-    title, description, image, category,
+    title, description, image, imageAlt, category,
   } = article;
 
   const path = article.path.split('.')[0];
 
-  const picture = createOptimizedPicture(image, title, false, [{ width: '750' }]);
+  const picture = createOptimizedPicture(image, imageAlt || title, false, [{ width: '750' }]);
   const pictureTag = picture.outerHTML;
   const card = document.createElement('a');
   card.className = `${type}-card`;
