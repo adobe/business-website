@@ -1,22 +1,22 @@
 import { buildFigure } from '../../scripts/scripts.js';
 
 const loadScript = (url, callback, type) => {
-  const $head = document.querySelector('head');
-  const $script = document.createElement('script');
-  $script.src = url;
+  const head = document.querySelector('head');
+  const script = document.createElement('script');
+  script.src = url;
   if (type) {
-    $script.setAttribute('type', type);
+    script.setAttribute('type', type);
   }
-  $head.append($script);
-  $script.onload = callback;
-  return $script;
+  head.append(script);
+  script.onload = callback;
+  return script;
 };
 
 const getDefaultEmbed = (url) => `<div style="left: 0; width: 100%; height: 0; position: relative; padding-bottom: 56.25%;">
-      <iframe src="${url.href}" style="border: 0; top: 0; left: 0; width: 100%; height: 100%; position: absolute;" allowfullscreen=""
-        scrolling="no" allow="encrypted-media" title="Content from ${url.hostname}" loading="lazy">
-      </iframe>
-    </div>`;
+    <iframe src="${url.href}" style="border: 0; top: 0; left: 0; width: 100%; height: 100%; position: absolute;" allowfullscreen=""
+      scrolling="no" allow="encrypted-media" title="Content from ${url.hostname}" loading="lazy">
+    </iframe>
+  </div>`;
 
 const embedYoutube = (url) => {
   const usp = new URLSearchParams(url.search);
@@ -46,10 +46,10 @@ const embedInstagram = (url) => {
 const embedVimeo = (url) => {
   const video = url.pathname.split('/')[1];
   const embedHTML = `<div style="left: 0; width: 100%; height: 0; position: relative; padding-bottom: 56.25%;">
-        <iframe src="https://player.vimeo.com/video/${video}?app_id=122963" 
-        style="border: 0; top: 0; left: 0; width: 100%; height: 100%; position: absolute;" 
-        frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen  
-        title="Content from Vimeo" loading="lazy"></iframe>
+      <iframe src="https://player.vimeo.com/video/${video}?app_id=122963" 
+      style="border: 0; top: 0; left: 0; width: 100%; height: 100%; position: absolute;" 
+      frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen  
+      title="Content from Vimeo" loading="lazy"></iframe>
     </div>`;
   return embedHTML;
 };
@@ -70,19 +70,19 @@ const embedTwitter = (url) => {
 };
 
 const embedTiktok = (url) => {
-  const $resultHtml = document.createElement('div');
-  $resultHtml.setAttribute('id', 'tiktok');
+  const resultHtml = document.createElement('div');
+  resultHtml.setAttribute('id', 'tiktok');
 
   const tiktokBuild = async (fetchUrl) => {
     loadScript('https://www.tiktok.com/embed.js');
     const response = await fetch(fetchUrl);
     const json = await response.json();
-    const $tiktok = document.getElementById('tiktok');
-    $tiktok.outerHTML = json.html;
+    const tiktok = document.getElementById('tiktok');
+    tiktok.outerHTML = json.html;
   };
   tiktokBuild(`https://www.tiktok.com/oembed?url=${url}`);
 
-  return $resultHtml.outerHTML;
+  return resultHtml.outerHTML;
 };
 
 const embedSlideShare = (url) => {
@@ -92,15 +92,15 @@ const embedSlideShare = (url) => {
   const slideShareBuild = async () => {
     const response = await fetch(url);
     const body = await response.text();
-    const $el = document.createElement('div');
-    $el.innerHTML = body;
-    const $slideShowInfo = $el.querySelector('.slideshow-info meta[itemprop="embedURL"]');
-    if ($slideShowInfo) {
-      const embedUrl = $el.querySelector('.slideshow-info meta[itemprop="embedURL"]').content;
-      const $slideShare = document.getElementById('slideShare');
-      $slideShare.outerHTML = `<div style="left: 0; width: 100%; height: 0; position: relative; padding-bottom: 56.25%;">
-            <iframe src="${embedUrl}" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%; top: 0; left: 0; width: 100%; height: 100%; position: absolute;" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" allowfullscreen loading="lazy"> </iframe>
-            </div>`;
+    const el = document.createElement('div');
+    el.innerHTML = body;
+    const slideShowInfo = el.querySelector('.slideshow-info meta[itemprop="embedURL"]');
+    if (slideShowInfo) {
+      const embedUrl = el.querySelector('.slideshow-info meta[itemprop="embedURL"]').content;
+      const slideShare = document.getElementById('slideShare');
+      slideShare.outerHTML = `<div style="left: 0; width: 100%; height: 0; position: relative; padding-bottom: 56.25%;">
+          <iframe src="${embedUrl}" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%; top: 0; left: 0; width: 100%; height: 100%; position: absolute;" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" allowfullscreen loading="lazy"> </iframe>
+        </div>`;
     }
   };
   slideShareBuild(url);
@@ -143,16 +143,16 @@ const EMBEDS_CONFIG = {
   },
 };
 
-const loadEmbed = ($block) => {
-  if ($block.classList.contains('is-loaded')) {
+const loadEmbed = (block) => {
+  if (block.classList.contains('is-loaded')) {
     return;
   }
 
-  const $a = $block.querySelector('a');
-  const $figure = buildFigure($block.firstChild.firstChild);
+  const a = block.querySelector('a');
+  const figure = buildFigure(block.firstChild.firstChild);
 
-  if ($a) {
-    const url = new URL($a.href.replace(/\/$/, ''));
+  if (a) {
+    const url = new URL(a.href.replace(/\/$/, ''));
     const hostnameArr = url.hostname.split('.');
 
     // trimed domain name (ex, www.google.com -> google)
@@ -174,14 +174,14 @@ const loadEmbed = ($block) => {
 
     // loading embed function for given config and url.
     if (config) {
-      $a.outerHTML = config.embed(url);
-      $block.classList = `block embed embed-${config.type}`;
+      a.outerHTML = config.embed(url);
+      block.classList = `block embed embed-${config.type}`;
     } else {
-      $a.outerHTML = getDefaultEmbed(url);
-      $block.classList = `block embed embed-${simpleDomain}`;
+      a.outerHTML = getDefaultEmbed(url);
+      block.classList = `block embed embed-${simpleDomain}`;
     }
-    $block.innerHTML = $figure.outerHTML;
-    $block.classList.add('is-loaded');
+    block.innerHTML = figure.outerHTML;
+    block.classList.add('is-loaded');
   }
 };
 
@@ -189,8 +189,8 @@ const intersectHandler = (entries) => {
   const entry = entries[0];
   if (entry.isIntersecting) {
     if (entry.intersectionRatio >= 0.25) {
-      const $block = entry.target;
-      loadEmbed($block);
+      const block = entry.target;
+      loadEmbed(block);
     }
   } else {
     // if ((entry.intersectionRatio === 0.0) && (adBox.dataset.totalViewTime >= 60000)) {
@@ -199,7 +199,7 @@ const intersectHandler = (entries) => {
   }
 };
 
-export default function decorate($block) {
+export default function decorate(block) {
   window.addEventListener('load', () => {
     const options = {
       root: null,
@@ -208,6 +208,6 @@ export default function decorate($block) {
     };
 
     const observer = new IntersectionObserver(intersectHandler, options);
-    observer.observe($block);
+    observer.observe(block);
   });
 }
