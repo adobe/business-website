@@ -1,4 +1,5 @@
-import { createEl, fetchBlogArticleIndex, createOptimizedPicture } from '../../scripts/scripts.js';
+import { fetchBlogArticleIndex, createOptimizedPicture } from '../../scripts/scripts.js';
+import createTag from './gnav-utils.js';
 
 function decorateCard(hit) {
   const {
@@ -13,7 +14,7 @@ function decorateCard(hit) {
         <h3>${title}</h3>
         <p>${description}</p>
       </div>`;
-  return createEl({
+  return createTag({
     tag: 'a', className: 'article-card', html, attributes: { href: path },
   });
 }

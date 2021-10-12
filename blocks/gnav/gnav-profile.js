@@ -1,4 +1,5 @@
-import { createEl, getHelixEnv } from '../../scripts/scripts.js';
+import { getHelixEnv } from '../../scripts/scripts.js';
+import createTag from './gnav-utils.js';
 
 function decorateEmail(email) {
   const MAX_CHAR = 12;
@@ -25,10 +26,10 @@ function decorateProfileMenu(blockEl, profileEl, profiles, toggle) {
   const { avatar } = user;
 
   const displayEmail = decorateEmail(email);
-  const avatarImg = createEl({ tag: 'img', className: 'gnav-profile-img', attributes: { src: avatar } });
+  const avatarImg = createTag({ tag: 'img', className: 'gnav-profile-img', attributes: { src: avatar } });
   const accountLink = blockEl.querySelector('div > div > p:nth-child(2) a');
 
-  const profileButton = createEl({
+  const profileButton = createTag({
     tag: 'button',
     className: 'gnav-profile-button',
     html: avatarImg,
@@ -40,32 +41,32 @@ function decorateProfileMenu(blockEl, profileEl, profiles, toggle) {
   });
   profileButton.addEventListener('click', () => { toggle(profileEl); });
 
-  const profileMenu = createEl({ tag: 'div', id: 'gnav-profile-menu', className: 'gnav-profile-menu' });
-  const profileHeader = createEl({ tag: 'a', className: 'gnav-profile-header' });
-  const profileDetails = createEl({ tag: 'div', className: 'gnav-profile-details' });
-  const profileActions = createEl({ tag: 'ul', className: 'gnav-profile-actions' });
+  const profileMenu = createTag({ tag: 'div', id: 'gnav-profile-menu', className: 'gnav-profile-menu' });
+  const profileHeader = createTag({ tag: 'a', className: 'gnav-profile-header' });
+  const profileDetails = createTag({ tag: 'div', className: 'gnav-profile-details' });
+  const profileActions = createTag({ tag: 'ul', className: 'gnav-profile-actions' });
 
   profileHeader.href = decorateProfileLink(accountLink.href, 'account');
   profileHeader.setAttribute('aria-label', accountLink.textContent);
 
   const profileImg = avatarImg.cloneNode(true);
-  const profileName = createEl({ tag: 'p', className: 'gnav-profile-name', html: displayName });
-  const profileEmail = createEl({ tag: 'p', className: 'gnav-profile-email', html: displayEmail });
+  const profileName = createTag({ tag: 'p', className: 'gnav-profile-name', html: displayName });
+  const profileEmail = createTag({ tag: 'p', className: 'gnav-profile-email', html: displayEmail });
   const accountText = blockEl.querySelector('div > div > p:nth-child(2) a').innerHTML;
-  const profileViewAccount = createEl({ tag: 'p', className: 'gnav-profile-account', html: accountText });
+  const profileViewAccount = createTag({ tag: 'p', className: 'gnav-profile-account', html: accountText });
   profileDetails.append(profileName, profileEmail, profileViewAccount);
 
   if (sections.manage.items.team?.id) {
     const teamLink = blockEl.querySelector('div > div > p:nth-child(3) a');
     teamLink.href = decorateProfileLink(teamLink.href, 'adminconsole');
-    const manageTeam = createEl({ tag: 'li', html: teamLink, className: 'gnav-profile-action' });
+    const manageTeam = createTag({ tag: 'li', html: teamLink, className: 'gnav-profile-action' });
     profileActions.append(manageTeam);
   }
 
   if (sections.manage.items.enterprise?.id) {
     const manageLink = blockEl.querySelector('div > div > p:nth-child(4) a');
     manageLink.href = decorateProfileLink(manageLink.href, 'adminconsole');
-    const manageEnt = createEl({ tag: 'li', html: manageLink, className: 'gnav-profile-action' });
+    const manageEnt = createTag({ tag: 'li', html: manageLink, className: 'gnav-profile-action' });
     profileActions.append(manageEnt);
   }
 
@@ -74,7 +75,7 @@ function decorateProfileMenu(blockEl, profileEl, profiles, toggle) {
     e.preventDefault();
     window.adobeIMS.signOut();
   });
-  const signOut = createEl({ tag: 'li', html: signOutLink, className: 'gnav-profile-action' });
+  const signOut = createTag({ tag: 'li', html: signOutLink, className: 'gnav-profile-action' });
   profileActions.append(signOut);
 
   profileHeader.append(profileImg, profileDetails);

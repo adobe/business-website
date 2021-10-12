@@ -1,8 +1,5 @@
-import {
-  loadScript,
-  getHelixEnv,
-  debug,
-} from '../../scripts/scripts.js';
+import { loadScript, getHelixEnv, debug } from '../../scripts/scripts.js';
+import createTag from './gnav-utils.js';
 
 const BRAND_IMG = '<img loading="lazy" alt="Adobe" src="/blocks/gnav/adobe-logo.svg">';
 const SEARCH_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" focusable="false">
@@ -10,31 +7,6 @@ const SEARCH_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
 </svg>`;
 const IS_OPEN = 'is-Open';
 
-/**
- * Create an element with ID, class, children, and attributes
- * @param {Object} props to create the element
- * @returns {HTMLElement} the element created
- */
-function createTag({
-  tag, className, id, html, attributes,
-}) {
-  const el = document.createElement(tag);
-  if (id) { el.id = id; }
-  if (className) { el.className = className; }
-  if (html) {
-    if (html instanceof HTMLElement) {
-      el.append(html);
-    } else {
-      el.insertAdjacentHTML('beforeend', html);
-    }
-  }
-  if (attributes) {
-    Object.keys(attributes).forEach((key) => {
-      el.setAttribute(key, attributes[key]);
-    });
-  }
-  return el;
-}
 class Gnav {
   constructor(body, el) {
     this.el = el;
