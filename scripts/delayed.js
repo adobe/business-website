@@ -39,7 +39,7 @@ function storeCWV(measurement) {
 }
 
 function updateExternalLinks() {
-  document.querySelectorAll('a').forEach((a) => {
+  document.querySelectorAll('main a').forEach((a) => {
     const { origin } = new URL(a);
     if (origin && origin !== window.location.origin) {
       a.setAttribute('rel', 'noopener');
