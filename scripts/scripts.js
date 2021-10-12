@@ -361,16 +361,8 @@ function buildTagsBlock(mainEl) {
     if (recBlock) {
       recBlock.parentNode.insertBefore(tagsBlock, recBlock);
     } else {
-      mainEl.append(tagsBlock);
+      mainEl.lastElementChild.append(tagsBlock);
     }
-  }
-}
-
-async function interlink() {
-  const blockName = 'interlinks';
-  const mod = await import(`/blocks/${blockName}/${blockName}.js`);
-  if (mod.default) {
-    await mod.default();
   }
 }
 
@@ -391,10 +383,9 @@ function decorateBlocks($main) {
 function buildAutoBlocks(mainEl) {
   removeStylingFromImages(mainEl);
   try {
-    if (getMetadata('author') && getMetadata('publication-date') && !mainEl.querySelector('.article-header')) {
+    if (getMetadata('publication-date') && !mainEl.querySelector('.article-header')) {
       buildArticleHeader(mainEl);
       buildTagsBlock(mainEl);
-      interlink(mainEl);
     }
     if (window.location.pathname.includes('/categories/') || window.location.pathname.includes('/tags/')) {
       buildTagHeader(mainEl);
@@ -510,6 +501,7 @@ export async function loadBlock($block, callback) {
     $block.setAttribute('data-block-loaded', true);
     const blockName = $block.getAttribute('data-block-name');
     try {
+      loadCSS(`/blocks/${blockName}/${blockName}.css`);
       const mod = await import(`/blocks/${blockName}/${blockName}.js`);
       if (mod.default) {
         await mod.default($block, blockName, document, callback);
@@ -517,7 +509,6 @@ export async function loadBlock($block, callback) {
     } catch (err) {
       debug(`failed to load module for ${blockName}`, err);
     }
-    loadCSS(`/blocks/${blockName}/${blockName}.css`);
   }
 }
 
@@ -602,7 +593,7 @@ export function normalizeHeadings($elem, allowedHeadings) {
  * @param {Array} breakpoints breakpoints and corresponding params (eg. width)
  */
 
-export function createOptimizedPicture(src, alt = '', eager = false, breakpoints = [{ media: 'min-width: 400px', width: '2000' }, { width: '750' }]) {
+export function createOptimizedPicture(src, alt = '', eager = false, breakpoints = [{ media: '(min-width: 400px)', width: '2000' }, { width: '750' }]) {
   const url = new URL(src, window.location.href);
   const picture = document.createElement('picture');
   const { pathname } = url;
@@ -786,7 +777,7 @@ function setLCPTrigger(lcpCandidateEl, postLCP) {
 function getLCPCandidate(callback) {
   const usp = new URLSearchParams(window.location.search);
   const lcp = usp.get('lcp');
-  const lcpBlocks = ['featured-article'];
+  const lcpBlocks = ['featured-article', 'article-header'];
   let candidate = document.querySelector('main img');
   const block = document.querySelector('.block');
   if (block) {
@@ -854,16 +845,16 @@ async function decoratePage(win = window) {
         addFavIcon('/styles/favicon.svg');
 
         /* trigger delayed.js load */
-        const martechUrl = '/scripts/delayed.js';
+        const delayedScript = '/scripts/delayed.js';
         const usp = new URLSearchParams(window.location.search);
-        const martech = usp.get('martech');
+        const delayed = usp.get('delayed');
 
-        if (!(martech === 'off' || document.querySelector(`head script[src="${martechUrl}"]`))) {
+        if (!(delayed === 'off' || document.querySelector(`head script[src="${delayedScript}"]`))) {
           let ms = 3500;
           const delay = usp.get('delay');
           if (delay) ms = +delay;
           setTimeout(() => {
-            loadScript(martechUrl, null, 'module');
+            loadScript(delayedScript, null, 'module');
           }, ms);
         }
       });

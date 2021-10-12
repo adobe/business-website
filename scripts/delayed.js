@@ -51,3 +51,7 @@ if (window.hlx.rum.isSelected) {
   };
   document.head.appendChild(script);
 }
+
+if (document.querySelector('.article-header') && !document.querySelector('[data-origin]')) {
+  loadScript('../../blocks/interlinks/interlinks.js', null, 'module');
+}
