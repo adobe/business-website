@@ -11,11 +11,12 @@
  */
 
 /* globals webVitals */
-import { loadScript, sampleRUM } from './scripts.js';
+import { loadScript, sampleRUM, getHelixEnv } from './scripts.js';
 
+const { target } = getHelixEnv();
 window.marketingtech = window.marketingtech || {};
 window.marketingtech.adobe = {
-  target: true,
+  target,
   audienceManager: true,
   launch: {
     property: 'global',
