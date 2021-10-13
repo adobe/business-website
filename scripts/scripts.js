@@ -195,43 +195,43 @@ export function toClassName(name) {
 
 /**
  * Wraps each section in an additional {@code div}.
- * @param {[Element]} $sections The sections
+ * @param {[Element]} sections The sections
  */
-function wrapSections($sections) {
-  $sections.forEach(($div) => {
-    if (!$div.id) {
-      const $wrapper = document.createElement('div');
-      $wrapper.className = 'section-wrapper';
-      $div.parentNode.appendChild($wrapper);
-      $wrapper.appendChild($div);
+function wrapSections(sections) {
+  sections.forEach((div) => {
+    if (!div.id) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'section-wrapper';
+      div.parentNode.appendChild(wrapper);
+      wrapper.appendChild(div);
     }
   });
 }
 
 /**
  * Decorates a block.
- * @param {Element} $block The block element
+ * @param {Element} block The block element
  */
-export function decorateBlock($block) {
-  const classes = Array.from($block.classList.values());
+export function decorateBlock(block) {
+  const classes = Array.from(block.classList.values());
   let blockName = classes[0];
   if (!blockName) return;
-  const $section = $block.closest('.section-wrapper');
-  if ($section) {
-    $section.classList.add(`${blockName}-container`.replace(/--/g, '-'));
+  const section = block.closest('.section-wrapper');
+  if (section) {
+    section.classList.add(`${blockName}-container`.replace(/--/g, '-'));
   }
   const blocksWithVariants = ['recommended-articles'];
   blocksWithVariants.forEach((b) => {
     if (blockName.startsWith(`${b}-`)) {
       const options = blockName.substring(b.length + 1).split('-').filter((opt) => !!opt);
       blockName = b;
-      $block.classList.add(b);
-      $block.classList.add(...options);
+      block.classList.add(b);
+      block.classList.add(...options);
     }
   });
 
-  $block.classList.add('block');
-  $block.setAttribute('data-block-name', blockName);
+  block.classList.add('block');
+  block.setAttribute('data-block-name', blockName);
 }
 
 /**
@@ -368,17 +368,17 @@ function buildTagsBlock(mainEl) {
 
 /**
  * Decorates all blocks in a container element.
- * @param {Element} $main The container element
+ * @param {Element} main The container element
  */
-function decorateBlocks($main) {
-  $main
+function decorateBlocks(main) {
+  main
     .querySelectorAll('div.section-wrapper > div > div')
-    .forEach(($block) => decorateBlock($block));
+    .forEach((block) => decorateBlock(block));
 }
 
 /**
  * Builds all synthetic blocks in a container element.
- * @param {Element} $main The container element
+ * @param {Element} main The container element
  */
 function buildAutoBlocks(mainEl) {
   removeStylingFromImages(mainEl);
@@ -407,12 +407,12 @@ function unwrapBlock(block) {
   section.parentNode.insertBefore(blockSection, nextSection);
   section.parentNode.insertBefore(postBlockSection, nextSection);
 
-  let $appendTo;
+  let appendTo;
   els.forEach((el) => {
-    if (el === block) $appendTo = blockSection;
-    if ($appendTo) {
-      $appendTo.appendChild(el);
-      $appendTo = postBlockSection;
+    if (el === block) appendTo = blockSection;
+    if (appendTo) {
+      appendTo.appendChild(el);
+      appendTo = postBlockSection;
     }
   });
   if (!section.hasChildNodes()) {
@@ -494,17 +494,17 @@ export function buildFigure(blockEl) {
 
 /**
  * Loads JS and CSS for a block.
- * @param {Element} $block The block element
+ * @param {Element} block The block element
  */
-export async function loadBlock($block, callback) {
-  if (!$block.getAttribute('data-block-loaded')) {
-    $block.setAttribute('data-block-loaded', true);
-    const blockName = $block.getAttribute('data-block-name');
+export async function loadBlock(block, callback) {
+  if (!block.getAttribute('data-block-loaded')) {
+    block.setAttribute('data-block-loaded', true);
+    const blockName = block.getAttribute('data-block-name');
     try {
       loadCSS(`/blocks/${blockName}/${blockName}.css`);
       const mod = await import(`/blocks/${blockName}/${blockName}.js`);
       if (mod.default) {
-        await mod.default($block, blockName, document, callback);
+        await mod.default(block, blockName, document, callback);
       }
     } catch (err) {
       debug(`failed to load module for ${blockName}`, err);
@@ -514,43 +514,43 @@ export async function loadBlock($block, callback) {
 
 /**
  * Loads JS and CSS for all blocks in a container element.
- * @param {Element} $main The container element
+ * @param {Element} main The container element
  */
-async function loadBlocks($main) {
-  $main
+async function loadBlocks(main) {
+  main
     .querySelectorAll('div.section-wrapper > div > .block')
-    .forEach(async ($block) => loadBlock($block));
+    .forEach(async (block) => loadBlock(block));
 }
 
 /**
  * Extracts the config from a block.
- * @param {Element} $block The block element
+ * @param {Element} block The block element
  * @returns {object} The block config
  */
-export function readBlockConfig($block) {
+export function readBlockConfig(block) {
   const config = {};
-  $block.querySelectorAll(':scope>div').forEach(($row) => {
-    if ($row.children) {
-      const $cols = [...$row.children];
-      if ($cols[1]) {
-        const $value = $cols[1];
-        const name = toClassName($cols[0].textContent);
+  block.querySelectorAll(':scope>div').forEach((row) => {
+    if (row.children) {
+      const cols = [...row.children];
+      if (cols[1]) {
+        const valueEl = cols[1];
+        const name = toClassName(cols[0].textContent);
         let value = '';
-        if ($value.querySelector('a')) {
-          const $as = [...$value.querySelectorAll('a')];
-          if ($as.length === 1) {
-            value = $as[0].href;
+        if (valueEl.querySelector('a')) {
+          const aArr = [...valueEl.querySelectorAll('a')];
+          if (aArr.length === 1) {
+            value = aArr[0].href;
           } else {
-            value = $as.map(($a) => $a.href);
+            value = aArr.map((a) => a.href);
           }
-        } else if ($value.querySelector('p')) {
-          const $ps = [...$value.querySelectorAll('p')];
-          if ($ps.length === 1) {
-            value = $ps[0].textContent;
+        } else if (valueEl.querySelector('p')) {
+          const pArr = [...valueEl.querySelectorAll('p')];
+          if (pArr.length === 1) {
+            value = pArr[0].textContent;
           } else {
-            value = $ps.map(($p) => $p.textContent);
+            value = pArr.map((p) => p.textContent);
           }
-        } else value = $row.children[1].textContent;
+        } else value = row.children[1].textContent;
         config[name] = value;
       }
     }
@@ -560,12 +560,12 @@ export function readBlockConfig($block) {
 
 /**
  * Normalizes all headings within a container element.
- * @param {Element} $elem The container element
+ * @param {Element} el The container element
  * @param {[string]]} allowedHeadings The list of allowed headings (h1 ... h6)
  */
-export function normalizeHeadings($elem, allowedHeadings) {
+export function normalizeHeadings(el, allowedHeadings) {
   const allowed = allowedHeadings.map((h) => h.toLowerCase());
-  $elem.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((tag) => {
+  el.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((tag) => {
     const h = tag.tagName.toLowerCase();
     if (allowed.indexOf(h) === -1) {
       // current heading is not in the allowed list -> try first to "promote" the heading
@@ -659,10 +659,10 @@ export function buildArticleCard(article, type = 'article') {
 
 /**
  * Decorates the main element.
- * @param {Element} $main The main element
+ * @param {Element} main The main element
  */
-function decoratePictures($main) {
-  $main.querySelectorAll('img[src*="/media_"').forEach((img, i) => {
+function decoratePictures(main) {
+  main.querySelectorAll('img[src*="/media_"').forEach((img, i) => {
     const newPicture = createOptimizedPicture(img.src, img.alt, !i);
     const picture = img.closest('picture');
     if (picture) picture.parentElement.replaceChild(newPicture, picture);
@@ -671,16 +671,16 @@ function decoratePictures($main) {
 
 /**
  * Decorates the main element.
- * @param {Element} $main The main element
+ * @param {Element} main The main element
  */
-export function decorateMain($main) {
+export function decorateMain(main) {
   // forward compatible pictures redecoration
-  decoratePictures($main);
-  buildAutoBlocks($main);
+  decoratePictures(main);
+  buildAutoBlocks(main);
   splitSections();
   removeEmptySections();
-  wrapSections($main.querySelectorAll(':scope > div'));
-  decorateBlocks($main);
+  wrapSections(main.querySelectorAll(':scope > div'));
+  decorateBlocks(main);
 }
 
 /**
@@ -688,15 +688,15 @@ export function decorateMain($main) {
  * @param {string} href The favicon URL
  */
 export function addFavIcon(href) {
-  const $link = document.createElement('link');
-  $link.rel = 'icon';
-  $link.type = 'image/svg+xml';
-  $link.href = href;
-  const $existingLink = document.querySelector('head link[rel="icon"]');
-  if ($existingLink) {
-    $existingLink.parentElement.replaceChild($link, $existingLink);
+  const link = document.createElement('link');
+  link.rel = 'icon';
+  link.type = 'image/svg+xml';
+  link.href = href;
+  const existingLink = document.querySelector('head link[rel="icon"]');
+  if (existingLink) {
+    existingLink.parentElement.replaceChild(link, existingLink);
   } else {
-    document.getElementsByTagName('head')[0].appendChild($link);
+    document.getElementsByTagName('head')[0].appendChild(link);
   }
 }
 
@@ -825,9 +825,9 @@ export function loadScript(url, callback, type) {
  */
 async function decoratePage(win = window) {
   const doc = win.document;
-  const $main = doc.querySelector('main');
-  if ($main) {
-    decorateMain($main);
+  const main = doc.querySelector('main');
+  if (main) {
+    decorateMain(main);
     getLCPCandidate((lcpCandidateEl) => {
       setLCPTrigger(lcpCandidateEl, async () => {
         // post LCP actions go here
@@ -840,7 +840,7 @@ async function decoratePage(win = window) {
         header.setAttribute('data-gnav-source', gnavPath);
         loadBlock(header);
 
-        await loadBlocks($main);
+        await loadBlocks(main);
         loadCSS('/styles/lazy-styles.css');
         addFavIcon('/styles/favicon.svg');
 
