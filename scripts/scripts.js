@@ -59,10 +59,8 @@ export function loadCSS(href) {
     const link = document.createElement('link');
     link.setAttribute('rel', 'stylesheet');
     link.setAttribute('href', href);
-    link.onload = () => {
-    };
-    link.onerror = () => {
-    };
+    link.onload = () => { };
+    link.onerror = () => { };
     document.head.appendChild(link);
   }
 }
@@ -120,6 +118,57 @@ export function getMetadata(name) {
 }
 
 /**
+ * Get the current Helix environment
+ * @returns {Object} the env object
+ */
+export function getHelixEnv() {
+  let envName = sessionStorage.getItem('helix-env');
+  if (!envName) envName = 'prod';
+  const envs = {
+    stage: {
+      ims: 'stg1',
+      adobeIO: 'cc-collab-stage.adobe.io',
+      adminconsole: 'stage.adminconsole.adobe.com',
+      account: 'stage.account.adobe.com',
+      target: false,
+    },
+    prod: {
+      ims: 'prod',
+      adobeIO: 'cc-collab.adobe.io',
+      adminconsole: 'adminconsole.adobe.com',
+      account: 'account.adobe.com',
+      target: true,
+    },
+  };
+  const env = envs[envName];
+
+  const overrideItem = sessionStorage.getItem('helix-env-overrides');
+  if (overrideItem) {
+    const overrides = JSON.parse(overrideItem);
+    const keys = Object.keys(overrides);
+    env.overrides = keys;
+
+    keys.forEach((value) => {
+      env[value] = overrides[value];
+    });
+  }
+
+  if (env) {
+    env.name = envName;
+  }
+  return env;
+}
+
+export function debug(message) {
+  const { hostname } = window.location;
+  const env = getHelixEnv();
+  if (env.name !== 'prod' || hostname === 'localhost') {
+    // eslint-disable-next-line no-console
+    console.log(message);
+  }
+}
+
+/**
  * Adds one or more URLs to the dependencies for publishing.
  * @param {string|[string]} url The URL(s) to add as dependencies
  */
@@ -146,43 +195,43 @@ export function toClassName(name) {
 
 /**
  * Wraps each section in an additional {@code div}.
- * @param {[Element]} $sections The sections
+ * @param {[Element]} sections The sections
  */
-function wrapSections($sections) {
-  $sections.forEach(($div) => {
-    if (!$div.id) {
-      const $wrapper = document.createElement('div');
-      $wrapper.className = 'section-wrapper';
-      $div.parentNode.appendChild($wrapper);
-      $wrapper.appendChild($div);
+function wrapSections(sections) {
+  sections.forEach((div) => {
+    if (!div.id) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'section-wrapper';
+      div.parentNode.appendChild(wrapper);
+      wrapper.appendChild(div);
     }
   });
 }
 
 /**
  * Decorates a block.
- * @param {Element} $block The block element
+ * @param {Element} block The block element
  */
-export function decorateBlock($block) {
-  const classes = Array.from($block.classList.values());
+export function decorateBlock(block) {
+  const classes = Array.from(block.classList.values());
   let blockName = classes[0];
   if (!blockName) return;
-  const $section = $block.closest('.section-wrapper');
-  if ($section) {
-    $section.classList.add(`${blockName}-container`.replace(/--/g, '-'));
+  const section = block.closest('.section-wrapper');
+  if (section) {
+    section.classList.add(`${blockName}-container`.replace(/--/g, '-'));
   }
   const blocksWithVariants = ['recommended-articles'];
   blocksWithVariants.forEach((b) => {
     if (blockName.startsWith(`${b}-`)) {
       const options = blockName.substring(b.length + 1).split('-').filter((opt) => !!opt);
       blockName = b;
-      $block.classList.add(b);
-      $block.classList.add(...options);
+      block.classList.add(b);
+      block.classList.add(...options);
     }
   });
 
-  $block.classList.add('block');
-  $block.setAttribute('data-block-name', blockName);
+  block.classList.add('block');
+  block.setAttribute('data-block-name', blockName);
 }
 
 /**
@@ -281,7 +330,7 @@ function buildArticleHeader(mainEl) {
 }
 
 function buildTagHeader(mainEl) {
-  const div = document.createElement('div');
+  const div = mainEl.querySelector('div');
   const h1 = mainEl.querySelector('h1');
   const picture = mainEl.querySelector('picture');
   const tagHeaderBlockEl = buildBlock('tag-header', [
@@ -289,7 +338,6 @@ function buildTagHeader(mainEl) {
     [{ elems: [picture.closest('p')] }],
   ]);
   div.append(tagHeaderBlockEl);
-  mainEl.prepend(div);
 }
 
 function buildArticleFeed(mainEl) {
@@ -313,29 +361,29 @@ function buildTagsBlock(mainEl) {
     if (recBlock) {
       recBlock.parentNode.insertBefore(tagsBlock, recBlock);
     } else {
-      mainEl.append(tagsBlock);
+      mainEl.lastElementChild.append(tagsBlock);
     }
   }
 }
 
 /**
  * Decorates all blocks in a container element.
- * @param {Element} $main The container element
+ * @param {Element} main The container element
  */
-function decorateBlocks($main) {
-  $main
+function decorateBlocks(main) {
+  main
     .querySelectorAll('div.section-wrapper > div > div')
-    .forEach(($block) => decorateBlock($block));
+    .forEach((block) => decorateBlock(block));
 }
 
 /**
  * Builds all synthetic blocks in a container element.
- * @param {Element} $main The container element
+ * @param {Element} main The container element
  */
 function buildAutoBlocks(mainEl) {
   removeStylingFromImages(mainEl);
   try {
-    if (getMetadata('author') && getMetadata('publication-date') && !mainEl.querySelector('.article-header')) {
+    if (getMetadata('publication-date') && !mainEl.querySelector('.article-header')) {
       buildArticleHeader(mainEl);
       buildTagsBlock(mainEl);
     }
@@ -359,15 +407,20 @@ function unwrapBlock(block) {
   section.parentNode.insertBefore(blockSection, nextSection);
   section.parentNode.insertBefore(postBlockSection, nextSection);
 
-  let $appendTo;
+  let appendTo;
   els.forEach((el) => {
-    if (el === block) $appendTo = blockSection;
-    if ($appendTo) {
-      $appendTo.appendChild(el);
-      $appendTo = postBlockSection;
+    if (el === block) appendTo = blockSection;
+    if (appendTo) {
+      appendTo.appendChild(el);
+      appendTo = postBlockSection;
     }
   });
-
+  if (!section.hasChildNodes()) {
+    section.remove();
+  }
+  if (!blockSection.hasChildNodes()) {
+    blockSection.remove();
+  }
   if (!postBlockSection.hasChildNodes()) {
     postBlockSection.remove();
   }
@@ -375,11 +428,16 @@ function unwrapBlock(block) {
 
 function splitSections() {
   document.querySelectorAll('main > div > div').forEach((block) => {
-    const blocksToSplit = ['article-feed', 'article-header', 'recommended-articles'];
-
+    const blocksToSplit = ['article-header', 'recommended-articles'];
     if (blocksToSplit.includes(block.className)) {
       unwrapBlock(block);
     }
+  });
+}
+
+function removeEmptySections() {
+  document.querySelectorAll('main > div:empty').forEach((div) => {
+    div.remove();
   });
 }
 
@@ -436,64 +494,63 @@ export function buildFigure(blockEl) {
 
 /**
  * Loads JS and CSS for a block.
- * @param {Element} $block The block element
+ * @param {Element} block The block element
  */
-export async function loadBlock($block, callback) {
-  if (!$block.getAttribute('data-block-loaded')) {
-    $block.setAttribute('data-block-loaded', true);
-    const blockName = $block.getAttribute('data-block-name');
+export async function loadBlock(block, callback) {
+  if (!block.getAttribute('data-block-loaded')) {
+    block.setAttribute('data-block-loaded', true);
+    const blockName = block.getAttribute('data-block-name');
     try {
+      loadCSS(`/blocks/${blockName}/${blockName}.css`);
       const mod = await import(`/blocks/${blockName}/${blockName}.js`);
       if (mod.default) {
-        await mod.default($block, blockName, document, callback);
+        await mod.default(block, blockName, document, callback);
       }
     } catch (err) {
-      // eslint-disable-next-line no-console
-      console.log(`failed to load module for ${blockName}`, err);
+      debug(`failed to load module for ${blockName}`, err);
     }
-    loadCSS(`/blocks/${blockName}/${blockName}.css`);
   }
 }
 
 /**
  * Loads JS and CSS for all blocks in a container element.
- * @param {Element} $main The container element
+ * @param {Element} main The container element
  */
-async function loadBlocks($main) {
-  $main
+async function loadBlocks(main) {
+  main
     .querySelectorAll('div.section-wrapper > div > .block')
-    .forEach(async ($block) => loadBlock($block));
+    .forEach(async (block) => loadBlock(block));
 }
 
 /**
  * Extracts the config from a block.
- * @param {Element} $block The block element
+ * @param {Element} block The block element
  * @returns {object} The block config
  */
-export function readBlockConfig($block) {
+export function readBlockConfig(block) {
   const config = {};
-  $block.querySelectorAll(':scope>div').forEach(($row) => {
-    if ($row.children) {
-      const $cols = [...$row.children];
-      if ($cols[1]) {
-        const $value = $cols[1];
-        const name = toClassName($cols[0].textContent);
+  block.querySelectorAll(':scope>div').forEach((row) => {
+    if (row.children) {
+      const cols = [...row.children];
+      if (cols[1]) {
+        const valueEl = cols[1];
+        const name = toClassName(cols[0].textContent);
         let value = '';
-        if ($value.querySelector('a')) {
-          const $as = [...$value.querySelectorAll('a')];
-          if ($as.length === 1) {
-            value = $as[0].href;
+        if (valueEl.querySelector('a')) {
+          const aArr = [...valueEl.querySelectorAll('a')];
+          if (aArr.length === 1) {
+            value = aArr[0].href;
           } else {
-            value = $as.map(($a) => $a.href);
+            value = aArr.map((a) => a.href);
           }
-        } else if ($value.querySelector('p')) {
-          const $ps = [...$value.querySelectorAll('p')];
-          if ($ps.length === 1) {
-            value = $ps[0].textContent;
+        } else if (valueEl.querySelector('p')) {
+          const pArr = [...valueEl.querySelectorAll('p')];
+          if (pArr.length === 1) {
+            value = pArr[0].textContent;
           } else {
-            value = $ps.map(($p) => $p.textContent);
+            value = pArr.map((p) => p.textContent);
           }
-        } else value = $row.children[1].textContent;
+        } else value = row.children[1].textContent;
         config[name] = value;
       }
     }
@@ -503,12 +560,12 @@ export function readBlockConfig($block) {
 
 /**
  * Normalizes all headings within a container element.
- * @param {Element} $elem The container element
+ * @param {Element} el The container element
  * @param {[string]]} allowedHeadings The list of allowed headings (h1 ... h6)
  */
-export function normalizeHeadings($elem, allowedHeadings) {
+export function normalizeHeadings(el, allowedHeadings) {
   const allowed = allowedHeadings.map((h) => h.toLowerCase());
-  $elem.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((tag) => {
+  el.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((tag) => {
     const h = tag.tagName.toLowerCase();
     if (allowed.indexOf(h) === -1) {
       // current heading is not in the allowed list -> try first to "promote" the heading
@@ -536,7 +593,7 @@ export function normalizeHeadings($elem, allowedHeadings) {
  * @param {Array} breakpoints breakpoints and corresponding params (eg. width)
  */
 
-export function createOptimizedPicture(src, alt = '', eager = false, breakpoints = [{ media: 'min-width: 400px', width: '2000' }, { width: '750' }]) {
+export function createOptimizedPicture(src, alt = '', eager = false, breakpoints = [{ media: '(min-width: 400px)', width: '2000' }, { width: '750' }]) {
   const url = new URL(src, window.location.href);
   const picture = document.createElement('picture');
   const { pathname } = url;
@@ -577,12 +634,12 @@ export function createOptimizedPicture(src, alt = '', eager = false, breakpoints
  */
 export function buildArticleCard(article, type = 'article') {
   const {
-    title, description, image, category,
+    title, description, image, imageAlt, category,
   } = article;
 
   const path = article.path.split('.')[0];
 
-  const picture = createOptimizedPicture(image, title, false, [{ width: '750' }]);
+  const picture = createOptimizedPicture(image, imageAlt || title, false, [{ width: '750' }]);
   const pictureTag = picture.outerHTML;
   const card = document.createElement('a');
   card.className = `${type}-card`;
@@ -602,10 +659,10 @@ export function buildArticleCard(article, type = 'article') {
 
 /**
  * Decorates the main element.
- * @param {Element} $main The main element
+ * @param {Element} main The main element
  */
-function decoratePictures($main) {
-  $main.querySelectorAll('img[src*="/media_"').forEach((img, i) => {
+function decoratePictures(main) {
+  main.querySelectorAll('img[src*="/media_"').forEach((img, i) => {
     const newPicture = createOptimizedPicture(img.src, img.alt, !i);
     const picture = img.closest('picture');
     if (picture) picture.parentElement.replaceChild(newPicture, picture);
@@ -614,15 +671,16 @@ function decoratePictures($main) {
 
 /**
  * Decorates the main element.
- * @param {Element} $main The main element
+ * @param {Element} main The main element
  */
-export function decorateMain($main) {
+export function decorateMain(main) {
   // forward compatible pictures redecoration
-  decoratePictures($main);
-  buildAutoBlocks($main);
+  decoratePictures(main);
+  buildAutoBlocks(main);
   splitSections();
-  wrapSections($main.querySelectorAll(':scope > div'));
-  decorateBlocks($main);
+  removeEmptySections();
+  wrapSections(main.querySelectorAll(':scope > div'));
+  decorateBlocks(main);
 }
 
 /**
@@ -630,15 +688,15 @@ export function decorateMain($main) {
  * @param {string} href The favicon URL
  */
 export function addFavIcon(href) {
-  const $link = document.createElement('link');
-  $link.rel = 'icon';
-  $link.type = 'image/svg+xml';
-  $link.href = href;
-  const $existingLink = document.querySelector('head link[rel="icon"]');
-  if ($existingLink) {
-    $existingLink.parentElement.replaceChild($link, $existingLink);
+  const link = document.createElement('link');
+  link.rel = 'icon';
+  link.type = 'image/svg+xml';
+  link.href = href;
+  const existingLink = document.querySelector('head link[rel="icon"]');
+  if (existingLink) {
+    existingLink.parentElement.replaceChild(link, existingLink);
   } else {
-    document.getElementsByTagName('head')[0].appendChild($link);
+    document.getElementsByTagName('head')[0].appendChild(link);
   }
 }
 
@@ -677,14 +735,14 @@ export async function getBlogArticle(path) {
  * @returns {object} localized variables
  */
 
-export async function fetchVariables() {
-  const resp = await fetch(`${getRootPath()}/variables.json`);
+export async function fetchPlaceholders() {
+  const resp = await fetch(`${getRootPath()}/placeholders.json`);
   const json = await resp.json();
-  const vars = {};
-  json.data.forEach((v) => {
-    vars[v.Key] = v.Text;
+  const placeholders = {};
+  json.data.forEach((placeholder) => {
+    placeholders[placeholder.Key] = placeholder.Text;
   });
-  return (vars);
+  return (placeholders);
 }
 
 /**
@@ -719,27 +777,24 @@ function setLCPTrigger(lcpCandidateEl, postLCP) {
 function getLCPCandidate(callback) {
   const usp = new URLSearchParams(window.location.search);
   const lcp = usp.get('lcp');
-  const lcpBlocks = ['featured-article'];
+  const lcpBlocks = ['featured-article', 'article-header'];
   let candidate = document.querySelector('main img');
   const block = document.querySelector('.block');
   if (block) {
     if (lcp !== 'simple' && lcpBlocks.includes(block.getAttribute('data-block-name'))) {
       loadBlock(block, () => {
         candidate = block.querySelector('img');
-        // eslint-disable-next-line no-console
-        console.log('LCP block found', candidate);
+        debug('LCP block found', candidate);
         callback(candidate);
       });
     } else {
       // not an LCP block
-      // eslint-disable-next-line no-console
-      console.log('first block is not LCP block', candidate);
+      debug('first block is not LCP block', candidate);
       callback(candidate);
     }
   } else {
     // no blocks found
-    // eslint-disable-next-line no-console
-    console.log('no blocks found', candidate);
+    debug('no blocks found', candidate);
     callback(candidate);
   }
 }
@@ -770,9 +825,9 @@ export function loadScript(url, callback, type) {
  */
 async function decoratePage(win = window) {
   const doc = win.document;
-  const $main = doc.querySelector('main');
-  if ($main) {
-    decorateMain($main);
+  const main = doc.querySelector('main');
+  if (main) {
+    decorateMain(main);
     getLCPCandidate((lcpCandidateEl) => {
       setLCPTrigger(lcpCandidateEl, async () => {
         // post LCP actions go here
@@ -780,8 +835,9 @@ async function decoratePage(win = window) {
 
         /* load gnav */
         const header = document.querySelector('header');
+        const gnavPath = getMetadata('gnav') || `${getRootPath()}/gnav`;
         header.setAttribute('data-block-name', 'gnav');
-        header.setAttribute('data-gnav-source', `${getRootPath()}/gnav`);
+        header.setAttribute('data-gnav-source', gnavPath);
         loadBlock(header);
 
         /* load footer */
@@ -790,21 +846,21 @@ async function decoratePage(win = window) {
         footer.setAttribute('data-footer-source', `${getRootPath()}/footer`);
         loadBlock(footer);
 
-        await loadBlocks($main);
+        await loadBlocks(main);
         loadCSS('/styles/lazy-styles.css');
         addFavIcon('/styles/favicon.svg');
 
         /* trigger delayed.js load */
-        const martechUrl = '/scripts/delayed.js';
+        const delayedScript = '/scripts/delayed.js';
         const usp = new URLSearchParams(window.location.search);
-        const martech = usp.get('martech');
+        const delayed = usp.get('delayed');
 
-        if (!(martech === 'off' || document.querySelector(`head script[src="${martechUrl}"]`))) {
-          let ms = 3000;
+        if (!(delayed === 'off' || document.querySelector(`head script[src="${delayedScript}"]`))) {
+          let ms = 3500;
           const delay = usp.get('delay');
           if (delay) ms = +delay;
           setTimeout(() => {
-            loadScript(martechUrl, null, 'module');
+            loadScript(delayedScript, null, 'module');
           }, ms);
         }
       });
@@ -815,6 +871,41 @@ async function decoratePage(win = window) {
 
 decoratePage(window);
 
+function setHelixEnv(name, overrides) {
+  if (name) {
+    sessionStorage.setItem('helix-env', name);
+    if (overrides) {
+      sessionStorage.setItem('helix-env-overrides', JSON.stringify(overrides));
+    } else {
+      sessionStorage.removeItem('helix-env-overrides');
+    }
+  } else {
+    sessionStorage.removeItem('helix-env');
+    sessionStorage.removeItem('helix-env-overrides');
+  }
+}
+
+function displayEnv() {
+  try {
+    /* setup based on URL Params */
+    const usp = new URLSearchParams(window.location.search);
+    if (usp.has('helix-env')) {
+      const env = usp.get('helix-env');
+      setHelixEnv(env);
+    }
+
+    /* setup based on referrer */
+    if (document.referrer) {
+      const url = new URL(document.referrer);
+      if (window.location.hostname !== url.hostname) {
+        debug(`external referrer detected: ${document.referrer}`);
+      }
+    }
+  } catch (e) {
+    debug(`display env failed: ${e.message}`);
+  }
+}
+displayEnv();
 /*
  * lighthouse performance instrumentation helper
  * (needs a refactor)
@@ -822,8 +913,7 @@ decoratePage(window);
 
 function stamp(message) {
   if (window.name.includes('performance')) {
-    // eslint-disable-next-line no-console
-    console.log(`${new Date() - performance.timing.navigationStart}:${message}`);
+    debug(`${new Date() - performance.timing.navigationStart}:${message}`);
   }
 }
 
@@ -834,16 +924,14 @@ function registerPerformanceLogger() {
     const polcp = new PerformanceObserver((entryList) => {
       const entries = entryList.getEntries();
       stamp(JSON.stringify(entries));
-      // eslint-disable-next-line no-console
-      console.log(entries[0].element);
+      debug(entries[0].element);
     });
     polcp.observe({ type: 'largest-contentful-paint', buffered: true });
 
     const pols = new PerformanceObserver((entryList) => {
       const entries = entryList.getEntries();
       stamp(JSON.stringify(entries));
-      // eslint-disable-next-line no-console
-      console.log(entries[0].sources[0].node);
+      debug(entries[0].sources[0].node);
     });
     pols.observe({ type: 'layout-shift', buffered: true });
 

@@ -1,5 +1,5 @@
 import {
-  fetchVariables,
+  fetchPlaceholders,
 } from '../../scripts/scripts.js';
 
 async function markupToFooter(url) {
@@ -45,7 +45,7 @@ async function markupToFooter(url) {
 }
 
 async function getFooter(data) {
-  const vars = await fetchVariables();
+  const vars = await fetchPlaceholders();
 
   const footer = document.createElement('div');
   footer.className = 'footer';

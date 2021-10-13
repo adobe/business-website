@@ -5,7 +5,7 @@ export default function decorateTags(blockEl) {
   container.textContent = '';
   tags.forEach((tag) => {
     const a = document.createElement('a');
-    a.setAttribute('href', `../tags/${tag.toLowerCase().replace(' ', '-')}`);
+    a.setAttribute('href', `../tags/${tag.toLowerCase().replace(/\s+/g, '-')}`);
     a.textContent = tag;
     a.classList.add('button');
     container.append(a);

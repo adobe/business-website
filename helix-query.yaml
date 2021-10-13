@@ -7,6 +7,15 @@ indices:
     fetch: https://{ref}--{repo}--{owner}.hlx.live{path}
     include:
       - '/blog/**'
+    exclude:
+      - '/blog/'
+      - '/blog/index*'
+      - '/blog/gnav*'
+      - '/blog/footer*'
+      - '/blog/authors/**'
+      - '/blog/banners/**'
+      - '/blog/categories/**'
+      - '/blog/tags/**'
     target: https://adobe.sharepoint.com/sites/BizWeb/Shared%20Documents/website/blog/query-index.xlsx
     sitemap:
       source: /blog/query-index.json
@@ -29,6 +38,10 @@ indices:
         select: head > meta[property="og:image"]
         value: |
           match(attribute(el, 'content'), 'https:\/\/[^/]+(\/.*)')
+      imageAlt:
+        select: head > meta[property="og:image:alt"]
+        value: |
+          attribute(el, 'content')
       description:
         select: head > meta[name="description"]
         value: |

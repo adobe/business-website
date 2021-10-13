@@ -11,11 +11,12 @@
  */
 
 /* globals webVitals */
-import { loadScript, sampleRUM } from './scripts.js';
+import { loadScript, sampleRUM, getHelixEnv } from './scripts.js';
 
+const { target } = getHelixEnv();
 window.marketingtech = window.marketingtech || {};
 window.marketingtech.adobe = {
-  target: true,
+  target,
   audienceManager: true,
   launch: {
     property: 'global',
@@ -38,6 +39,16 @@ function storeCWV(measurement) {
   sampleRUM('cwv', rum);
 }
 
+function updateExternalLinks() {
+  document.querySelectorAll('main a').forEach((a) => {
+    const { origin } = new URL(a);
+    if (origin && origin !== window.location.origin) {
+      a.setAttribute('rel', 'noopener');
+      a.setAttribute('target', '_blank');
+    }
+  });
+}
+
 if (window.hlx.rum.isSelected) {
   const script = document.createElement('script');
   script.src = 'https://unpkg.com/web-vitals';
@@ -50,3 +61,9 @@ if (window.hlx.rum.isSelected) {
   };
   document.head.appendChild(script);
 }
+
+if (document.querySelector('.article-header') && !document.querySelector('[data-origin]')) {
+  loadScript('../../blocks/interlinks/interlinks.js', null, 'module');
+}
+
+updateExternalLinks();

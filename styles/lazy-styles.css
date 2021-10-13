@@ -53,6 +53,18 @@
 .tk-adobe-clean { font-family: "adobe-clean",sans-serif; }
 .tk-adobe-clean-serif { font-family: "adobe-clean-serif",sans-serif; }
 
+main div.article-header-container + div a:any-link:not([class]) {
+  color: var(--color-info-accent);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+}
+
+main div.article-header-container + div a:hover:not([class]),
+main div.article-header-container + div a:focus:not([class]) {
+  color: var(--color-info-accent-hover);
+}
+
+
 /* article card styles, share between blocks */
 
 .article-card {
@@ -113,7 +125,9 @@ main a.article-card:any-link {
   object-fit: cover;
   height: 100%;
   width: 100%;
-  transition: .4s;
+  transition: opacity .4s;
+  color: var(--color-white);
+  line-height: var(--body-line-height);
 }
 
 .article-card .article-card-image img:hover {
