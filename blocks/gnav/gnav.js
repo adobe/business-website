@@ -17,8 +17,8 @@ class Gnav {
 
   init = () => {
     this.state = {};
-    this.curtain = createTag({ tag: 'div', className: 'gnav-curtain' });
-    const nav = createTag({ tag: 'nav', className: 'gnav' });
+    this.curtain = createTag('div', { class: 'gnav-curtain' });
+    const nav = createTag('nav', { class: 'gnav' });
 
     const mobileToggle = this.decorateToggle(nav);
     nav.append(mobileToggle);
@@ -48,19 +48,12 @@ class Gnav {
       nav.append(logo);
     }
 
-    const wrapper = createTag({ tag: 'div', className: 'gnav-wrapper', html: nav });
+    const wrapper = createTag('div', { class: 'gnav-wrapper' }, nav);
     this.el.append(this.curtain, wrapper);
   }
 
   decorateToggle = (nav) => {
-    const toggle = createTag({
-      tag: 'button',
-      className: 'gnav-toggle',
-      attributes: {
-        'aria-label': 'Navigation menu',
-        'aria-expanded': false,
-      },
-    });
+    const toggle = createTag('button', { class: 'gnav-toggle', 'aria-label': 'Navigation menu', 'aria-expanded': false });
     const onMediaChange = (e) => {
       if (e.matches) {
         nav.classList.remove(IS_OPEN);
@@ -115,9 +108,9 @@ class Gnav {
   }
 
   buildMainNav = (navLinks) => {
-    const mainNav = createTag({ tag: 'div', className: 'gnav-mainnav' });
+    const mainNav = createTag('div', { class: 'gnav-mainnav' });
     navLinks.forEach((navLink, idx) => {
-      const navItem = createTag({ tag: 'div', className: 'gnav-navitem' });
+      const navItem = createTag('div', { class: 'gnav-navitem' });
 
       const menu = navLink.closest('div');
       menu.querySelector('h2').remove();
@@ -148,7 +141,7 @@ class Gnav {
       menu.classList.add('medium-Variant');
     } else if (childCount >= 3) {
       menu.classList.add('large-Variant');
-      const container = createTag({ tag: 'div', className: 'gnav-menu-container' });
+      const container = createTag('div', { class: 'gnav-menu-container' });
       container.append(...Array.from(menu.children));
       menu.append(container);
     }
@@ -171,18 +164,18 @@ class Gnav {
     if (searchBlock) {
       const label = searchBlock.querySelector('p').textContent;
       const advancedLink = searchBlock.querySelector('a');
-      const searchEl = createTag({ tag: 'div', className: 'gnav-search' });
+      const searchEl = createTag('div', { class: 'gnav-search' });
       const searchBar = this.decorateSearchBar(label, advancedLink);
-      const searchButton = createTag({
-        tag: 'button',
-        className: 'gnav-search-button',
-        html: SEARCH_ICON,
-        attributes: {
+      const searchButton = createTag(
+        'button',
+        {
+          class: 'gnav-search-button',
           'aria-label': label,
           'aria-expanded': false,
           'aria-controls': 'gnav-search-bar',
         },
-      });
+        SEARCH_ICON,
+      );
       searchButton.addEventListener('click', () => {
         this.loadSearch(searchEl);
         this.toggleMenu(searchEl);
@@ -194,10 +187,10 @@ class Gnav {
   }
 
   decorateSearchBar = (label, advancedLink) => {
-    const searchBar = createTag({ tag: 'aside', id: 'gnav-search-bar', className: 'gnav-search-bar' });
-    const searchField = createTag({ tag: 'div', className: 'gnav-search-field', html: SEARCH_ICON });
-    const searchInput = createTag({ tag: 'input', className: 'gnav-search-input', attributes: { placeholder: label } });
-    const searchResults = createTag({ tag: 'div', className: 'gnav-search-results' });
+    const searchBar = createTag('aside', { id: 'gnav-search-bar', class: 'gnav-search-bar' });
+    const searchField = createTag('div', { class: 'gnav-search-field' }, SEARCH_ICON);
+    const searchInput = createTag('input', { class: 'gnav-search-input', placeholder: label });
+    const searchResults = createTag('div', { class: 'gnav-search-results' });
 
     searchInput.addEventListener('input', (e) => {
       this.onSearchInput(e.target.value, searchResults, advancedLink);
@@ -217,7 +210,7 @@ class Gnav {
   decorateProfile = () => {
     const blockEl = this.body.querySelector('.profile');
     if (!blockEl) return null;
-    const profileEl = createTag({ tag: 'div', className: 'gnav-profile' });
+    const profileEl = createTag('div', { class: 'gnav-profile' });
 
     window.adobeid = {
       client_id: 'bizweb',

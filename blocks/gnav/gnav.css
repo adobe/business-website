@@ -369,13 +369,14 @@ button.gnav-toggle:after {
 
 .gnav-profile .gnav-profile-menu {
   display: none;
-  position: absolute;
+  position: fixed;
   right: 0;
-  top: 100%;
+  top: 64px;
   min-width: 320px;
   background: #FFF;
   border: 1px solid #E1E1E1;
   border-radius: 0 0 4px 4px;
+  overflow: hidden;
 }
 
 .gnav-profile.is-Open .gnav-profile-menu {
@@ -440,7 +441,7 @@ button.gnav-toggle:after {
   color: #4b4b4b;
 }
 
-.gnav-profile-actions a:hover {
+.gnav-profile-menu a:hover {
   background-color: #FAFAFA;
 }
 
@@ -536,7 +537,12 @@ button.gnav-toggle:after {
 
   .gnav-search-results .article-card:first-of-type {
     margin-top: unset;
-}
+  }
+
+  .gnav-profile .gnav-profile-menu {
+    position: absolute;
+    top: 100%;
+  }
 }
 
 @media (min-width: 1440px) {

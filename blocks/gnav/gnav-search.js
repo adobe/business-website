@@ -8,15 +8,14 @@ function decorateCard(hit) {
   const path = hit.path.split('.')[0];
   const picture = createOptimizedPicture(image, title, false, [{ width: '750' }]);
   const pictureTag = picture.outerHTML;
-  const html = `<div class="article-card-image">${pictureTag}</div>
-      <div class="article-card-body">
-        <p class="article-card-category">${category}</p>
-        <h3>${title}</h3>
-        <p>${description}</p>
-      </div>`;
-  return createTag({
-    tag: 'a', className: 'article-card', html, attributes: { href: path },
-  });
+  const html = `
+  <div class="article-card-image">${pictureTag}</div>
+  <div class="article-card-body">
+    <p class="article-card-category">${category}</p>
+    <h3>${title}</h3>
+    <p>${description}</p>
+  </div>`;
+  return createTag('a', { class: 'article-card', href: path }, html);
 }
 
 function highlightTextElements(terms, elements) {
