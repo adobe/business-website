@@ -517,9 +517,9 @@ export async function loadBlock(block, callback) {
  * @param {Element} main The container element
  */
 async function loadBlocks(main) {
-  main
-    .querySelectorAll('div.section-wrapper > div > .block')
-    .forEach(async (block) => loadBlock(block));
+  return Promise.all(Array.from(main
+    .querySelectorAll('div.section-wrapper > div > .block'))
+    .map(async (block) => loadBlock(block)));
 }
 
 /**
@@ -751,20 +751,20 @@ export async function fetchPlaceholders() {
  * @param {Element} lcpCandidateElement The LCP candidate element
  * @param {Function} postLCP The callback function
  */
-function setLCPTrigger(lcpCandidateEl, postLCP) {
+async function setLCPTrigger(lcpCandidateEl, postLCP) {
   if (lcpCandidateEl) {
     if (lcpCandidateEl.complete) {
-      postLCP();
+      await postLCP();
     } else {
-      lcpCandidateEl.addEventListener('load', () => {
-        postLCP();
+      lcpCandidateEl.addEventListener('load', async () => {
+        await postLCP();
       });
-      lcpCandidateEl.addEventListener('error', () => {
-        postLCP();
+      lcpCandidateEl.addEventListener('error', async () => {
+        await postLCP();
       });
     }
   } else {
-    postLCP();
+    await postLCP();
   }
 }
 
@@ -774,7 +774,7 @@ function setLCPTrigger(lcpCandidateEl, postLCP) {
  * @param {Function} callback The function called with the LCP candidate element
  */
 
-function getLCPCandidate(callback) {
+async function getLCPCandidate(callback) {
   const usp = new URLSearchParams(window.location.search);
   const lcp = usp.get('lcp');
   const lcpBlocks = ['featured-article', 'article-header'];
@@ -782,10 +782,10 @@ function getLCPCandidate(callback) {
   const block = document.querySelector('.block');
   if (block) {
     if (lcp !== 'simple' && lcpBlocks.includes(block.getAttribute('data-block-name'))) {
-      loadBlock(block, () => {
+      await loadBlock(block, async () => {
         candidate = block.querySelector('img');
         debug('LCP block found', candidate);
-        callback(candidate);
+        await callback(candidate);
       });
     } else {
       // not an LCP block
@@ -828,8 +828,8 @@ async function decoratePage(win = window) {
   const main = doc.querySelector('main');
   if (main) {
     decorateMain(main);
-    getLCPCandidate((lcpCandidateEl) => {
-      setLCPTrigger(lcpCandidateEl, async () => {
+    await getLCPCandidate(async (lcpCandidateEl) => {
+      await setLCPTrigger(lcpCandidateEl, async () => {
         // post LCP actions go here
         sampleRUM('lcp');
 
@@ -838,15 +838,18 @@ async function decoratePage(win = window) {
         const gnavPath = getMetadata('gnav') || `${getRootPath()}/gnav`;
         header.setAttribute('data-block-name', 'gnav');
         header.setAttribute('data-gnav-source', gnavPath);
-        loadBlock(header);
 
         /* load footer */
         const footer = document.querySelector('footer');
         footer.setAttribute('data-block-name', 'footer');
         footer.setAttribute('data-footer-source', `${getRootPath()}/footer`);
-        loadBlock(footer);
 
-        await loadBlocks(main);
+        await Promise.all([
+          loadBlock(header),
+          loadBlock(footer),
+          loadBlocks(main),
+        ]);
+
         loadCSS('/styles/lazy-styles.css');
         addFavIcon('/styles/favicon.svg');
 
