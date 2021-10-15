@@ -2,7 +2,6 @@ import {
   fetchPlaceholders,
   debug,
 } from '../../scripts/scripts.js';
-// import createTag from './gnav-utils.js';
 import createTag from '../gnav/gnav-utils.js';
 
 const GLOBE_IMG = '<img class="footer-region-img" loading="lazy" src="/blocks/footer/globe.svg">';
@@ -12,7 +11,6 @@ class Footer {
   constructor(body, el) {
     this.el = el;
     this.body = body;
-    // this.env = getHelixEnv();
     this.desktop = window.matchMedia('(min-width: 900px)');
   }
 
@@ -26,19 +24,33 @@ class Footer {
     }
 
     const infoRow = createTag('div', { class: 'footer-info' });
+    const infoColumnLeft = createTag('div', { class: 'footer-info-column' });
+    const infoColumnRight = createTag('div', { class: 'footer-info-column' });
 
     const region = await this.decorateRegion();
     if (region) {
-      infoRow.append(region);
+      infoColumnLeft.append(region);
       infoRow.classList.add('has-region');
+    }
+
+    const social = this.decorateSocial();
+    if (social) {
+      infoColumnLeft.append(social);
+      infoRow.classList.add('has-social');
     }
 
     const privacy = this.decoratePrivacy();
     if (privacy) {
-      infoRow.append(privacy);
+      infoColumnRight.append(privacy);
       infoRow.classList.add('has-privacy');
     }
 
+    if (infoColumnLeft.hasChildNodes()) {
+      infoRow.append(infoColumnLeft);
+    }
+    if (infoColumnRight.hasChildNodes()) {
+      infoRow.append(infoColumnRight);
+    }
     if (infoRow.hasChildNodes()) {
       wrapper.append(infoRow);
     }
@@ -128,6 +140,34 @@ class Footer {
     });
     regionContainer.append(regionOptions);
     return regionContainer;
+  }
+
+  decorateSocial = () => {
+    const socialEl = this.body.querySelector('.social > div');
+    if (!socialEl) return null;
+    // build social icon wrapper
+    const socialWrapper = createTag('div', { class: 'footer-social' });
+    // build social icon links
+    const socialLinks = createTag('ul', { class: 'footer-social-icons' });
+    socialEl.querySelectorAll('a').forEach((a) => {
+      const domain = a.host.replace(/www./, '').replace(/.com/, '');
+      const supported = ['facebook', 'instagram', 'twitter', 'linkedin'];
+      if (supported.includes(domain)) {
+        // populate social icon links
+        const li = createTag('li', { class: 'footer-social-icon' });
+        const socialIcon = createTag('img', {
+          class: 'footer-social-img',
+          loading: 'lazy',
+          src: `/blocks/footer/${domain}-square.svg`,
+        });
+        a.textContent = '';
+        a.append(socialIcon);
+        li.append(a);
+        socialLinks.append(li);
+      } else { a.remove(); }
+      socialWrapper.append(socialLinks);
+    });
+    return socialWrapper;
   }
 
   decoratePrivacy = () => {
