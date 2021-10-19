@@ -496,7 +496,7 @@ export function buildFigure(blockEl) {
  * Loads JS and CSS for a block.
  * @param {Element} block The block element
  */
-export async function loadBlock(block, callback) {
+export async function loadBlock(block) {
   if (!block.getAttribute('data-block-loaded')) {
     block.setAttribute('data-block-loaded', true);
     const blockName = block.getAttribute('data-block-name');
@@ -504,7 +504,7 @@ export async function loadBlock(block, callback) {
       loadCSS(`/blocks/${blockName}/${blockName}.css`);
       const mod = await import(`/blocks/${blockName}/${blockName}.js`);
       if (mod.default) {
-        await mod.default(block, blockName, document, callback);
+        await mod.default(block, blockName, document);
       }
     } catch (err) {
       debug(`failed to load module for ${blockName}`, err);
@@ -639,7 +639,7 @@ export function buildArticleCard(article, type = 'article') {
 
   const path = article.path.split('.')[0];
 
-  const picture = createOptimizedPicture(image, imageAlt || title, false, [{ width: '750' }]);
+  const picture = createOptimizedPicture(image, imageAlt || title, type === 'featured-article', [{ width: '750' }]);
   const pictureTag = picture.outerHTML;
   const card = document.createElement('a');
   card.className = `${type}-card`;
