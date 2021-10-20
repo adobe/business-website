@@ -717,17 +717,50 @@ export async function fetchBlogArticleIndex() {
 }
 
 /**
+ * forward looking *.metadata.json experiment
+ * fetches metadata.json of page
+ * @param {path} path to *.metadata.json
+ * @returns {Object} containing sanitized meta data
+ */
+
+async function getMetadataJson(path) {
+  const resp = await fetch(path.split('.')[0]);
+  const text = await resp.text();
+  const html = document.createElement('html');
+  html.innerHTML = text;
+  const metaTags = html.querySelectorAll('head > meta');
+  const meta = {};
+  metaTags.forEach((metaTag) => {
+    const name = metaTag.getAttribute('name') || metaTag.getAttribute('property');
+    const value = metaTag.getAttribute('content');
+    if (meta[name]) {
+      meta[name] += `, ${value}`;
+    } else {
+      meta[name] = value;
+    }
+  });
+  return (JSON.stringify(meta));
+}
+
+/**
  * gets a blog article index information by path.
  * @param {string} path indentifies article
  * @returns {object} article object
  */
 
 export async function getBlogArticle(path) {
-  if (!window.blogIndex) {
-    window.blogIndex = await fetchBlogArticleIndex();
-  }
-  const index = window.blogIndex;
-  return (index.byPath[path]);
+  const json = await getMetadataJson(`${path}.metadata.json`);
+  const meta = JSON.parse(json);
+  const articleMeta = {
+    description: meta.description,
+    title: meta['og:title'],
+    image: meta['og:image'],
+    imageAlt: meta['og:image:alt'],
+    date: meta['publication-date'],
+    path,
+    category: meta.category,
+  };
+  return (articleMeta);
 }
 
 /**
