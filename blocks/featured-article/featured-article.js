@@ -16,6 +16,7 @@ async function decorateFeaturedArticle(featuredArticleEl, articlePath, callback)
     } else {
       featuredArticleEl.append(card);
     }
+    featuredArticleEl.classList.add('loaded');
     if (callback) callback();
   } else {
     const { origin } = new URL(window.location.href);
