@@ -496,7 +496,7 @@ export function buildFigure(blockEl) {
  * Loads JS and CSS for a block.
  * @param {Element} block The block element
  */
-export async function loadBlock(block) {
+export async function loadBlock(block, eager = false) {
   if (!block.getAttribute('data-block-loaded')) {
     block.setAttribute('data-block-loaded', true);
     const blockName = block.getAttribute('data-block-name');
@@ -504,7 +504,7 @@ export async function loadBlock(block) {
       loadCSS(`/blocks/${blockName}/${blockName}.css`);
       const mod = await import(`/blocks/${blockName}/${blockName}.js`);
       if (mod.default) {
-        await mod.default(block, blockName, document);
+        await mod.default(block, blockName, document, eager);
       }
     } catch (err) {
       debug(`failed to load module for ${blockName}`, err);
@@ -776,7 +776,7 @@ async function loadEager() {
     const lcpBlocks = ['featured-article', 'article-header'];
     const block = document.querySelector('.block');
     const hasLCPBlock = (block && lcpBlocks.includes(block.getAttribute('data-block-name')));
-    if (hasLCPBlock) await loadBlock(block);
+    if (hasLCPBlock) await loadBlock(block, true);
     const lcpCandidate = document.querySelector('main img');
     const loaded = {
       then: (resolve) => {
