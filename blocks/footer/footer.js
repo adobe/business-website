@@ -256,7 +256,6 @@ class Footer {
 
 async function fetchFooter(url) {
   const resp = await fetch(`${url}.plain.html`);
-  // const resp = await fetch('/drafts/fkakatie/footer.plain.html');
   const html = await resp.text();
   return html;
 }
