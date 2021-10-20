@@ -40,7 +40,7 @@ function storeCWV(measurement) {
 }
 
 function updateExternalLinks() {
-  document.querySelectorAll('main a').forEach((a) => {
+  document.querySelectorAll('main a, footer a').forEach((a) => {
     const { origin } = new URL(a);
     if (origin && origin !== window.location.origin) {
       a.setAttribute('rel', 'noopener');
