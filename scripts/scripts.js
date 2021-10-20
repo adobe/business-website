@@ -814,7 +814,7 @@ async function loadLazy() {
   footer.setAttribute('data-footer-source', `${getRootPath()}/footer`);
   loadBlock(footer);
 
-  await loadBlocks(main);
+  loadBlocks(main);
   loadCSS('/styles/lazy-styles.css');
   addFavIcon('/styles/favicon.svg');
 }
