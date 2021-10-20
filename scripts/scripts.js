@@ -726,9 +726,10 @@ export async function fetchBlogArticleIndex() {
 async function getMetadataJson(path) {
   const resp = await fetch(path.split('.')[0]);
   const text = await resp.text();
-  const html = document.createElement('html');
-  html.innerHTML = text;
-  const metaTags = html.querySelectorAll('head > meta');
+  const headStr = text.split('<head>')[1].split('</head>')[0];
+  const head = document.createElement('head');
+  head.innerHTML = headStr;
+  const metaTags = head.querySelectorAll(':scope > meta');
   const meta = {};
   metaTags.forEach((metaTag) => {
     const name = metaTag.getAttribute('name') || metaTag.getAttribute('property');
