@@ -1,7 +1,7 @@
 import {
   readBlockConfig,
   buildArticleCard,
-  fetchBlogArticleIndex,
+  getBlogArticleIndex,
   fetchPlaceholders,
 } from '../../scripts/scripts.js';
 
@@ -12,10 +12,7 @@ function isCardOnPage(article) {
 }
 
 async function filterArticles(config) {
-  if (!window.blogIndex) {
-    window.blogIndex = await fetchBlogArticleIndex();
-  }
-  const index = window.blogIndex;
+  const index = await getBlogArticleIndex();
 
   const result = [];
 

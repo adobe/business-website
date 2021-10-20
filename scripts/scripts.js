@@ -705,7 +705,7 @@ export function addFavIcon(href) {
  * @returns {object} index with data and path lookup
  */
 
-export async function fetchBlogArticleIndex() {
+async function fetchBlogArticleIndex() {
   const resp = await fetch(`${getRootPath()}/query-index.json`);
   const json = await resp.json();
   const byPath = {};
@@ -716,6 +716,25 @@ export async function fetchBlogArticleIndex() {
   return (index);
 }
 
+let pendingFetchBlogArticleIndex;
+export async function getBlogArticleIndex() {
+  if (window.blogIndex) return window.blogIndex;
+
+  if (pendingFetchBlogArticleIndex) {
+    return pendingFetchBlogArticleIndex;
+  }
+
+  pendingFetchBlogArticleIndex = new Promise((resolve) => {
+    fetchBlogArticleIndex().then((index) => {
+      window.blogIndex = index;
+      resolve(window.blogIndex);
+      pendingFetchBlogArticleIndex = null;
+    });
+  });
+
+  return pendingFetchBlogArticleIndex;
+}
+
 /**
  * gets a blog article index information by path.
  * @param {string} path indentifies article
@@ -723,10 +742,7 @@ export async function fetchBlogArticleIndex() {
  */
 
 export async function getBlogArticle(path) {
-  if (!window.blogIndex) {
-    window.blogIndex = await fetchBlogArticleIndex();
-  }
-  const index = window.blogIndex;
+  const index = await getBlogArticleIndex();
   return (index.byPath[path]);
 }
 
