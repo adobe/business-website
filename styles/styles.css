@@ -45,6 +45,7 @@
   --heading-font-size-m: 1.5rem; /* 24px */
   --heading-font-size-s: 1.25rem; /* 20px */
   --heading-font-size-xs: 1.125rem; /* 18px */
+  --heading-font-size-xxs: 0.875rem; /* 14px */
   
   /* details */
   --detail-font-weight: 700;
@@ -68,11 +69,6 @@
   }
 }
 
-html,
-body {
-  height: 100%; /* For bottom aligned footer */
-}
-
 body {
   background-color: var(--body-background-color);
   font-family: var(--body-font-family);
@@ -80,9 +76,6 @@ body {
   color: var(--body-color);
   margin: 0;
   padding: 0;
-  /* For bottom aligned footer */
-  display: flex;
-  flex-direction: column;
 }
 
 /* buttons */
@@ -197,7 +190,6 @@ main {
   line-height: var(--body-line-height);
   margin: 64px 0 0 0;
   font-weight: var(--body-font-weight);
-  flex: 1 0 auto; /* For bottom aligned footer */
 }
 
 main p:not(:last-of-type) {

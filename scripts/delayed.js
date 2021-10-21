@@ -30,7 +30,7 @@ const launchScriptEl = loadScript('https://www.adobe.com/marketingtech/main.no-p
 launchScriptEl.setAttribute('data-seed-adobelaunch', 'true');
 
 function updateExternalLinks() {
-  document.querySelectorAll('main a').forEach((a) => {
+  document.querySelectorAll('main a, footer a').forEach((a) => {
     const { origin } = new URL(a);
     if (origin && origin !== window.location.origin) {
       a.setAttribute('rel', 'noopener');

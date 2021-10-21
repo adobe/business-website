@@ -1,148 +1,278 @@
 import {
   fetchPlaceholders,
+  debug,
 } from '../../scripts/scripts.js';
+import createTag from '../gnav/gnav-utils.js';
 
-async function markupToFooter(url) {
+const GLOBE_IMG = '<img class="footer-region-img" loading="lazy" src="/blocks/footer/globe.svg">';
+const ADCHOICE_IMG = '<img class="footer-link-img" loading="lazy" src="/blocks/footer/adchoices-small.svg">';
+
+class Footer {
+  constructor(body, el) {
+    this.el = el;
+    this.body = body;
+    this.desktop = window.matchMedia('(min-width: 900px)');
+  }
+
+  init = async () => {
+    this.state = {};
+    const wrapper = createTag('div', { class: 'footer-wrapper' });
+
+    const grid = this.decorateGrid();
+    if (grid) {
+      wrapper.append(grid);
+    }
+
+    const infoRow = createTag('div', { class: 'footer-info' });
+    const infoColumnLeft = createTag('div', { class: 'footer-info-column' });
+    const infoColumnRight = createTag('div', { class: 'footer-info-column' });
+
+    const region = await this.decorateRegion();
+    if (region) {
+      infoColumnLeft.append(region);
+      infoRow.classList.add('has-region');
+    }
+
+    const social = this.decorateSocial();
+    if (social) {
+      infoColumnLeft.append(social);
+      infoRow.classList.add('has-social');
+    }
+
+    const privacy = this.decoratePrivacy();
+    if (privacy) {
+      infoColumnRight.append(privacy);
+      infoRow.classList.add('has-privacy');
+    }
+
+    if (infoColumnLeft.hasChildNodes()) {
+      infoRow.append(infoColumnLeft);
+    }
+    if (infoColumnRight.hasChildNodes()) {
+      infoRow.append(infoColumnRight);
+    }
+    if (infoRow.hasChildNodes()) {
+      wrapper.append(infoRow);
+    }
+
+    this.el.append(wrapper);
+  }
+
+  decorateGrid = () => {
+    const gridBlock = this.body.querySelector('.footer-links > div');
+    if (!gridBlock) return null;
+    this.desktop.addEventListener('change', this.onMediaChange);
+    // build grid container
+    const navGrid = createTag('div', { class: 'footer-nav-grid' });
+    const columns = gridBlock.querySelectorAll('div');
+    columns.forEach((column) => {
+      // build grid column
+      const navColumn = createTag('div', { class: 'footer-nav-column' });
+      const headings = column.querySelectorAll('h2');
+      headings.forEach((heading) => {
+        // build grid column item
+        const navItem = createTag('div', { class: 'footer-nav-item' });
+        const titleId = heading.textContent.trim().toLowerCase().replace(/ /g, '-');
+        let expanded = false;
+        if (this.desktop.matches) { expanded = true; }
+        // populate grid column item
+        const title = createTag('h4', {
+          class: 'footer-nav-item-title',
+          role: 'button',
+          'aria-expanded': expanded,
+          'aria-controls': `${titleId}-menu`,
+        });
+        title.textContent = heading.textContent;
+        navItem.append(title);
+        const linksContainer = heading.nextElementSibling;
+        linksContainer.classList = 'footer-nav-item-links';
+        linksContainer.id = `${titleId}-menu`;
+        if (!this.desktop.matches) {
+          title.addEventListener('click', this.toggleMenu);
+        }
+        const links = linksContainer.querySelectorAll('li');
+        links.forEach((link) => {
+          link.classList.add('footer-nav-item-link');
+        });
+        navItem.append(linksContainer);
+        navColumn.append(navItem);
+      });
+      navGrid.append(navColumn);
+    });
+    return navGrid;
+  }
+
+  decorateRegion = async () => {
+    const region = this.body.querySelector('.region-selector > div');
+    if (!region) return null;
+    const placeholders = await fetchPlaceholders();
+    // build region selector container
+    const regionContainer = createTag('div', { class: 'footer-region' });
+    // build region selector button
+    const regionButton = createTag('a', {
+      class: 'footer-region-button',
+      id: 'region-button',
+      'aria-haspopup': true,
+      'aria-expanded': false,
+      role: 'button',
+    });
+    regionButton.addEventListener('click', this.toggleMenu);
+    const regionText = createTag('span', { class: 'footer-region-text' });
+    regionText.textContent = placeholders['change-language'];
+    regionButton.insertAdjacentHTML('afterbegin', GLOBE_IMG);
+    regionButton.append(regionText);
+    regionContainer.append(regionButton);
+    // build region selector options
+    const regionOptions = createTag('ul', {
+      class: 'footer-region-options',
+      'aria-labelledby': 'region-button',
+      role: 'menu',
+    });
+    const regionLinks = region.querySelectorAll('a');
+    // populate region selector options
+    regionLinks.forEach((link) => {
+      const selected = link.parentNode.nodeName === 'STRONG';
+      const options = { class: 'footer-region-option' };
+      if (selected) { options.class += ' footer-region-selected'; }
+      const li = createTag('li', options);
+      li.append(link);
+      regionOptions.append(li);
+    });
+    regionContainer.append(regionOptions);
+    return regionContainer;
+  }
+
+  decorateSocial = () => {
+    const socialEl = this.body.querySelector('.social > div');
+    if (!socialEl) return null;
+    // build social icon wrapper
+    const socialWrapper = createTag('div', { class: 'footer-social' });
+    // build social icon links
+    const socialLinks = createTag('ul', { class: 'footer-social-icons' });
+    socialEl.querySelectorAll('a').forEach((a) => {
+      const domain = a.host.replace(/www./, '').replace(/.com/, '');
+      const supported = ['facebook', 'instagram', 'twitter', 'linkedin'];
+      if (supported.includes(domain)) {
+        // populate social icon links
+        const li = createTag('li', { class: 'footer-social-icon' });
+        const socialIcon = createTag('img', {
+          class: 'footer-social-img',
+          loading: 'lazy',
+          src: `/blocks/footer/${domain}-square.svg`,
+        });
+        a.textContent = '';
+        a.append(socialIcon);
+        li.append(a);
+        socialLinks.append(li);
+      } else { a.remove(); }
+      socialWrapper.append(socialLinks);
+    });
+    return socialWrapper;
+  }
+
+  decoratePrivacy = () => {
+    const copyrightEl = this.body.querySelector('div em');
+    const links = copyrightEl.parentElement.querySelectorAll('a');
+    if (!copyrightEl || !links) return null;
+    // build privacy wrapper
+    const privacyWrapper = createTag('div', { class: 'footer-privacy' });
+    // build privacy copyright text
+    const copyright = createTag('p', { class: 'footer-privacy-copyright' });
+    copyright.textContent = copyrightEl.textContent;
+    privacyWrapper.append(copyright);
+    // build privacy links
+    const infoLinks = createTag('ul', { class: 'footer-privacy-links' });
+    // populate privacy links
+    links.forEach((link) => {
+      const li = createTag('li', { class: 'footer-privacy-link' });
+      if (link.hash === '#interest-based-ads') {
+        link.insertAdjacentHTML('afterbegin', ADCHOICE_IMG);
+      }
+      li.append(link);
+      infoLinks.append(li);
+    });
+    privacyWrapper.append(infoLinks);
+    return privacyWrapper;
+  }
+
+  toggleMenu = (e) => {
+    const button = e.target.closest('[role=button]');
+    const expanded = button.getAttribute('aria-expanded');
+    if (expanded === 'true') {
+      this.closeMenu(button);
+    } else {
+      this.openMenu(button);
+    }
+  }
+
+  closeMenu = (el) => {
+    if (el.id === 'region-button') {
+      window.removeEventListener('keydown', this.closeOnEscape);
+      window.removeEventListener('click', this.closeOnDocClick);
+    }
+    el.setAttribute('aria-expanded', false);
+  }
+
+  openMenu = (el) => {
+    const type = el.classList[0];
+    const expandedMenu = document.querySelector(`.${type}[aria-expanded=true]`);
+    if (expandedMenu) { this.closeMenu(expandedMenu); }
+    if (el.id === 'region-button') {
+      window.addEventListener('keydown', this.closeOnEscape);
+      window.addEventListener('click', this.closeOnDocClick);
+    }
+    el.setAttribute('aria-expanded', true);
+  }
+
+  closeOnEscape = (e) => {
+    const button = document.getElementById('region-button');
+    if (e.code === 'Escape') {
+      this.closeMenu(button);
+    }
+  }
+
+  closeOnDocClick = (e) => {
+    const button = document.getElementById('region-button');
+    const a = e.target.closest('a');
+    if (a !== button) {
+      this.closeMenu(button);
+    }
+  }
+
+  onMediaChange = (e) => {
+    if (e.matches) {
+      document.querySelectorAll('.footer-nav-item-title').forEach((button) => {
+        button.setAttribute('aria-expanded', true);
+        button.removeEventListener('click', this.toggleMenu);
+      });
+    } else {
+      document.querySelectorAll('.footer-nav-item-title').forEach((button) => {
+        button.setAttribute('aria-expanded', false);
+        button.addEventListener('click', this.toggleMenu);
+      });
+    }
+  };
+}
+
+async function fetchFooter(url) {
   const resp = await fetch(`${url}.plain.html`);
   const html = await resp.text();
-  const placeholder = document.createElement('div');
-  placeholder.innerHTML = html;
-  const data = {};
-
-  const regionEl = placeholder.querySelector('.region-selector');
-  if (regionEl) {
-    const regions = [];
-    let selected;
-    if (regionEl.querySelector('a')) { // multi-option
-      regionEl.querySelectorAll('a').forEach((a) => {
-        const { href, textContent: region } = a;
-        const { pathname: path } = new URL(href);
-        regions.push({ region, path });
-        const parentNode = a.parentNode.nodeName;
-        if (parentNode === 'STRONG') {
-          selected = region;
-        }
-      });
-    }
-    data.regionSelector = {
-      selected,
-      options: regions,
-    };
-  }
-
-  data.copyright = placeholder.querySelector(':scope > div em').textContent;
-
-  data.links = [...placeholder.querySelectorAll(':scope > div h2')].map((h2) => {
-    const link = {};
-    link.text = h2.textContent;
-    const h2a = h2.closest('a') || h2.querySelector('a');
-    if (h2a) {
-      link.href = h2a.href;
-    }
-    return link;
-  });
-  return data;
+  return html;
 }
 
-async function getFooter(data) {
-  const vars = await fetchPlaceholders();
-
-  const footer = document.createElement('div');
-  footer.className = 'footer';
-  const regionHtml = `
-  <div class="footer-region">
-    <a class="footer-region-button" id="region-button" aria-haspopup="true" aria-expanded="false" role="button">
-      <img class="footer-region-img" loading="lazy" src="/blocks/footer/globe.svg">
-      <span class="footer-region-text">
-        ${vars['change-language']}
-      </span>
-    </a>
-    <div class="footer-region-dropdown" aria-labelledby="region-button" role="menu">
-      <ul class="footer-region-options"></ul>
-    </div>
-  </div>`;
-  const infoHtml = `
-  <div class="footer-info">
-    <p class="footer-copyright-text">
-      ${data.copyright}
-    </p>
-    <ul class="footer-links"></ul>
-  </div>`;
-  if (data.regionSelector) {
-    footer.innerHTML = regionHtml;
-
-    const regionOptionsContainer = footer.querySelector('.footer-region-options');
-
-    data.regionSelector.options.forEach((option) => {
-      const li = document.createElement('li');
-      li.className = 'footer-region-option';
-      const a = document.createElement('a');
-      a.href = option.path;
-      a.textContent = option.region;
-      a.setAttribute('title', option.region);
-      if (option.region === data.regionSelector.selected) {
-        li.classList.add('footer-region-selected');
+export default async function init(block) {
+  const url = block.getAttribute('data-footer-source');
+  if (url) {
+    const html = await fetchFooter(url);
+    if (html) {
+      try {
+        const parser = new DOMParser();
+        const footerDoc = parser.parseFromString(html, 'text/html');
+        const footer = new Footer(footerDoc.body, block);
+        footer.init();
+      } catch {
+        debug('Could not create footer.');
       }
-      li.append(a);
-      regionOptionsContainer.append(li);
-    });
-  }
-  footer.innerHTML += infoHtml;
-
-  const regionBtn = footer.querySelector('.footer-region-button');
-  if (regionBtn) {
-    regionBtn.addEventListener('click', () => {
-      const regionsExpanded = regionBtn.getAttribute('aria-expanded');
-      if (regionsExpanded === 'false') {
-        regionBtn.setAttribute('aria-expanded', true);
-      } else {
-        regionBtn.setAttribute('aria-expanded', false);
-      }
-
-      window.addEventListener('keydown', (e) => {
-        if (e.code === 'Escape' && regionsExpanded === 'true') {
-          regionBtn.setAttribute('aria-expanded', false);
-        }
-      });
-    });
-
-    window.addEventListener('click', (e) => {
-      const a = e.target.closest('a');
-      const regionsExpanded = regionBtn.getAttribute('aria-expanded');
-      if (a !== regionBtn && regionsExpanded === 'true') {
-        regionBtn.setAttribute('aria-expanded', false);
-      }
-    });
-  }
-
-  const linkContainer = footer.querySelector('.footer-links');
-
-  data.links.forEach((link) => {
-    const li = document.createElement('li');
-    li.className = 'footer-link';
-    if (link.href) {
-      const a = document.createElement('a');
-      a.href = link.href;
-      a.textContent = link.text;
-      const { hash } = new URL(link.href);
-      if (hash === '#interest-based-ads') {
-        li.innerHTML = '<img class="footer-link-img" loading="lazy" src="/blocks/footer/adchoices-small.svg">';
-      }
-      li.append(a);
-      linkContainer.append(li);
     }
-  });
-
-  return (footer);
-}
-
-export async function decorateFooter(blockEl, url) {
-  const footerData = await markupToFooter(url);
-  const footer = await getFooter(footerData);
-  blockEl.appendChild(footer);
-}
-
-export default function decorate(blockEl) {
-  const url = blockEl.getAttribute('data-footer-source');
-  decorateFooter(blockEl, url);
+  }
 }
