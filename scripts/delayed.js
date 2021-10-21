@@ -29,16 +29,6 @@ window.targetGlobalSettings.bodyHidingEnabled = false;
 const launchScriptEl = loadScript('https://www.adobe.com/marketingtech/main.no-promise.min.js');
 launchScriptEl.setAttribute('data-seed-adobelaunch', 'true');
 
-/* Core Web Vitals RUM collection */
-
-sampleRUM('cwv');
-
-function storeCWV(measurement) {
-  const rum = { cwv: { } };
-  rum.cwv[measurement.name] = measurement.value;
-  sampleRUM('cwv', rum);
-}
-
 function updateExternalLinks() {
   document.querySelectorAll('main a').forEach((a) => {
     const { origin } = new URL(a);
@@ -47,6 +37,22 @@ function updateExternalLinks() {
       a.setAttribute('target', '_blank');
     }
   });
+}
+
+if (document.querySelector('.article-header') && !document.querySelector('[data-origin]')) {
+  loadScript('../../blocks/interlinks/interlinks.js', null, 'module');
+}
+
+updateExternalLinks();
+
+/* Core Web Vitals RUM collection */
+
+sampleRUM('cwv');
+
+function storeCWV(measurement) {
+  const rum = { cwv: { } };
+  rum.cwv[measurement.name] = measurement.value;
+  sampleRUM('cwv', rum);
 }
 
 if (window.hlx.rum.isSelected) {
@@ -61,9 +67,3 @@ if (window.hlx.rum.isSelected) {
   };
   document.head.appendChild(script);
 }
-
-if (document.querySelector('.article-header') && !document.querySelector('[data-origin]')) {
-  loadScript('../../blocks/interlinks/interlinks.js', null, 'module');
-}
-
-updateExternalLinks();
