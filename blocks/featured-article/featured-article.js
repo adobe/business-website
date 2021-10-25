@@ -5,7 +5,7 @@ import {
   getBlogArticle,
 } from '../../scripts/scripts.js';
 
-async function decorateFeaturedArticle(featuredArticleEl, articlePath, callback) {
+async function decorateFeaturedArticle(featuredArticleEl, articlePath) {
   const article = await getBlogArticle(articlePath);
   if (article) {
     const card = buildArticleCard(article, 'featured-article');
@@ -17,7 +17,6 @@ async function decorateFeaturedArticle(featuredArticleEl, articlePath, callback)
       featuredArticleEl.append(card);
     }
     featuredArticleEl.classList.add('loaded');
-    if (callback) callback();
   } else {
     const { origin } = new URL(window.location.href);
     // eslint-disable-next-line no-console
@@ -25,11 +24,11 @@ async function decorateFeaturedArticle(featuredArticleEl, articlePath, callback)
   }
 }
 
-export default function decorate(block, blockName, document, callback) {
+export default async function decorate(block, blockName, document, callback) {
   const a = block.querySelector('a');
   block.innerHTML = '';
   if (a && a.href) {
     const path = new URL(a.href).pathname;
-    decorateFeaturedArticle(block, path, callback);
+    await decorateFeaturedArticle(block, path, callback);
   }
 }

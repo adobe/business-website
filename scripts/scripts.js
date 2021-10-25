@@ -496,7 +496,7 @@ export function buildFigure(blockEl) {
  * Loads JS and CSS for a block.
  * @param {Element} block The block element
  */
-export async function loadBlock(block, callback) {
+export async function loadBlock(block, eager = false) {
   if (!block.getAttribute('data-block-loaded')) {
     block.setAttribute('data-block-loaded', true);
     const blockName = block.getAttribute('data-block-name');
@@ -504,7 +504,7 @@ export async function loadBlock(block, callback) {
       loadCSS(`/blocks/${blockName}/${blockName}.css`);
       const mod = await import(`/blocks/${blockName}/${blockName}.js`);
       if (mod.default) {
-        await mod.default(block, blockName, document, callback);
+        await mod.default(block, blockName, document, eager);
       }
     } catch (err) {
       debug(`failed to load module for ${blockName}`, err);
@@ -639,7 +639,7 @@ export function buildArticleCard(article, type = 'article') {
 
   const path = article.path.split('.')[0];
 
-  const picture = createOptimizedPicture(image, imageAlt || title, false, [{ width: '750' }]);
+  const picture = createOptimizedPicture(image, imageAlt || title, type === 'featured-article', [{ width: '750' }]);
   const pictureTag = picture.outerHTML;
   const card = document.createElement('a');
   card.className = `${type}-card`;
@@ -746,60 +746,6 @@ export async function fetchPlaceholders() {
 }
 
 /**
- * Sets the trigger for the LCP (Largest Contentful Paint) event.
- * @see https://web.dev/lcp/
- * @param {Element} lcpCandidateElement The LCP candidate element
- * @param {Function} postLCP The callback function
- */
-function setLCPTrigger(lcpCandidateEl, postLCP) {
-  if (lcpCandidateEl) {
-    if (lcpCandidateEl.complete) {
-      postLCP();
-    } else {
-      lcpCandidateEl.addEventListener('load', () => {
-        postLCP();
-      });
-      lcpCandidateEl.addEventListener('error', () => {
-        postLCP();
-      });
-    }
-  } else {
-    postLCP();
-  }
-}
-
-/**
- * Gets the LCP (Largest Contentful Paint) candidate element.
- * @see https://web.dev/lcp/
- * @param {Function} callback The function called with the LCP candidate element
- */
-
-function getLCPCandidate(callback) {
-  const usp = new URLSearchParams(window.location.search);
-  const lcp = usp.get('lcp');
-  const lcpBlocks = ['featured-article', 'article-header'];
-  let candidate = document.querySelector('main img');
-  const block = document.querySelector('.block');
-  if (block) {
-    if (lcp !== 'simple' && lcpBlocks.includes(block.getAttribute('data-block-name'))) {
-      loadBlock(block, () => {
-        candidate = block.querySelector('img');
-        debug('LCP block found', candidate);
-        callback(candidate);
-      });
-    } else {
-      // not an LCP block
-      debug('first block is not LCP block', candidate);
-      callback(candidate);
-    }
-  } else {
-    // no blocks found
-    debug('no blocks found', candidate);
-    callback(candidate);
-  }
-}
-
-/**
  * loads a script by adding a script tag to the head.
  * @param {string} url URL of the js file
  * @param {Function} callback callback on load
@@ -820,53 +766,86 @@ export function loadScript(url, callback, type) {
 }
 
 /**
- * Decorates the page.
- * @param {Window} win The window
+ * loads everything needed to get to LCP.
  */
-async function decoratePage(win = window) {
-  const doc = win.document;
-  const main = doc.querySelector('main');
+async function loadEager() {
+  const main = document.querySelector('main');
   if (main) {
     decorateMain(main);
-    getLCPCandidate((lcpCandidateEl) => {
-      setLCPTrigger(lcpCandidateEl, async () => {
-        // post LCP actions go here
-        sampleRUM('lcp');
-
-        /* load gnav */
-        const header = document.querySelector('header');
-        const gnavPath = getMetadata('gnav') || `${getRootPath()}/gnav`;
-        header.setAttribute('data-block-name', 'gnav');
-        header.setAttribute('data-gnav-source', gnavPath);
-        loadBlock(header);
-
-        /* load footer */
-        const footer = document.querySelector('footer');
-        footer.setAttribute('data-block-name', 'footer');
-        footer.setAttribute('data-footer-source', `${getRootPath()}/footer`);
-        loadBlock(footer);
-
-        await loadBlocks(main);
-        loadCSS('/styles/lazy-styles.css');
-        addFavIcon('/styles/favicon.svg');
-
-        /* trigger delayed.js load */
-        const delayedScript = '/scripts/delayed.js';
-        const usp = new URLSearchParams(window.location.search);
-        const delayed = usp.get('delayed');
-
-        if (!(delayed === 'off' || document.querySelector(`head script[src="${delayedScript}"]`))) {
-          let ms = 3500;
-          const delay = usp.get('delay');
-          if (delay) ms = +delay;
-          setTimeout(() => {
-            loadScript(delayedScript, null, 'module');
-          }, ms);
-        }
-      });
-    });
     document.querySelector('body').classList.add('appear');
+    const lcpBlocks = ['featured-article', 'article-header'];
+    const block = document.querySelector('.block');
+    const hasLCPBlock = (block && lcpBlocks.includes(block.getAttribute('data-block-name')));
+    if (hasLCPBlock) await loadBlock(block, true);
+    const lcpCandidate = document.querySelector('main img');
+    const loaded = {
+      then: (resolve) => {
+        if (lcpCandidate && !lcpCandidate.complete) {
+          lcpCandidate.addEventListener('load', () => resolve());
+          lcpCandidate.addEventListener('error', () => resolve());
+        } else {
+          resolve();
+        }
+      },
+    };
+    await loaded;
   }
+}
+
+/**
+ * loads everything that doesn't need to be delayed.
+ */
+async function loadLazy() {
+  const main = document.querySelector('main');
+
+  // post LCP actions go here
+  sampleRUM('lcp');
+
+  /* load gnav */
+  const header = document.querySelector('header');
+  const gnavPath = getMetadata('gnav') || `${getRootPath()}/gnav`;
+  header.setAttribute('data-block-name', 'gnav');
+  header.setAttribute('data-gnav-source', gnavPath);
+  loadBlock(header);
+
+  /* load footer */
+  const footer = document.querySelector('footer');
+  footer.setAttribute('data-block-name', 'footer');
+  footer.setAttribute('data-footer-source', `${getRootPath()}/footer`);
+  loadBlock(footer);
+
+  loadBlocks(main);
+  loadCSS('/styles/lazy-styles.css');
+  addFavIcon('/styles/favicon.svg');
+}
+
+/**
+ * loads everything that happens a lot later, without impacting
+ * the user experience.
+ */
+function loadDelayed() {
+  /* trigger delayed.js load */
+  const delayedScript = '/scripts/delayed.js';
+  const usp = new URLSearchParams(window.location.search);
+  const delayed = usp.get('delayed');
+
+  if (!(delayed === 'off' || document.querySelector(`head script[src="${delayedScript}"]`))) {
+    let ms = 3500;
+    const delay = usp.get('delay');
+    if (delay) ms = +delay;
+    setTimeout(() => {
+      loadScript(delayedScript, null, 'module');
+    }, ms);
+  }
+}
+
+/**
+ * Decorates the page.
+ */
+async function decoratePage() {
+  await loadEager();
+  loadLazy();
+  loadDelayed();
 }
 
 decoratePage(window);
