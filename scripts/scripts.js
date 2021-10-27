@@ -891,7 +891,7 @@ function loadMartech() {
         url: 'https://assets.adobedtm.com/d4d114c60e50/cf25c910a920/launch-1bba233684fa-development.js',
         load: (l) => {
           window.addEventListener('load', () => {
-            setTimeout(l, 3000);
+            setTimeout(l, 3500);
           });
         },
       },
