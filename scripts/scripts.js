@@ -873,15 +873,6 @@ function loadDelayed() {
   }
 }
 
-/**
- * Decorates the page.
- */
-async function decoratePage() {
-  await loadEager();
-  loadLazy();
-  loadDelayed();
-}
-
 function loadMartech() {
   const env = getHelixEnv();
   window.marketingtech = {
@@ -900,7 +891,16 @@ function loadMartech() {
   loadScript('https://www.adobe.com/marketingtech/main.alloy.min.js');
 }
 
-loadMartech();
+/**
+ * Decorates the page.
+ */
+async function decoratePage() {
+  await loadEager();
+  loadMartech();
+  loadLazy();
+  loadDelayed();
+}
+
 decoratePage();
 
 function setHelixEnv(name, overrides) {
