@@ -882,7 +882,26 @@ async function decoratePage() {
   loadDelayed();
 }
 
-decoratePage(window);
+function loadMartech() {
+  const env = getHelixEnv();
+  window.marketingtech = {
+    adobe: {
+      target: env.target,
+      launch: {
+        url: 'https://assets.adobedtm.com/d4d114c60e50/cf25c910a920/launch-1bba233684fa-development.js',
+        load: function (l) {
+          window.addEventListener('load', function () {
+            setTimeout(l, 3000);
+          });
+        }
+      }
+    }
+  };
+  loadScript('https://www.adobe.com/marketingtech/main.alloy.min.js');
+}
+
+loadMartech();
+decoratePage();
 
 function setHelixEnv(name, overrides) {
   if (name) {

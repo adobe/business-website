@@ -11,23 +11,7 @@
  */
 
 /* globals webVitals */
-import { loadScript, sampleRUM, getHelixEnv } from './scripts.js';
-
-const { target } = getHelixEnv();
-window.marketingtech = window.marketingtech || {};
-window.marketingtech.adobe = {
-  target,
-  audienceManager: true,
-  launch: {
-    property: 'global',
-    environment: 'production',
-  },
-};
-window.targetGlobalSettings = window.targetGlobalSettings || {};
-window.targetGlobalSettings.bodyHidingEnabled = false;
-
-const launchScriptEl = loadScript('https://www.adobe.com/marketingtech/main.no-promise.min.js');
-launchScriptEl.setAttribute('data-seed-adobelaunch', 'true');
+import { loadScript, sampleRUM } from './scripts.js';
 
 function updateExternalLinks() {
   document.querySelectorAll('main a, footer a').forEach((a) => {
