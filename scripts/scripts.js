@@ -875,20 +875,47 @@ function loadDelayed() {
 
 function loadMartech() {
   const env = getHelixEnv();
-  window.marketingtech = {
-    adobe: {
-      target: env.target,
-      launch: {
-        url: 'https://assets.adobedtm.com/d4d114c60e50/cf25c910a920/launch-1bba233684fa-development.js',
-        load: (l) => {
-          window.addEventListener('load', () => {
-            setTimeout(l, 3500);
-          });
+  const usp = new URLSearchParams(window.location.search);
+  const alloy = usp.get('alloy');
+  let bootstrapScriptUrl = 'https://www.adobe.com/marketingtech/';
+
+  if (alloy === 'on') {
+    window.marketingtech = {
+      adobe: {
+        target: env.target,
+        launch: {
+          url: 'https://assets.adobedtm.com/d4d114c60e50/cf25c910a920/launch-1bba233684fa-development.js',
+          load: (l) => {
+            window.addEventListener('load', () => {
+              setTimeout(l, 3500);
+            });
+          },
         },
       },
-    },
-  };
-  loadScript('https://www.adobe.com/marketingtech/main.alloy.min.js');
+    };
+    bootstrapScriptUrl += 'main.alloy.min.js';
+  } else {
+    window.marketingtech = {
+      adobe: {
+        target: env.target,
+        audienceManager: true,
+        launch: {
+          property: 'global',
+          environment: 'production',
+        },
+      },
+    };
+    window.targetGlobalSettings = window.targetGlobalSettings || {};
+    window.targetGlobalSettings.bodyHidingEnabled = false;
+    bootstrapScriptUrl += 'main.min.js';
+  }
+
+  /* eslint-disable no-underscore-dangle */
+  loadScript(bootstrapScriptUrl, () => {
+    const { digitalData } = window;
+    digitalData._set('page.pageInfo.language', getLanguage());
+  });
+  /* eslint-enable no-underscore-dangle */
 }
 
 /**
