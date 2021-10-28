@@ -877,8 +877,18 @@ function loadMartech() {
   const env = getHelixEnv();
   const usp = new URLSearchParams(window.location.search);
   const alloy = usp.get('alloy');
-  let bootstrapScriptUrl = 'https://www.adobe.com/marketingtech/';
 
+  // set data layer properties
+  window.digitalData = {
+    page: {
+      pageInfo: {
+        language: getLanguage(),
+      },
+    },
+  };
+
+  // load bootstrap script
+  let bootstrapScriptUrl = 'https://www.adobe.com/marketingtech/';
   if (alloy === 'on') {
     window.marketingtech = {
       adobe: {
@@ -911,10 +921,11 @@ function loadMartech() {
   }
 
   /* eslint-disable no-underscore-dangle */
-  loadScript(bootstrapScriptUrl, () => {
-    const { digitalData } = window;
-    digitalData._set('page.pageInfo.language', getLanguage());
-  });
+  loadScript(bootstrapScriptUrl);
+  // loadScript(bootstrapScriptUrl, () => {
+  //   const { digitalData } = window;
+  //   digitalData._set('page.pageInfo.language', getLanguage());
+  // });
   /* eslint-enable no-underscore-dangle */
 }
 
