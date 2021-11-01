@@ -907,9 +907,14 @@ function loadMartech() {
         launch: {
           url: 'https://assets.adobedtm.com/d4d114c60e50/cf25c910a920/launch-1bba233684fa-development.js',
           load: (l) => {
-            window.addEventListener('load', () => {
-              setTimeout(l, 3500);
-            });
+            const delay = () => (
+              setTimeout(l, 3500)
+            );
+            if (document.readyState === 'complete') {
+              delay();
+            } else {
+              window.addEventListener('load', delay);
+            }
           },
         },
       },
