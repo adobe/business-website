@@ -76,6 +76,17 @@ const LANG = {
   BR: 'br',
 };
 
+const LANG_LOC = {
+  en: 'en_US',
+  de: 'de_DE',
+  fr: 'fr_FR',
+  ko: 'ko_KR',
+  es: 'es_ES', // es_MX?
+  it: 'it_IT',
+  jp: 'ja_JP',
+  br: 'pt_BR',
+};
+
 let language;
 
 export function getLanguage() {
@@ -882,7 +893,7 @@ function loadMartech() {
   window.digitalData = {
     page: {
       pageInfo: {
-        language: getLanguage(),
+        language: LANG_LOC[getLanguage()] || '',
       },
     },
   };
