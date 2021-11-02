@@ -1,4 +1,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
+<style id="alloy-prehiding">body{opacity:0.01 !important}</style>
+<script>
+setTimeout(function () {
+  var s = document.getElementById('alloy-prehiding');
+  try {
+    (s && s.parentNode) && s.parentNode.removeChild(s);
+  } catch (e) {}
+}, 3000);
+</script>
 <script src="/scripts/scripts.js" type="module" crossorigin="use-credentials"></script>
 <link rel="stylesheet" href="/styles/styles.css"/>
 <link rel="icon" href="data:,">
