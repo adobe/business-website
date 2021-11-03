@@ -23,7 +23,7 @@ async function populateAuthorImg(imgContainer, url, name) {
   }
 }
 
-export default function decorateArticleHeader(blockEl, blockName, document, callback) {
+export default async function decorateArticleHeader(blockEl, blockName, document) {
   const childrenEls = Array.from(blockEl.children);
   // category
   const categoryContainer = childrenEls[0];
@@ -63,5 +63,4 @@ export default function decorateArticleHeader(blockEl, blockName, document, call
   featureFigEl.classList.add('figure-feature');
   featureImgContainer.prepend(featureFigEl);
   featureImgContainer.lastChild.remove();
-  if (callback) callback();
 }
