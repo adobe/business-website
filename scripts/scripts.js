@@ -737,20 +737,22 @@ export async function fetchBlogArticleIndex() {
 async function getMetadataJson(path) {
   const resp = await fetch(path.split('.')[0]);
   const text = await resp.text();
-  const headStr = text.split('<head>')[1].split('</head>')[0];
-  const head = document.createElement('head');
-  head.innerHTML = headStr;
-  const metaTags = head.querySelectorAll(':scope > meta');
   const meta = {};
-  metaTags.forEach((metaTag) => {
-    const name = metaTag.getAttribute('name') || metaTag.getAttribute('property');
-    const value = metaTag.getAttribute('content');
-    if (meta[name]) {
-      meta[name] += `, ${value}`;
-    } else {
-      meta[name] = value;
-    }
-  });
+  if (resp.status === 200 && text && text.includes('<head>')) {
+    const headStr = text.split('<head>')[1].split('</head>')[0];
+    const head = document.createElement('head');
+    head.innerHTML = headStr;
+    const metaTags = head.querySelectorAll(':scope > meta');
+    metaTags.forEach((metaTag) => {
+      const name = metaTag.getAttribute('name') || metaTag.getAttribute('property');
+      const value = metaTag.getAttribute('content');
+      if (meta[name]) {
+        meta[name] += `, ${value}`;
+      } else {
+        meta[name] = value;
+      }
+    });
+  }
   return (JSON.stringify(meta));
 }
 
@@ -763,16 +765,19 @@ async function getMetadataJson(path) {
 export async function getBlogArticle(path) {
   const json = await getMetadataJson(`${path}.metadata.json`);
   const meta = JSON.parse(json);
-  const articleMeta = {
-    description: meta.description,
-    title: meta['og:title'],
-    image: meta['og:image'],
-    imageAlt: meta['og:image:alt'],
-    date: meta['publication-date'],
-    path,
-    category: meta.category,
-  };
-  return (articleMeta);
+  if (meta['og:title']) {
+    const articleMeta = {
+      description: meta.description,
+      title: meta['og:title'],
+      image: meta['og:image'],
+      imageAlt: meta['og:image:alt'],
+      date: meta['publication-date'],
+      path,
+      category: meta.category,
+    };
+    return (articleMeta);
+  }
+  return null;
 }
 
 /**
