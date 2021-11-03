@@ -52,9 +52,7 @@ async function populateSearchResults(searchTerms, resultsContainer) {
   resultsContainer.innerHTML = '';
 
   if (terms.length) {
-    if (!window.blogIndex) {
-      window.blogIndex = await fetchBlogArticleIndex();
-    }
+    await fetchBlogArticleIndex();
 
     const articles = window.blogIndex.data;
 

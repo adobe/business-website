@@ -711,6 +711,28 @@ export function addFavIcon(href) {
   }
 }
 
+export async function fetchBlogArticleIndex() {
+  const pageSize = 1000;
+  window.blogIndex = window.blogIndex || {
+    data: [],
+    byPath: {},
+    offset: 0,
+    complete: false,
+  };
+  if (window.blogIndex.complete) return (window.blogIndex);
+  const index = window.blogIndex;
+  const resp = await fetch(`${getRootPath()}/query-index.json?limit=${pageSize}&offset=${index.offset}`);
+  const json = await resp.json();
+  const complete = (json.limit + json.offset) === json.total;
+  json.data.forEach((post) => {
+    index.data.push(post);
+    index.byPath[post.path.split('.')[0]] = post;
+  });
+  index.complete = complete;
+  index.offset = json.offset + pageSize;
+  return (index);
+}
+
 /**
  * forward looking *.metadata.json experiment
  * fetches metadata.json of page
