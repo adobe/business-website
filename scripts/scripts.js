@@ -884,7 +884,28 @@ function loadDelayed() {
   }
 }
 
-function loadMartech() {
+/**
+ * sets digital data
+ */
+
+async function setDigitalData(digitaldata) {
+  const resp = await fetch('/blog/instrumentation.json');
+  const json = await resp.json();
+
+  const digitalDataMap = json.digitaldata.data;
+  digitalDataMap.forEach((mapping) => {
+    const metaValue = getMetadata(mapping.metadata);
+    const path = mapping.digitaldata.split('.');
+    let obj = digitaldata;
+    path.forEach((pathSegment, i) => {
+      const value = (i === path.length - 1) ? metaValue : {};
+      obj[pathSegment] = obj[pathSegment] || value;
+      obj = obj[pathSegment];
+    });
+  });
+}
+
+async function loadMartech() {
   const env = getHelixEnv();
   const usp = new URLSearchParams(window.location.search);
   const alloy = usp.get('alloy');
@@ -897,6 +918,8 @@ function loadMartech() {
       },
     },
   };
+
+  await setDigitalData(window.digitalData);
 
   // load bootstrap script
   let bootstrapScriptUrl = 'https://www.adobe.com/marketingtech/';
