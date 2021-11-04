@@ -11,7 +11,7 @@
  */
 
 /* globals webVitals */
-import { loadScript, sampleRUM } from './scripts.js';
+import { loadScript, sampleRUM, getHelixEnv } from './scripts.js';
 
 function updateExternalLinks() {
   document.querySelectorAll('main a, footer a').forEach((a) => {
@@ -51,3 +51,37 @@ if (window.hlx.rum.isSelected) {
   };
   document.head.appendChild(script);
 }
+
+function loadPrivacy() {
+  function getOtDomainId() {
+    const domains = {
+      'adobe.com': '7a5eb705-95ed-4cc4-a11d-0cc5760e93db',
+      'hlx.page': '3a6a37fe-9e07-4aa9-8640-8f358a623271',
+    };
+
+    const currentDomain = Object.keys(domains)
+      .find((domain) => window.location.host.indexOf(domain) > -1);
+
+    return `${domains[currentDomain] || domains[Object.keys(domains)[0]]}`;
+  }
+
+  // Configure Privacy
+  window.fedsConfig = {
+    privacy: {
+      otDomainId: getOtDomainId(),
+    },
+  };
+
+  const preferenceCenter = document.querySelector('[href="https://www.adobe.com/#openPrivacy"]');
+  if (preferenceCenter) {
+    preferenceCenter.addEventListener('click', (event) => {
+      event.preventDefault();
+      window?.adobePrivacy?.showConsentPopup();
+    });
+  }
+
+  const env = getHelixEnv().name === 'prod' ? '' : 'stage.';
+  loadScript(`https://www.${env}adobe.com/etc/beagle/public/globalnav/adobe-privacy/latest/privacy.min.js`);
+}
+
+loadPrivacy();
