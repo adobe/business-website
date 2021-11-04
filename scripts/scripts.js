@@ -892,17 +892,15 @@ async function setDigitalData(digitaldata) {
   digitaldata.page.pageInfo.category = 'unknown: before instrumentation.json';
   const resp = await fetch('/blog/instrumentation.json');
   const json = await resp.json();
+  delete digitaldata.page.pageInfo.category;
 
   const digitalDataMap = json.digitaldata.data;
   digitalDataMap.forEach((mapping) => {
     const metaValue = getMetadata(mapping.metadata);
-    const path = mapping.digitaldata.split('.');
-    let obj = digitaldata;
-    path.forEach((pathSegment, i) => {
-      const value = (i === path.length - 1) ? metaValue : {};
-      obj[pathSegment] = obj[pathSegment] || value;
-      obj = obj[pathSegment];
-    });
+    if (metaValue) {
+      // eslint-disable-next-line no-underscore-dangle
+      digitaldata._set(mapping.digitaldata, metaValue);
+    }
   });
 }
 
