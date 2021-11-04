@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-/* globals webVitals */
+/* globals  */
 import { loadScript, sampleRUM } from './scripts.js';
 
 function updateExternalLinks() {
@@ -32,22 +32,3 @@ updateExternalLinks();
 /* Core Web Vitals RUM collection */
 
 sampleRUM('cwv');
-
-function storeCWV(measurement) {
-  const rum = { cwv: { } };
-  rum.cwv[measurement.name] = measurement.value;
-  sampleRUM('cwv', rum);
-}
-
-if (window.hlx.rum.isSelected) {
-  const script = document.createElement('script');
-  script.src = 'https://unpkg.com/web-vitals';
-  script.onload = () => {
-    // When loading `web-vitals` using a classic script, all the public
-    // methods can be found on the `webVitals` global namespace.
-    webVitals.getCLS(storeCWV);
-    webVitals.getFID(storeCWV);
-    webVitals.getLCP(storeCWV);
-  };
-  document.head.appendChild(script);
-}

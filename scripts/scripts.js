@@ -16,8 +16,11 @@
  * @param {Object} data additional data for RUM sample
  */
 
-// eslint-disable-next-line object-curly-newline
-if (!navigator.sendBeacon) { window.data = JSON.stringify({ referer: window.location.href, checkpoint: 'unsupported', weight: 1 }); new Image().src = `https://rum.hlx3.page/.rum/1?data=${window.data}`; }
+/**
+ * log RUM if part of the sample.
+ * @param {string} checkpoint identifies the checkpoint in funnel
+ * @param {Object} data additional data for RUM sample
+ */
 
 export function sampleRUM(checkpoint, data = {}) {
   try {
@@ -35,14 +38,31 @@ export function sampleRUM(checkpoint, data = {}) {
     }
     const { random, weight, id } = window.hlx.rum;
     if (random && (random * weight < 1)) {
-      // eslint-disable-next-line object-curly-newline
-      const body = JSON.stringify({ weight, id, referer: window.location.href, generation: 'biz-gen1', checkpoint, ...data });
-      const url = `https://rum.hlx3.page/.rum/${weight}`;
-      // eslint-disable-next-line no-unused-expressions
-      navigator.sendBeacon(url, body); // we should probably use XHR instead of fetch
+      const sendPing = () => {
+        // eslint-disable-next-line object-curly-newline
+        const body = JSON.stringify({ weight, id, referer: window.location.href, generation: 'biz-gen1', checkpoint, ...data });
+        const url = `https://rum.hlx3.page/.rum/${weight}`;
+        // eslint-disable-next-line no-unused-expressions
+        navigator.sendBeacon(url, body);
+      };
+      sendPing();
+      // special case CWV
+      if (checkpoint === 'cwv') {
+        // eslint-disable-next-line import/no-unresolved
+        import('https://unpkg.com/web-vitals?module').then((mod) => {
+          const storeCWV = (measurement) => {
+            data.cwv = {};
+            data.cwv[measurement.name] = measurement.value;
+            sendPing();
+          };
+          mod.getCLS(storeCWV);
+          mod.getFID(storeCWV);
+          mod.getLCP(storeCWV);
+        });
+      }
     }
   } catch (e) {
-    // somethign went wrong
+    // something went wrong
   }
 }
 
