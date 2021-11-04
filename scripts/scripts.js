@@ -49,7 +49,7 @@ export function sampleRUM(checkpoint, data = {}) {
       // special case CWV
       if (checkpoint === 'cwv') {
         // eslint-disable-next-line import/no-unresolved
-        import('https://unpkg.com/web-vitals?module').then((mod) => {
+        import('./web-vitals-module-2-1-2.js').then((mod) => {
           const storeCWV = (measurement) => {
             data.cwv = {};
             data.cwv[measurement.name] = measurement.value;
