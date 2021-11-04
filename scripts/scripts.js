@@ -889,6 +889,7 @@ function loadDelayed() {
  */
 
 async function setDigitalData(digitaldata) {
+  digitaldata.page.pageInfo.category = 'unknown: before instrumentation.json';
   const resp = await fetch('/blog/instrumentation.json');
   const json = await resp.json();
 
@@ -915,6 +916,7 @@ async function loadMartech() {
     page: {
       pageInfo: {
         language: LANG_LOC[getLanguage()] || '',
+        category: 'unknown: before setDigitalData()',
       },
     },
   };
