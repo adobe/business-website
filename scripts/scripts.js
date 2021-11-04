@@ -919,8 +919,6 @@ async function loadMartech() {
     },
   };
 
-  await setDigitalData(window.digitalData);
-
   // load bootstrap script
   let bootstrapScriptUrl = 'https://www.adobe.com/marketingtech/';
   if (alloy === 'on') {
@@ -959,13 +957,9 @@ async function loadMartech() {
     bootstrapScriptUrl += 'main.min.js';
   }
 
-  /* eslint-disable no-underscore-dangle */
-  loadScript(bootstrapScriptUrl);
-  // loadScript(bootstrapScriptUrl, () => {
-  //   const { digitalData } = window;
-  //   digitalData._set('page.pageInfo.language', getLanguage());
-  // });
-  /* eslint-enable no-underscore-dangle */
+  loadScript(bootstrapScriptUrl, () => {
+    setDigitalData(window.digitalData);
+  });
 }
 
 /**
