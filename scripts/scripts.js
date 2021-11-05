@@ -1003,7 +1003,7 @@ displayEnv();
  * (needs a refactor)
  */
 
-function stamp(message) {
+export function stamp(message) {
   if (window.name.includes('performance')) {
     debug(`${new Date() - performance.timing.navigationStart}:${message}`);
   }

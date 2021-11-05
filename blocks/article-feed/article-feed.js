@@ -3,6 +3,7 @@ import {
   buildArticleCard,
   fetchPlaceholders,
   fetchBlogArticleIndex,
+  stamp,
 } from '../../scripts/scripts.js';
 
 /**
@@ -34,10 +35,12 @@ async function filterArticles(config, feed, limit, offset) {
   });
 
   while ((feed.data.length < limit + offset) && (!feed.complete)) {
+    const beforeLoading = new Date();
     // eslint-disable-next-line no-await-in-loop
     const index = await fetchBlogArticleIndex();
     const indexChunk = index.data.slice(feed.cursor);
 
+    const beforeFiltering = new Date();
     /* filter and ignore if already in result */
     const feedChunk = indexChunk.filter((article) => {
       const matchedAll = Object.keys(filters).every((key) => {
@@ -47,6 +50,7 @@ async function filterArticles(config, feed, limit, offset) {
       });
       return (matchedAll && !result.includes(article) && !isCardOnPage(article));
     });
+    stamp(`chunk measurements - loading: ${beforeFiltering - beforeLoading}ms filtering: ${new Date() - beforeFiltering}ms`);
     feed.cursor = index.data.length;
     feed.complete = index.complete;
     feed.data = [...feed.data, ...feedChunk];
