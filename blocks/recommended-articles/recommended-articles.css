@@ -42,6 +42,10 @@ main div.recommended-articles-small-content-wrapper {
   margin: 0 auto;
 }
 
+main div.recommended-articles-small-container .article-card .article-card-body p {
+  display: none;
+}
+
 @media (min-width: 700px) {
   main div.recommended-articles-small-content-wrapper {
     width: calc(100% - 64px);
