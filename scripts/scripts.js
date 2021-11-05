@@ -348,15 +348,14 @@ function buildTagHeader(mainEl) {
     [h1],
     [{ elems: [picture.closest('p')] }],
   ]);
-  div.append(tagHeaderBlockEl);
+  div.prepend(tagHeaderBlockEl);
 }
 
-function buildArticleFeed(mainEl) {
-  const { pathname } = window.location;
+function buildArticleFeed(mainEl, type) {
   const div = document.createElement('div');
   const title = mainEl.querySelector('h1').textContent.trim();
   const articleFeedEl = buildBlock('article-feed', [
-    [`${pathname.includes('/tags/') ? 'tags' : 'category'}`, title],
+    [type, title],
   ]);
   div.append(articleFeedEl);
   mainEl.append(div);
@@ -398,9 +397,11 @@ function buildAutoBlocks(mainEl) {
       buildArticleHeader(mainEl);
       buildTagsBlock(mainEl);
     }
-    if (window.location.pathname.includes('/categories/') || window.location.pathname.includes('/tags/')) {
+    if (window.location.pathname.includes('/tags/')) {
       buildTagHeader(mainEl);
-      buildArticleFeed(mainEl);
+      if (!document.querySelector('.article-feed')) {
+        buildArticleFeed(mainEl, 'tags');
+      }
     }
     buildImageBlocks(mainEl);
   } catch (error) {
@@ -439,7 +440,7 @@ function unwrapBlock(block) {
 
 function splitSections() {
   document.querySelectorAll('main > div > div').forEach((block) => {
-    const blocksToSplit = ['article-header', 'recommended-articles'];
+    const blocksToSplit = ['article-header', 'article-feed', 'recommended-articles'];
     if (blocksToSplit.includes(block.className)) {
       unwrapBlock(block);
     }

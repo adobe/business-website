@@ -1,4 +1,4 @@
-main .tag-header-container {
+main div.section-wrapper.tag-header-container {
   visibility: unset;
   display: flex;
   margin-top: 0;
