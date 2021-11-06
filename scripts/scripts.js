@@ -909,7 +909,27 @@ function loadDelayed() {
   }
 }
 
-function loadMartech() {
+/**
+ * sets digital data
+ */
+
+async function setDigitalData(digitaldata) {
+  digitaldata.page.pageInfo.category = 'unknown: before instrumentation.json';
+  const resp = await fetch('/blog/instrumentation.json');
+  const json = await resp.json();
+  delete digitaldata.page.pageInfo.category;
+
+  const digitalDataMap = json.digitaldata.data;
+  digitalDataMap.forEach((mapping) => {
+    const metaValue = getMetadata(mapping.metadata);
+    if (metaValue) {
+      // eslint-disable-next-line no-underscore-dangle
+      digitaldata._set(mapping.digitaldata, metaValue);
+    }
+  });
+}
+
+async function loadMartech() {
   const env = getHelixEnv();
   const usp = new URLSearchParams(window.location.search);
   const alloy = usp.get('alloy');
@@ -919,6 +939,7 @@ function loadMartech() {
     page: {
       pageInfo: {
         language: LANG_LOC[getLanguage()] || '',
+        category: 'unknown: before setDigitalData()',
       },
     },
   };
@@ -961,13 +982,9 @@ function loadMartech() {
     bootstrapScriptUrl += 'main.min.js';
   }
 
-  /* eslint-disable no-underscore-dangle */
-  loadScript(bootstrapScriptUrl);
-  // loadScript(bootstrapScriptUrl, () => {
-  //   const { digitalData } = window;
-  //   digitalData._set('page.pageInfo.language', getLanguage());
-  // });
-  /* eslint-enable no-underscore-dangle */
+  loadScript(bootstrapScriptUrl, () => {
+    setDigitalData(window.digitalData);
+  });
 }
 
 /**
