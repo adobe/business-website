@@ -6,11 +6,6 @@ import {
   stamp,
 } from '../../scripts/scripts.js';
 
-/**
- * fetches blog article index.
- * @returns {object} index with data and path lookup
- */
-
 function isCardOnPage(article) {
   const path = article.path.split('.')[0];
   /* using recommended and featured articles */

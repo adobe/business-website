@@ -16,12 +16,6 @@
  * @param {Object} data additional data for RUM sample
  */
 
-/**
- * log RUM if part of the sample.
- * @param {string} checkpoint identifies the checkpoint in funnel
- * @param {Object} data additional data for RUM sample
- */
-
 export function sampleRUM(checkpoint, data = {}) {
   try {
     window.hlx = window.hlx || {};
@@ -730,6 +724,11 @@ export function addFavIcon(href) {
     document.getElementsByTagName('head')[0].appendChild(link);
   }
 }
+
+/**
+ * fetches blog article index.
+ * @returns {object} index with data and path lookup
+ */
 
 export async function fetchBlogArticleIndex() {
   const pageSize = 1000;
