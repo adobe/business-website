@@ -78,6 +78,10 @@ main div.recommended-articles-small-content-wrapper p {
 
 }
 
+main .recommended-articles-small-container .article-cards {
+  padding-top: 1rem;
+}
+
 main .recommended-articles-small-container .article-card {
   display: flex;
   width: 100%;
