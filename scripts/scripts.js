@@ -155,14 +155,12 @@ export function getHelixEnv() {
       adobeIO: 'cc-collab-stage.adobe.io',
       adminconsole: 'stage.adminconsole.adobe.com',
       account: 'stage.account.adobe.com',
-      target: false,
     },
     prod: {
       ims: 'prod',
       adobeIO: 'cc-collab.adobe.io',
       adminconsole: 'adminconsole.adobe.com',
       account: 'account.adobe.com',
-      target: true,
     },
   };
   const env = envs[envName];
@@ -841,14 +839,121 @@ export function loadScript(url, callback, type) {
   return script;
 }
 
+function unhideBody(id) {
+  try {
+    document.head.removeChild(document.getElementById(id));
+  } catch (e) {
+    // nothing
+  }
+}
+
+function hideBody(id) {
+  const style = document.createElement('style');
+  style.id = id;
+  style.innerHTML = 'body{visibility: hidden !important}';
+
+  try {
+    document.head.appendChild(style);
+  } catch (e) {
+    // nothing
+  }
+}
+
+/**
+ * sets digital data
+ */
+
+async function setDigitalData(digitaldata) {
+  digitaldata.page.pageInfo.category = 'unknown: before instrumentation.json';
+  const resp = await fetch('/blog/instrumentation.json');
+  const json = await resp.json();
+  delete digitaldata.page.pageInfo.category;
+
+  const digitalDataMap = json.digitaldata.data;
+  digitalDataMap.forEach((mapping) => {
+    const metaValue = getMetadata(mapping.metadata);
+    if (metaValue) {
+      // eslint-disable-next-line no-underscore-dangle
+      digitaldata._set(mapping.digitaldata, metaValue);
+    }
+  });
+}
+
+async function loadMartech() {
+  const usp = new URLSearchParams(window.location.search);
+  const alloy = usp.get('alloy');
+
+  // set data layer properties
+  window.digitalData = {
+    page: {
+      pageInfo: {
+        language: LANG_LOC[getLanguage()] || '',
+        category: 'unknown: before setDigitalData()',
+      },
+    },
+  };
+
+  const target = getMetadata('target').toLocaleLowerCase() === 'on';
+
+  // load bootstrap script
+  let bootstrapScriptUrl = 'https://www.adobe.com/marketingtech/';
+  if (alloy === 'on') {
+    window.marketingtech = {
+      adobe: {
+        target,
+        launch: {
+          url: 'https://assets.adobedtm.com/d4d114c60e50/cf25c910a920/launch-1bba233684fa-development.js',
+          load: (l) => {
+            const delay = () => (
+              setTimeout(l, 3500)
+            );
+            if (document.readyState === 'complete') {
+              delay();
+            } else {
+              window.addEventListener('load', delay);
+            }
+          },
+        },
+      },
+    };
+    bootstrapScriptUrl += 'main.alloy.min.js';
+  } else {
+    window.marketingtech = {
+      adobe: {
+        target,
+        audienceManager: true,
+        launch: {
+          property: 'global',
+          environment: 'production',
+        },
+      },
+    };
+    window.targetGlobalSettings = window.targetGlobalSettings || {};
+    bootstrapScriptUrl += 'main.min.js';
+  }
+
+  loadScript(bootstrapScriptUrl, () => {
+    setDigitalData(window.digitalData);
+  });
+}
+
 /**
  * loads everything needed to get to LCP.
  */
 async function loadEager() {
   const main = document.querySelector('main');
   if (main) {
+    const bodyHideStyleId = 'at-body-style';
     decorateMain(main);
     document.querySelector('body').classList.add('appear');
+    const target = getMetadata('target').toLocaleLowerCase() === 'on';
+    if (target) {
+      hideBody(bodyHideStyleId);
+      setTimeout(() => {
+        unhideBody(bodyHideStyleId);
+      }, 3000);
+    }
+
     const lcpBlocks = ['featured-article', 'article-header'];
     const block = document.querySelector('.block');
     const hasLCPBlock = (block && lcpBlocks.includes(block.getAttribute('data-block-name')));
@@ -893,6 +998,7 @@ async function loadLazy() {
   loadBlocks(main);
   loadCSS('/styles/lazy-styles.css');
   addFavIcon('/styles/favicon.svg');
+  loadMartech();
 }
 
 /**
@@ -916,89 +1022,10 @@ function loadDelayed() {
 }
 
 /**
- * sets digital data
- */
-
-async function setDigitalData(digitaldata) {
-  digitaldata.page.pageInfo.category = 'unknown: before instrumentation.json';
-  const resp = await fetch('/blog/instrumentation.json');
-  const json = await resp.json();
-  delete digitaldata.page.pageInfo.category;
-
-  const digitalDataMap = json.digitaldata.data;
-  digitalDataMap.forEach((mapping) => {
-    const metaValue = getMetadata(mapping.metadata);
-    if (metaValue) {
-      // eslint-disable-next-line no-underscore-dangle
-      digitaldata._set(mapping.digitaldata, metaValue);
-    }
-  });
-}
-
-async function loadMartech() {
-  const env = getHelixEnv();
-  const usp = new URLSearchParams(window.location.search);
-  const alloy = usp.get('alloy');
-
-  // set data layer properties
-  window.digitalData = {
-    page: {
-      pageInfo: {
-        language: LANG_LOC[getLanguage()] || '',
-        category: 'unknown: before setDigitalData()',
-      },
-    },
-  };
-
-  // load bootstrap script
-  let bootstrapScriptUrl = 'https://www.adobe.com/marketingtech/';
-  if (alloy === 'on') {
-    window.marketingtech = {
-      adobe: {
-        target: env.target,
-        launch: {
-          url: 'https://assets.adobedtm.com/d4d114c60e50/cf25c910a920/launch-1bba233684fa-development.js',
-          load: (l) => {
-            const delay = () => (
-              setTimeout(l, 3500)
-            );
-            if (document.readyState === 'complete') {
-              delay();
-            } else {
-              window.addEventListener('load', delay);
-            }
-          },
-        },
-      },
-    };
-    bootstrapScriptUrl += 'main.alloy.min.js';
-  } else {
-    window.marketingtech = {
-      adobe: {
-        target: env.target,
-        audienceManager: true,
-        launch: {
-          property: 'global',
-          environment: 'production',
-        },
-      },
-    };
-    window.targetGlobalSettings = window.targetGlobalSettings || {};
-    window.targetGlobalSettings.bodyHidingEnabled = false;
-    bootstrapScriptUrl += 'main.min.js';
-  }
-
-  loadScript(bootstrapScriptUrl, () => {
-    setDigitalData(window.digitalData);
-  });
-}
-
-/**
  * Decorates the page.
  */
 async function decoratePage() {
   await loadEager();
-  loadMartech();
   loadLazy();
   loadDelayed();
 }
