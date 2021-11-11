@@ -892,7 +892,6 @@ async function setDigitalData(digitaldata) {
       });
       // eslint-disable-next-line no-underscore-dangle
       digitaldata._set(listEntry.digitaldata, listValue);
-      console.log(listEntry.digitaldata, listValue);
     }
   });
 }
