@@ -888,7 +888,7 @@ async function setDigitalData(digitaldata) {
       const metaValueArr = listEntry.delimiter ? metaValue.split(listEntry.delimiter) : [metaValue];
       metaValueArr.forEach((value) => {
         const escapedValue = value.split('|').join(); // well, well...
-        listValue += `${listValue ? ' | ' : ''}${name} : ${escapedValue}`;
+        listValue += `${listValue ? ' | ' : ''}${name}: ${escapedValue}`;
       });
       // eslint-disable-next-line no-underscore-dangle
       digitaldata._set(listEntry.digitaldata, listValue);
