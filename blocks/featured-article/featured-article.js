@@ -3,6 +3,7 @@
 import {
   buildArticleCard,
   getBlogArticle,
+  rewritePath,
 } from '../../scripts/scripts.js';
 
 async function decorateFeaturedArticle(featuredArticleEl, articlePath) {
@@ -28,7 +29,7 @@ export default async function decorate(block, blockName, document, callback) {
   const a = block.querySelector('a');
   block.innerHTML = '';
   if (a && a.href) {
-    const path = new URL(a.href).pathname;
+    const path = rewritePath(new URL(a.href).pathname);
     await decorateFeaturedArticle(block, path, callback);
   }
 }

@@ -751,6 +751,21 @@ export async function fetchBlogArticleIndex() {
   return (index);
 }
 
+export function rewritePath(path) {
+  let newpath = path;
+  const replacements = [{
+    from: 'news',
+    to: 'the-latest',
+  }, {
+    from: 'insights',
+    to: 'perspectives',
+  }];
+  replacements.forEach((r) => {
+    newpath = newpath.replace(`/${r.from}/`, `/${r.to}/`);
+  });
+  return newpath;
+}
+
 /**
  * forward looking *.metadata.json experiment
  * fetches metadata.json of page
