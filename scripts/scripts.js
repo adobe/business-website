@@ -905,6 +905,23 @@ async function setDigitalData(digitaldata) {
       digitaldata._set(mapping.digitaldata, metaValue);
     }
   });
+
+  const digitalDataLists = json['digitaldata-lists'].data;
+  digitalDataLists.forEach((listEntry) => {
+    const metaValue = getMetadata(listEntry.metadata);
+    if (metaValue) {
+      // eslint-disable-next-line no-underscore-dangle
+      let listValue = digitaldata._get(listEntry.digitaldata) || '';
+      const name = listEntry['list-item-name'];
+      const metaValueArr = listEntry.delimiter ? metaValue.split(listEntry.delimiter) : [metaValue];
+      metaValueArr.forEach((value) => {
+        const escapedValue = value.split('|').join(); // well, well...
+        listValue += `${listValue ? ' | ' : ''}${name}: ${escapedValue}`;
+      });
+      // eslint-disable-next-line no-underscore-dangle
+      digitaldata._set(listEntry.digitaldata, listValue);
+    }
+  });
 }
 
 async function loadMartech() {
