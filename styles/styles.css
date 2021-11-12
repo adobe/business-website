@@ -223,10 +223,6 @@ main h5, main h6 {
   font-size: var(--heading-font-size-xs);
 }
 
-main h1.hidden {
-  display: none;
-}
-
 @media (min-width:600px) {
   main {
     font-size: var(--body-font-size-l);
