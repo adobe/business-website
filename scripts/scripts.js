@@ -751,6 +751,13 @@ export async function fetchBlogArticleIndex() {
   return (index);
 }
 
+export function makeLinkRelative(href) {
+  const url = new URL(href);
+  const host = url.hostname;
+  if (host.endsWith('.page') || host.endsWith('.live') || host === 'business.adobe.com') return (`${url.pathname}${url.search}${url.hash}`);
+  return (href);
+}
+
 export function rewritePath(path) {
   let newpath = path;
   const replacements = [{
