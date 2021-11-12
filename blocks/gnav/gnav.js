@@ -1,4 +1,9 @@
-import { loadScript, getHelixEnv, debug } from '../../scripts/scripts.js';
+import {
+  loadScript,
+  getHelixEnv,
+  debug,
+  makeLinkRelative,
+} from '../../scripts/scripts.js';
 import createTag from './gnav-utils.js';
 
 const BRAND_IMG = '<img loading="lazy" alt="Adobe" src="/blocks/gnav/adobe-logo.svg">';
@@ -79,6 +84,7 @@ class Gnav {
     const brandBlock = this.body.querySelector('[class^="gnav-brand"]');
     if (!brandBlock) return null;
     const brand = brandBlock.querySelector('a');
+    brand.href = makeLinkRelative(brand.href);
 
     const { className } = brandBlock;
     const classNameClipped = className.slice(0, -1);
@@ -92,6 +98,7 @@ class Gnav {
 
   decorateLogo = () => {
     const logo = this.body.querySelector('.adobe-logo a');
+    logo.href = makeLinkRelative(logo.href);
     logo.classList.add('gnav-logo');
     logo.setAttribute('aria-label', logo.textContent);
     logo.textContent = '';
@@ -110,9 +117,7 @@ class Gnav {
   buildMainNav = (navLinks) => {
     const mainNav = createTag('div', { class: 'gnav-mainnav' });
     navLinks.forEach((navLink, idx) => {
-      const navURL = new URL(navLink.href);
-      const host = navURL.hostname;
-      if (host.endsWith('.page') || host.endsWith('.live') || host === 'business.adobe.com') navLink.href = navURL.pathname;
+      navLink.href = makeLinkRelative(navLink.href);
       const navItem = createTag('div', { class: 'gnav-navitem' });
       const menu = navLink.closest('div');
       menu.querySelector('h2').remove();
