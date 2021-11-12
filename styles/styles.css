@@ -241,6 +241,10 @@ main h5, main h6 {
   }
 }
 
+main h1.hidden {
+  display: none;
+}
+
 /* links */
 
 main a:any-link {
