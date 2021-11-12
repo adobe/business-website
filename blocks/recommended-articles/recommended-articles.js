@@ -2,6 +2,7 @@ import {
   buildArticleCard,
   getBlogArticle,
   fetchPlaceholders,
+  rewritePath,
 } from '../../scripts/scripts.js';
 
 async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
@@ -19,7 +20,7 @@ async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
   const articleCardsContainer = document.createElement('div');
   articleCardsContainer.className = 'article-cards';
   for (let i = 0; i < paths.length; i += 1) {
-    const articlePath = paths[i];
+    const articlePath = rewritePath(paths[i]);
     // eslint-disable-next-line no-await-in-loop
     const article = await getBlogArticle(articlePath);
     if (article) {
