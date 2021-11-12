@@ -705,6 +705,12 @@ export function decorateMain(main) {
   removeEmptySections();
   wrapSections(main.querySelectorAll(':scope > div'));
   decorateBlocks(main);
+
+  /* hide h1 on homepage */
+  if (window.location.pathname.endsWith('/blog/')) {
+    const h1 = document.querySelector('h1');
+    if (h1) h1.classList.add('hidden');
+  }
 }
 
 /**
