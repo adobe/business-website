@@ -754,7 +754,7 @@ export async function fetchBlogArticleIndex() {
 export function makeLinkRelative(href) {
   const url = new URL(href);
   const host = url.hostname;
-  if (host.endsWith('.page') || host.endsWith('.live') || host === 'business.adobe.com') return (url.pathname);
+  if (host.endsWith('.page') || host.endsWith('.live') || host === 'business.adobe.com') return (`${url.pathname}${url.search}${url.hash}`);
   return (href);
 }
 
