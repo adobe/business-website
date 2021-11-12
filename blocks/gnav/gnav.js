@@ -110,8 +110,10 @@ class Gnav {
   buildMainNav = (navLinks) => {
     const mainNav = createTag('div', { class: 'gnav-mainnav' });
     navLinks.forEach((navLink, idx) => {
+      const navURL = new URL(navLink.href);
+      const host = navURL.hostname;
+      if (host.endsWith('.page') || host.endsWith('.live') || host === 'business.adobe.com') navLink.href = navURL.pathname;
       const navItem = createTag('div', { class: 'gnav-navitem' });
-
       const menu = navLink.closest('div');
       menu.querySelector('h2').remove();
       navItem.appendChild(navLink);
