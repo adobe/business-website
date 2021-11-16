@@ -1,7 +1,13 @@
-import { loadScript, getHelixEnv, debug } from '../../scripts/scripts.js';
+import {
+  loadScript,
+  getHelixEnv,
+  debug,
+  makeLinkRelative,
+} from '../../scripts/scripts.js';
 import createTag from './gnav-utils.js';
 
-const BRAND_IMG = '<img loading="lazy" alt="Adobe" src="/blocks/gnav/adobe-logo.svg">';
+const ADOBE_IMG = '<img alt="Adobe" src="/blocks/gnav/adobe-logo.svg">';
+const BRAND_IMG = '<img src="/blocks/gnav/brand-logo.svg">';
 const SEARCH_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" focusable="false">
 <path d="M14 2A8 8 0 0 0 7.4 14.5L2.4 19.4a1.5 1.5 0 0 0 2.1 2.1L9.5 16.6A8 8 0 1 0 14 2Zm0 14.1A6.1 6.1 0 1 1 20.1 10 6.1 6.1 0 0 1 14 16.1Z"></path>
 </svg>`;
@@ -79,23 +85,29 @@ class Gnav {
     const brandBlock = this.body.querySelector('[class^="gnav-brand"]');
     if (!brandBlock) return null;
     const brand = brandBlock.querySelector('a');
+    const title = createTag('span', { class: 'gnav-brand-title' }, brand.textContent);
 
+    brand.href = makeLinkRelative(brand.href);
+    brand.setAttribute('aria-label', brand.textContent);
+    brand.textContent = '';
     const { className } = brandBlock;
     const classNameClipped = className.slice(0, -1);
     const classNames = classNameClipped.split('--');
     brand.className = classNames.join(' ');
-    if (brand.classList.contains('with-logo')) {
+    if (brand.classList.contains('logo')) {
       brand.insertAdjacentHTML('afterbegin', BRAND_IMG);
     }
+    brand.append(title);
     return brand;
   }
 
   decorateLogo = () => {
     const logo = this.body.querySelector('.adobe-logo a');
+    logo.href = makeLinkRelative(logo.href);
     logo.classList.add('gnav-logo');
     logo.setAttribute('aria-label', logo.textContent);
     logo.textContent = '';
-    logo.insertAdjacentHTML('afterbegin', BRAND_IMG);
+    logo.insertAdjacentHTML('afterbegin', ADOBE_IMG);
     return logo;
   }
 
@@ -110,8 +122,8 @@ class Gnav {
   buildMainNav = (navLinks) => {
     const mainNav = createTag('div', { class: 'gnav-mainnav' });
     navLinks.forEach((navLink, idx) => {
+      navLink.href = makeLinkRelative(navLink.href);
       const navItem = createTag('div', { class: 'gnav-navitem' });
-
       const menu = navLink.closest('div');
       menu.querySelector('h2').remove();
       navItem.appendChild(navLink);
