@@ -14,12 +14,13 @@ header .gnav {
 .gnav {
   visibility: unset;
   display: grid;
-  grid-template-areas: 'toggle  brand   profile logo'
-                       'search  search  search  search'
-                       'navlist navlist navlist navlist';
-  grid-template-columns: 64px 1fr auto 64px;
+  grid-template-areas: 'toggle  brand   profile'
+                       'search  search  search'
+                       'navlist navlist navlist';
+  grid-template-columns: 64px 1fr auto;
   grid-template-rows: 64px auto;
   margin: 0 auto;
+  padding: 0 12px 0 0;
   -webkit-font-smoothing: antialiased;
   flex: 0 1 100%;
   box-sizing: border-box;
@@ -58,16 +59,25 @@ button.gnav-toggle:after {
 .gnav .gnav-brand {
   grid-area: brand;
   display: flex;
+  justify-content: center;
   align-items: center;
   color: #fa0f00;
-  font-size: 18px;
-  line-height: 18px;
+  font-size: 16px;
+  line-height: 16px;
   font-weight: 700;
+}
+
+.gnav .gnav-brand img {
+  width: 27px;
+}
+
+.gnav .gnav-brand-title {
+  display: none;
 }
 
 .gnav .gnav-logo {
   grid-area: logo;
-  display: flex;
+  display: none;
   justify-content: center;
   align-items: center;
   min-width: 41px;
@@ -450,7 +460,6 @@ button.gnav-toggle:after {
     grid-template-areas: 'brand navlist search profile logo';
     grid-template-columns: auto 1fr auto auto auto;
     grid-template-rows: unset;
-    padding: 0 12px 0 0;
   }
 
   .gnav.is-Open {
@@ -463,6 +472,16 @@ button.gnav-toggle:after {
 
   .gnav .gnav-brand {
     padding: 0 20px;
+    justify-content: unset;
+  }
+
+  .gnav .gnav-brand-title {
+    margin-left: 8px;
+    display: unset;
+  }
+
+  .gnav .gnav-logo {
+    display: flex;
   }
 
   .gnav.is-Open .gnav-search-bar {

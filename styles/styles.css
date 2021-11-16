@@ -333,14 +333,13 @@ main .section-wrapper p.button-container {
 /* gnav placeholder */
 
 header {
-  border-bottom: 1px solid #EAEAEA;
   display: flex;
   position: fixed;
   top: 0;
   width: 100%;
   height: 65px;
   background-color: var(--color-white);
-  z-index: 2;
+  z-index: 3;
 }
 
 /* caption styling */
