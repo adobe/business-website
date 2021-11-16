@@ -128,6 +128,28 @@ class Gnav {
       menu.querySelector('h2').remove();
       navItem.appendChild(navLink);
 
+      const sectionNavBlock = menu.closest('.section-nav');
+      if (sectionNavBlock) {
+        let path = sectionNavBlock.querySelector(':scope > div:last-of-type > div').textContent;
+        path = makeLinkRelative(path);
+        const promise = fetch(`${path}.plain.html`);
+        promise.then(async (resp) => {
+          if (resp.status === 200) {
+            const text = await resp.text();
+            const sectionMenu = createTag('div', null, text);
+            const id = `navmenu-${idx}`;
+            sectionMenu.id = id;
+            navItem.classList.add('has-Menu', 'section-nav');
+            navLink.setAttribute('role', 'button');
+            navLink.setAttribute('aria-expanded', false);
+            navLink.setAttribute('aria-controls', id);
+
+            const decoratedMenu = this.decorateMenu(navItem, navLink, sectionMenu);
+            navItem.appendChild(decoratedMenu);
+          }
+        });
+      }
+
       if (menu.childElementCount > 0) {
         const id = `navmenu-${idx}`;
         menu.id = id;
