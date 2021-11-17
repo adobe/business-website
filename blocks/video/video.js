@@ -1,11 +1,18 @@
-import { buildFigure } from '../../scripts/scripts.js';
+import {
+  buildAnchors,
+  buildFigure,
+} from '../../scripts/scripts.js';
 
 export default function decorate(block) {
   if (block.classList.contains('is-loaded')) {
     return;
   }
   const poster = block.querySelector('img') ? `poster="${block.querySelector('img').src}"` : '';
-  const a = block.querySelector('a');
+  let a = block.querySelector('a');
+  if (!a) {
+    buildAnchors(block);
+    a = block.querySelector('a');
+  }
   const videoSrc = a.href;
   const video = document.createElement('div');
   const figure = buildFigure(block.firstChild.firstChild);

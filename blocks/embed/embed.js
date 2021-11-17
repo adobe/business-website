@@ -1,4 +1,6 @@
-import { buildFigure } from '../../scripts/scripts.js';
+import {
+  buildAnchors,
+} from '../../scripts/scripts.js';
 
 const loadScript = (url, callback, type) => {
   const head = document.querySelector('head');
@@ -149,8 +151,6 @@ const loadEmbed = (block) => {
   }
 
   const a = block.querySelector('a');
-  const figure = buildFigure(block.firstChild.firstChild);
-
   if (a) {
     const url = new URL(a.href.replace(/\/$/, ''));
     const hostnameArr = url.hostname.split('.');
@@ -180,7 +180,6 @@ const loadEmbed = (block) => {
       a.outerHTML = getDefaultEmbed(url);
       block.classList = `block embed embed-${simpleDomain}`;
     }
-    block.innerHTML = figure.outerHTML;
     block.classList.add('is-loaded');
   }
 };
@@ -200,6 +199,11 @@ const intersectHandler = (entries) => {
 };
 
 export default function decorate(block) {
+  const a = block.querySelector('a');
+  if (!a) {
+    buildAnchors(block);
+  }
+
   window.addEventListener('load', () => {
     const options = {
       root: null,

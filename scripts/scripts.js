@@ -422,6 +422,42 @@ function buildAutoBlocks(mainEl) {
   }
 }
 
+/**
+ * Build anchors from unlinked links in a block.
+ * @param {Element} block The containing element
+ */
+export function buildAnchors(block) {
+  const blockText = block.textContent.trim();
+  const ps = block.querySelectorAll('p');
+  // search within all p elements
+  if (ps.length) {
+    ps.forEach((p) => {
+      if (p.textContent.startsWith('http') || p.textContent.startsWith('www.')) {
+        if (new URL(p.textContent)) {
+          const { href } = new URL(p.textContent);
+          const a = document.createElement('a');
+          a.textContent = href;
+          a.href = href;
+          p.innerHTML = '';
+          p.append(a);
+        }
+      }
+    });
+  // if block does not include any p elements
+  } else if (blockText.startsWith('http') || blockText.startsWith('www.')) {
+    if (new URL(blockText)) {
+      const { href } = new URL(blockText);
+      const p = document.createElement('p');
+      const a = document.createElement('a');
+      a.href = href;
+      a.textContent = href;
+      block.innerHTML = '';
+      p.append(a);
+      block.append(p);
+    }
+  }
+}
+
 function unwrapBlock(block) {
   const section = block.parentNode;
   const els = [...section.children];

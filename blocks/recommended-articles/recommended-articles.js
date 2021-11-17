@@ -1,4 +1,5 @@
 import {
+  buildAnchors,
   buildArticleCard,
   getBlogArticle,
   fetchPlaceholders,
@@ -34,7 +35,11 @@ async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
 }
 
 export default function decorate(blockEl) {
-  const anchors = [...blockEl.querySelectorAll('a')];
+  let anchors = [...blockEl.querySelectorAll('a')];
+  if (!anchors) {
+    buildAnchors(blockEl);
+    anchors = [...blockEl.querySelectorAll('a')];
+  }
   blockEl.innerHTML = '';
   const paths = anchors.map((a) => new URL(a.href).pathname);
   decorateRecommendedArticles(blockEl, paths);

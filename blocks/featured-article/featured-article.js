@@ -1,6 +1,6 @@
 /* eslint-disable import/named, import/extensions */
-
 import {
+  buildAnchors,
   buildArticleCard,
   getBlogArticle,
 } from '../../scripts/scripts.js';
@@ -25,7 +25,11 @@ async function decorateFeaturedArticle(featuredArticleEl, articlePath) {
 }
 
 export default async function decorate(block, blockName, document, callback) {
-  const a = block.querySelector('a');
+  let a = block.querySelector('a');
+  if (!a) {
+    buildAnchors(block);
+    a = block.querySelector('a');
+  }
   block.innerHTML = '';
   if (a && a.href) {
     const path = new URL(a.href).pathname;

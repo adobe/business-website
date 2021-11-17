@@ -1,7 +1,14 @@
-import { buildFigure } from '../../scripts/scripts.js';
+import {
+  buildAnchors,
+  buildFigure,
+} from '../../scripts/scripts.js';
 
 export default function decorateAnimation(blockEl) {
-  const a = blockEl.querySelector('a');
+  let a = blockEl.querySelector('a');
+  if (!a) {
+    buildAnchors(blockEl);
+    a = blockEl.querySelector('a');
+  }
   const parentEl = a.parentNode;
   const href = a.getAttribute('href');
   const url = new URL(href);
@@ -29,5 +36,7 @@ export default function decorateAnimation(blockEl) {
 
   const figEl = buildFigure(blockEl.firstChild.firstChild);
   blockEl.prepend(figEl);
-  blockEl.lastChild.remove();
+  if (blockEl.lastChild.nodeName === 'DIV') {
+    blockEl.lastChild.remove();
+  }
 }
