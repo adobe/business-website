@@ -673,7 +673,7 @@ export function buildArticleCard(article, type = 'article') {
     </div>
     <div class="${type}-card-body">
       <p class="${type}-card-category">
-        <a href="${window.location.origin}${getRootPath()}/categories/${category}">${category}</a>
+        <a href="${window.location.origin}${getRootPath()}/tags/${toClassName(category)}">${category}</a>
       </p>
       <h3>${title}</h3>
       <p>${description}</p>
