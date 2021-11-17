@@ -1045,7 +1045,7 @@ async function loadLazy() {
   loadBlocks(main);
   loadCSS('/styles/lazy-styles.css');
   addFavIcon('/styles/favicon.svg');
-  loadMartech();
+  if (!window.hlx.lighthouse) loadMartech();
 }
 
 /**
@@ -1076,6 +1076,8 @@ async function decoratePage() {
   loadLazy();
   loadDelayed();
 }
+window.hlx = window.hlx || {};
+window.hlx.lighthouse = new URLSearchParams(window.location.search).get('lighthouse') === 'on';
 
 decoratePage();
 

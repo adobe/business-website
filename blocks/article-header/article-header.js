@@ -64,4 +64,5 @@ export default async function decorateArticleHeader(blockEl, blockName, document
   featureFigEl.classList.add('figure-feature');
   featureImgContainer.prepend(featureFigEl);
   featureImgContainer.lastChild.remove();
+  blockEl.classList.add('loaded');
 }
