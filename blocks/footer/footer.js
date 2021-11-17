@@ -4,8 +4,8 @@ import {
 } from '../../scripts/scripts.js';
 import createTag from '../gnav/gnav-utils.js';
 
-const GLOBE_IMG = '<img class="footer-region-img" loading="lazy" src="/blocks/footer/globe.svg">';
-const ADCHOICE_IMG = '<img class="footer-link-img" loading="lazy" src="/blocks/footer/adchoices-small.svg">';
+const GLOBE_IMG = '<img class="footer-region-img" loading="lazy" alt="wireframe globe" src="/blocks/footer/globe.svg">';
+const ADCHOICE_IMG = '<img class="footer-link-img" loading="lazy" alt="AdChoices icon" src="/blocks/footer/adchoices-small.svg">';
 
 class Footer {
   constructor(body, el) {
@@ -15,7 +15,6 @@ class Footer {
   }
 
   init = async () => {
-    this.state = {};
     const wrapper = createTag('div', { class: 'footer-wrapper' });
 
     const grid = this.decorateGrid();
@@ -76,7 +75,7 @@ class Footer {
         let expanded = false;
         if (this.desktop.matches) { expanded = true; }
         // populate grid column item
-        const title = createTag('h4', {
+        const title = createTag('a', {
           class: 'footer-nav-item-title',
           role: 'button',
           'aria-expanded': expanded,
@@ -159,7 +158,9 @@ class Footer {
           class: 'footer-social-img',
           loading: 'lazy',
           src: `/blocks/footer/${domain}-square.svg`,
+          alt: `${domain} logo`,
         });
+        a.setAttribute('aria-label', domain);
         a.textContent = '';
         a.append(socialIcon);
         li.append(a);

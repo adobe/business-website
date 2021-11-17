@@ -66,6 +66,7 @@ footer a:focus {
   color: var(--color-gray-700);
   padding: 8px 0;
   font-size: var(--heading-font-size-xxs);
+  font-weight: var(--heading-font-weight);
   display: flex;
   align-items: center;
   justify-content: space-between;
