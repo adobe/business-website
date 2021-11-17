@@ -2,9 +2,6 @@ version: 1
 
 indices:
   blog:
-    # note, the following 2 properties are no longer used with Helix3
-    source: html
-    fetch: https://{ref}--{repo}--{owner}.hlx.live{path}
     include:
       - '/blog/**'
     exclude:
@@ -16,11 +13,7 @@ indices:
       - '/blog/banners/**'
       - '/blog/categories/**'
       - '/blog/tags/**'
-    target: https://adobe.sharepoint.com/sites/BizWeb/Shared%20Documents/website/blog/query-index.xlsx
-    sitemap:
-      source: /blog/query-index.json
-      path: /blog/sitemap.xml
-      origin: https://business.adobe.com
+    target: /blog/query-index.xlsx
     properties:
       author:
         select: head > meta[name="author"]
