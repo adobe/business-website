@@ -1,0 +1,7 @@
+version: 1
+
+sitemaps:
+  blog:
+    origin: https://business.adobe.com
+    source: /blog/query-index.json
+    destination: /blog/sitemap.xml
