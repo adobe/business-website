@@ -65,7 +65,7 @@ function loadPrivacy() {
   loadScript(`https://www.${env}adobe.com/etc/beagle/public/globalnav/adobe-privacy/latest/privacy.min.js`);
 }
 
-loadPrivacy();
+if (!window.hlx.lighthouse) loadPrivacy();
 
 async function setupLinkTracking() {
   const resp = await fetch('/blog/instrumentation.json');
