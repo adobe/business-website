@@ -838,13 +838,15 @@ export async function getBlogArticle(path) {
  */
 
 export async function fetchPlaceholders() {
-  const resp = await fetch(`${getRootPath()}/placeholders.json`);
-  const json = await resp.json();
-  const placeholders = {};
-  json.data.forEach((placeholder) => {
-    placeholders[placeholder.Key] = placeholder.Text;
-  });
-  return (placeholders);
+  if (!window.placeholders) {
+    const resp = await fetch(`${getRootPath()}/placeholders.json`);
+    const json = await resp.json();
+    window.placeholders = {};
+    json.data.forEach((placeholder) => {
+      window.placeholders[placeholder.Key] = placeholder.Text;
+    });
+  }
+  return window.placeholders;
 }
 
 /**
