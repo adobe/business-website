@@ -9,7 +9,13 @@ export default function decorateTags(blockEl) {
   container.textContent = '';
   tags.forEach((tag) => {
     const a = document.createElement('a');
-    a.setAttribute('href', `../tags/${toClassName(tag)}`);
+    let tagname = '';
+    toClassName(tag).split('-').forEach((e, i) => {
+      if (e) {
+        tagname += `${i ? '-' : ''}${e}`;
+      }
+    });
+    a.setAttribute('href', `../tags/${tagname}`);
     a.textContent = tag;
     a.classList.add('button');
     container.append(a);
