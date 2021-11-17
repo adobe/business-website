@@ -818,7 +818,7 @@ export async function fetchPlaceholders() {
       window.placeholders[placeholder.Key] = placeholder.Text;
     });
   }
-  return (window.placeholders);
+  return window.placeholders;
 }
 
 /**
