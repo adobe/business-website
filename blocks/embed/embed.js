@@ -147,42 +147,55 @@ const loadEmbed = (block) => {
   if (block.classList.contains('is-loaded')) {
     return;
   }
-
+  let figure = '';
+  let urlStr = '';
+  let baseElement = '';
   const a = block.querySelector('a');
-  const figure = buildFigure(block.firstChild.firstChild);
-
   if (a) {
-    const url = new URL(a.href.replace(/\/$/, ''));
-    const hostnameArr = url.hostname.split('.');
-
-    // trimed domain name (ex, www.google.com -> google)
-    const simpleDomain = hostnameArr[hostnameArr.length - 2];
-
-    // getting config
-    let config = EMBEDS_CONFIG[simpleDomain];
-
-    // for different config for same domain:
-    if (url.hostname.includes('adobe')) {
-      if (url.hostname.includes('spark.adobe.com')) {
-        config = EMBEDS_CONFIG['adobe-spark'];
-      } else {
-        config = EMBEDS_CONFIG['adobe-tv'];
-      }
-    } else if (url.hostname.includes('youtu')) {
-      config = EMBEDS_CONFIG.youtube;
+    baseElement = a;
+    urlStr = a.href.replace(/\/$/, '');
+    figure = buildFigure(block.firstChild.firstChild);
+  } else {
+    const p = block.querySelector('p');
+    const urlRegex = /(https?:\/\/[^ ]*)/;
+    const testUrl = p.textContent.match(urlRegex);
+    const onlyUrl = testUrl && testUrl[1];
+    if (onlyUrl) {
+      urlStr = onlyUrl;
+      baseElement = document.createElement('div');
+      figure = buildFigure(block.firstChild.firstChild);
+      figure.prepend(baseElement);
     }
-
-    // loading embed function for given config and url.
-    if (config) {
-      a.outerHTML = config.embed(url);
-      block.classList = `block embed embed-${config.type}`;
-    } else {
-      a.outerHTML = getDefaultEmbed(url);
-      block.classList = `block embed embed-${simpleDomain}`;
-    }
-    block.innerHTML = figure.outerHTML;
-    block.classList.add('is-loaded');
   }
+  const url = new URL(urlStr);
+  const hostnameArr = url.hostname.split('.');
+  // trimed domain name (ex, www.google.com -> google)
+  const simpleDomain = hostnameArr[hostnameArr.length - 2];
+
+  // getting config
+  let config = EMBEDS_CONFIG[simpleDomain];
+
+  // for different config for same domain:
+  if (url.hostname.includes('adobe')) {
+    if (url.hostname.includes('spark.adobe.com')) {
+      config = EMBEDS_CONFIG['adobe-spark'];
+    } else {
+      config = EMBEDS_CONFIG['adobe-tv'];
+    }
+  } else if (url.hostname.includes('youtu')) {
+    config = EMBEDS_CONFIG.youtube;
+  }
+
+  // loading embed function for given config and url.
+  if (config) {
+    baseElement.outerHTML = config.embed(url);
+    block.classList = `block embed embed-${config.type}`;
+  } else {
+    baseElement.outerHTML = getDefaultEmbed(url);
+    block.classList = `block embed embed-${simpleDomain}`;
+  }
+  block.innerHTML = figure.outerHTML;
+  block.classList.add('is-loaded');
 };
 
 const intersectHandler = (entries) => {
