@@ -144,7 +144,6 @@ const EMBEDS_CONFIG = {
 };
 
 const loadEmbed = (block) => {
-  console.log(block);
   if (block.classList.contains('is-loaded')) {
     return;
   }
@@ -173,7 +172,6 @@ const loadEmbed = (block) => {
       figure.prepend(baseElement);
     }
   }
-  console.log(urlStr);
   const url = new URL(urlStr);
   const hostnameArr = url.hostname.split('.');
   // trimed domain name (ex, www.google.com -> google)
