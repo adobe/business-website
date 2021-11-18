@@ -144,6 +144,7 @@ const EMBEDS_CONFIG = {
 };
 
 const loadEmbed = (block) => {
+  console.log(block);
   if (block.classList.contains('is-loaded')) {
     return;
   }
@@ -155,10 +156,15 @@ const loadEmbed = (block) => {
     baseElement = a;
     urlStr = a.href.replace(/\/$/, '');
     figure = buildFigure(block.firstChild.firstChild);
-  } else {
+  } else { // Handling non-link URL case.
     const p = block.querySelector('p');
     const urlRegex = /(https?:\/\/[^ ]*)/;
-    const testUrl = p.textContent.match(urlRegex);
+    let testUrl = '';
+    if (p) {
+      testUrl = p.textContent.match(urlRegex);
+    } else {
+      testUrl = block.textContent.match(urlRegex);
+    }
     const onlyUrl = testUrl && testUrl[1];
     if (onlyUrl) {
       urlStr = onlyUrl;
@@ -167,6 +173,7 @@ const loadEmbed = (block) => {
       figure.prepend(baseElement);
     }
   }
+  console.log(urlStr);
   const url = new URL(urlStr);
   const hostnameArr = url.hostname.split('.');
   // trimed domain name (ex, www.google.com -> google)
