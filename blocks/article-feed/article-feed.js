@@ -85,11 +85,10 @@ async function decorateArticleFeed(articleFeedEl, config, offset = 0,
       decorateArticleFeed(articleFeedEl, config, pageEnd, feed);
     });
   }
-  articleFeedEl.classList.add('appear');
 }
 
-export default function decorate(block) {
+export default async function decorate(block) {
   const config = readBlockConfig(block);
   block.innerHTML = '';
-  decorateArticleFeed(block, config);
+  await decorateArticleFeed(block, config);
 }

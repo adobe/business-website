@@ -2,9 +2,7 @@ main .article-feed-container > div {
   max-width: unset;
 }
 
-main .article-feed.appear {
-  visibility: unset;
-  min-height: unset;
+main .article-feed {
   text-align: center;
 }
 
