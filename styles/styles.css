@@ -368,15 +368,27 @@ main .figure .caption {
 
 /* CLS and FOUC protection for lazy loaded content/styles */
 
-header .gnav,
-main .recommended-articles,
-main .featured-article,
-main .article-feed,
-main .article-header,
-main .tag-header-container,
-main .recommended-articles-small-container {
+.block {
   visibility: hidden;
 }
+
+.block.block-visible {
+  visibility: unset;
+}
+
+main .block {
+  min-height: 100vh;
+}
+
+main .block.block-visible {
+  min-height: unset;
+}
+
+
+.recommended-articles-container, .recommended-articles-small-container {
+  visibility: hidden;
+}
+
 
 main .featured-article {
   min-height: 320px;
