@@ -148,8 +148,8 @@ const loadEmbed = (block) => {
     return;
   }
 
-  const a = block.querySelector('a');
   const figure = buildFigure(block.firstChild.firstChild);
+  const a = figure.querySelector('a');
 
   if (a) {
     const url = new URL(a.href.replace(/\/$/, ''));

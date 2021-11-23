@@ -485,34 +485,38 @@ export function buildCaption(pEl) {
 export function buildFigure(blockEl) {
   const figEl = document.createElement('figure');
   figEl.classList.add('figure');
-  // content is picture only, no caption or link
-  if (blockEl.firstChild) {
-    if (blockEl.firstChild.nodeName === 'PICTURE' || blockEl.firstChild.nodeName === 'VIDEO') {
-      figEl.append(blockEl.firstChild);
-    } else if (blockEl.firstChild.nodeName === 'P') {
-      const pEls = Array.from(blockEl.children);
-      pEls.forEach((pEl) => {
-        if (pEl.firstChild) {
-          if (pEl.firstChild.nodeName === 'PICTURE' || pEl.firstChild.nodeName === 'VIDEO') {
-            figEl.append(pEl.firstChild);
-          } else if (pEl.firstChild.nodeName === 'EM') {
-            const figCapEl = buildCaption(pEl);
-            figEl.append(figCapEl);
-          } else if (pEl.firstChild.nodeName === 'A') {
-            const picEl = figEl.querySelector('picture');
-            if (picEl) {
-              pEl.firstChild.textContent = '';
-              pEl.firstChild.append(picEl);
-            }
-            figEl.prepend(pEl.firstChild);
-          }
+  blockEl.childNodes.forEach((child) => {
+    const clone = child.cloneNode(true);
+    // picture, video, or embed link is NOT wrapped in P tag
+    if (clone.nodeName === 'PICTURE' || clone.nodeName === 'VIDEO' || clone.nodeName === 'A') {
+      figEl.prepend(clone);
+    } else {
+      // content wrapped in P tag(s)
+      const picture = clone.querySelector('picture');
+      if (picture) {
+        figEl.prepend(picture);
+      }
+      const video = clone.querySelector('video');
+      if (video) {
+        figEl.prepend(video);
+      }
+      const caption = clone.querySelector('em');
+      if (caption) {
+        const figElCaption = buildCaption(caption);
+        figEl.append(figElCaption);
+      }
+      const link = clone.querySelector('a');
+      if (link) {
+        const img = figEl.querySelector('picture') || figEl.querySelector('video');
+        if (img) {
+          // wrap picture or video in A tag
+          link.textContent = '';
+          link.append(img);
         }
-      });
-    // catch link-only figures (like embed blocks);
-    } else if (blockEl.firstChild.nodeName === 'A') {
-      figEl.append(blockEl.firstChild);
+        figEl.prepend(link);
+      }
     }
-  }
+  });
   return figEl;
 }
 
