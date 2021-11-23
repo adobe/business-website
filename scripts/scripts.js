@@ -518,17 +518,15 @@ export function buildFigure(blockEl) {
  * @param {Element} block The block element
  */
 export async function loadBlock(block, eager = false) {
-  if (!block.getAttribute('data-block-loaded')) {
-    block.setAttribute('data-block-loaded', true);
+  if (!block.getAttribute('data-block-status')) {
+    block.setAttribute('data-block-status', 'loading');
     const blockName = block.getAttribute('data-block-name');
     try {
       const cssLoaded = new Promise((resolve) => {
-        console.log('loading css');
         loadCSS(`/blocks/${blockName}/${blockName}.css`, resolve);
       });
       const decorationComplete = new Promise((resolve) => {
         const runBlock = async () => {
-          console.log('running block');
           const mod = await import(`/blocks/${blockName}/${blockName}.js`);
           if (mod.default) {
             await mod.default(block, blockName, document, eager);
@@ -537,12 +535,12 @@ export async function loadBlock(block, eager = false) {
         };
         runBlock();
       });
-      console.log('waiting for block to be');
       await Promise.all([cssLoaded, decorationComplete]);
-      console.log('block was run');
     } catch (err) {
       debug(`failed to load module for ${blockName}`, err);
     }
+    block.setAttribute('data-block-status', 'loaded');
+    block.classList.add('block-visible');
   }
 }
 
