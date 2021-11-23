@@ -68,13 +68,13 @@ document.addEventListener('click', () => sampleRUM('click'));
  * Loads a CSS file.
  * @param {string} href The path to the CSS file
  */
-export function loadCSS(href) {
+export function loadCSS(href, callback) {
   if (!document.querySelector(`head > link[href="${href}"]`)) {
     const link = document.createElement('link');
     link.setAttribute('rel', 'stylesheet');
     link.setAttribute('href', href);
-    link.onload = () => { };
-    link.onerror = () => { };
+    link.onload = () => { if (callback) callback(); };
+    link.onerror = () => { if (callback) callback(); };
     document.head.appendChild(link);
   }
 }
@@ -236,25 +236,22 @@ function wrapSections(sections) {
  * @param {Element} block The block element
  */
 export function decorateBlock(block) {
+  const trimDashes = (str) => str.replace(/(^\s*-)|(-\s*$)/g, '');
   const classes = Array.from(block.classList.values());
-  let blockName = classes[0];
+  const blockName = classes[0];
   if (!blockName) return;
   const section = block.closest('.section-wrapper');
   if (section) {
     section.classList.add(`${blockName}-container`.replace(/--/g, '-'));
   }
-  const blocksWithVariants = ['recommended-articles'];
-  blocksWithVariants.forEach((b) => {
-    if (blockName.startsWith(`${b}-`)) {
-      const options = blockName.substring(b.length + 1).split('-').filter((opt) => !!opt);
-      blockName = b;
-      block.classList.add(b);
-      block.classList.add(...options);
-    }
-  });
+  const blockWithVariants = blockName.split('--');
+  const shortBlockName = trimDashes(blockWithVariants.shift());
+  const variants = blockWithVariants.map((v) => trimDashes(v));
+  block.classList.add(shortBlockName);
+  block.classList.add(...variants);
 
   block.classList.add('block');
-  block.setAttribute('data-block-name', blockName);
+  block.setAttribute('data-block-name', shortBlockName);
 }
 
 /**
@@ -525,11 +522,24 @@ export async function loadBlock(block, eager = false) {
     block.setAttribute('data-block-loaded', true);
     const blockName = block.getAttribute('data-block-name');
     try {
-      loadCSS(`/blocks/${blockName}/${blockName}.css`);
-      const mod = await import(`/blocks/${blockName}/${blockName}.js`);
-      if (mod.default) {
-        await mod.default(block, blockName, document, eager);
-      }
+      const cssLoaded = new Promise((resolve) => {
+        console.log('loading css');
+        loadCSS(`/blocks/${blockName}/${blockName}.css`, resolve);
+      });
+      const decorationComplete = new Promise((resolve) => {
+        const runBlock = async () => {
+          console.log('running block');
+          const mod = await import(`/blocks/${blockName}/${blockName}.js`);
+          if (mod.default) {
+            await mod.default(block, blockName, document, eager);
+          }
+          resolve();
+        };
+        runBlock();
+      });
+      console.log('waiting for block to be');
+      await Promise.all([cssLoaded, decorationComplete]);
+      console.log('block was run');
     } catch (err) {
       debug(`failed to load module for ${blockName}`, err);
     }
