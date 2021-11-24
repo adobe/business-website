@@ -6,11 +6,6 @@ main .article-header-container > div {
   margin: 0 auto;
 }
 
-main .section-wrapper .article-header.loaded {
-  visibility: unset;
-  max-width: unset;
-}
-
 @media (min-width: 700px) {
   main .article-header {
     margin-left: auto;
