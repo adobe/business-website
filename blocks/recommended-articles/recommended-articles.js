@@ -29,14 +29,15 @@ async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
       recommendedArticlesEl.append(articleCardsContainer);
     }
   }
+  recommendedArticlesEl.closest('.section-wrapper').classList.add('appear');
   if (!articleCardsContainer.hasChildNodes()) {
     recommendedArticlesEl.parentNode.parentNode.remove();
   }
 }
 
-export default function decorate(blockEl) {
+export default async function decorate(blockEl) {
   const anchors = [...blockEl.querySelectorAll('a')];
   blockEl.innerHTML = '';
   const paths = anchors.map((a) => new URL(a.href).pathname);
-  decorateRecommendedArticles(blockEl, paths);
+  await decorateRecommendedArticles(blockEl, paths);
 }

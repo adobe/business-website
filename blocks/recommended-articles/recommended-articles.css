@@ -1,19 +1,18 @@
 main .recommended-articles-container,
 main .recommended-articles-small-container {
-  visibility: unset;
   background: var(--color-gray-200);
   padding-bottom: 1rem;
+}
+
+main .recommended-articles-container.appear,
+main .recommended-articles-small-container.appear {
+  visibility: unset;
 }
 
 main .recommended-articles-container > div {
   max-width: 100%;
   text-align: center;
   padding-top: 16px;
-}
-
-main .recommended-articles {
-  visibility: unset;
-  min-height: unset;
 }
 
 main .recommended-articles .article-cards {
