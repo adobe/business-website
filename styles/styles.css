@@ -590,6 +590,11 @@ main .article-feed {
   min-height: 2120px;  
 }
 
+main .article-header {
+  min-height: 691px;  
+}
+
+
 body {
   visibility: hidden;
 }
