@@ -10,7 +10,7 @@
   }
 }
 
-main .featured-article.loaded {
+main .featured-article-container {
   visibility: unset;
 }
 

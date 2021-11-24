@@ -1,3 +1,8 @@
+main .article-header-container {
+  visibility: unset;
+}
+
+
 /* article header */
 
 main .article-header-container > div {

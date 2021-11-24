@@ -1,3 +1,7 @@
+main .article-feed-container {
+  visibility: unset;
+}
+
 main .article-feed-container > div {
   max-width: unset;
 }
@@ -28,3 +32,4 @@ main .article-feed .load-more {
   margin-top: 0;
   margin-bottom: 64px;
 }
+
