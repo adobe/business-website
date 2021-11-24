@@ -76,7 +76,7 @@ export function loadCSS(href, callback) {
     link.onload = () => { if (callback) callback(); };
     link.onerror = () => { if (callback) callback(); };
     document.head.appendChild(link);
-  }
+  } else if (callback) callback();
 }
 
 const LANG = {
