@@ -1,4 +1,7 @@
-import { buildFigure } from '../../scripts/scripts.js';
+import {
+  buildFigure,
+  getTrueLinks,
+} from '../../scripts/scripts.js';
 
 const loadScript = (url, callback, type) => {
   const head = document.querySelector('head');
@@ -149,29 +152,10 @@ const loadEmbed = (block) => {
   }
   let figure = '';
   let urlStr = '';
-  let baseElement = '';
-  const a = block.querySelector('a');
-  if (a) {
-    baseElement = a;
-    urlStr = a.href.replace(/\/$/, '');
-    figure = buildFigure(block.firstChild.firstChild);
-  } else { // Handling non-link URL case.
-    const p = block.querySelector('p');
-    const urlRegex = /(https?:\/\/[^ ]*)/;
-    let testUrl = '';
-    if (p) {
-      testUrl = p.textContent.match(urlRegex);
-    } else {
-      testUrl = block.textContent.match(urlRegex);
-    }
-    const onlyUrl = testUrl && testUrl[1];
-    if (onlyUrl) {
-      urlStr = onlyUrl;
-      baseElement = document.createElement('div');
-      figure = buildFigure(block.firstChild.firstChild);
-      figure.prepend(baseElement);
-    }
-  }
+  const a = getTrueLinks(block);
+  urlStr = a.href.replace(/\/$/, '');
+  figure = buildFigure(block.firstChild.firstChild);
+  figure.prepend(a);
   const url = new URL(urlStr);
   const hostnameArr = url.hostname.split('.');
   // trimed domain name (ex, www.google.com -> google)
@@ -193,10 +177,10 @@ const loadEmbed = (block) => {
 
   // loading embed function for given config and url.
   if (config) {
-    baseElement.outerHTML = config.embed(url);
+    a.outerHTML = config.embed(url);
     block.classList = `block embed embed-${config.type}`;
   } else {
-    baseElement.outerHTML = getDefaultEmbed(url);
+    a.outerHTML = getDefaultEmbed(url);
     block.classList = `block embed embed-${simpleDomain}`;
   }
   block.innerHTML = figure.outerHTML;

@@ -731,6 +731,34 @@ export function addFavIcon(href) {
 }
 
 /**
+ * returning <a> from given html element.
+ * this function is to get build <a> from nonlink url.
+ * @param {element} elem
+ * @returns <a>
+ */
+export function getTrueLinks(elem) {
+  const a = elem.querySelector('a');
+  if (a) {
+    return a;
+  }
+  const p = elem.querySelector('p');
+  const urlRegex = /(https?:\/\/[^ ]*)/;
+  let testUrl = '';
+  if (p) {
+    testUrl = p.textContent.match(urlRegex);
+  } else {
+    testUrl = elem.textContent.match(urlRegex);
+  }
+  const onlyUrl = testUrl && testUrl[1];
+  if (onlyUrl) {
+    const newA = document.createElement('a');
+    newA.href = onlyUrl;
+    newA.textContent = onlyUrl;
+    return newA;
+  }
+}
+
+/**
  * fetches blog article index.
  * @returns {object} index with data and path lookup
  */
