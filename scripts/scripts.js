@@ -756,6 +756,7 @@ export function getTrueLinks(elem) {
     newA.textContent = onlyUrl;
     return newA;
   }
+  return false;
 }
 
 /**

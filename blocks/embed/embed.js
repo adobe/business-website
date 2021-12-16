@@ -150,11 +150,12 @@ const loadEmbed = (block) => {
   if (block.classList.contains('is-loaded')) {
     return;
   }
-  let figure = '';
-  let urlStr = '';
   const a = getTrueLinks(block);
-  urlStr = a.href.replace(/\/$/, '');
-  figure = buildFigure(block.firstChild.firstChild);
+  if (!a) {
+    return;
+  }
+  const urlStr = a.href.replace(/\/$/, '');
+  const figure = buildFigure(block.firstChild.firstChild);
   figure.prepend(a);
   const url = new URL(urlStr);
   const hostnameArr = url.hostname.split('.');
