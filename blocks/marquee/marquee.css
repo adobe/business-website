@@ -15,6 +15,12 @@ main .marquee {
     padding: 20px;
     color: white;
     text-align: center;
+    font-size: var(--body-font-size-l);
+}
+
+main .marquee .button {
+    width: 100%;
+    box-sizing: border-box;
 }
 
 main .marquee a:any-link {
@@ -48,9 +54,12 @@ main .marquee .attribution p {
 }
 
 main .marquee h1 {
+    font-family: Fira Sans;
     padding-top: 150px;
 }
 
 main .marquee h1 em {
     display: block;
+    font-weight: 400;
+    font-family: Caveat;
 }

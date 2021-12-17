@@ -14,15 +14,15 @@
   --color-gray-800: #242424;
   --color-black: #000;
   --color-brand-title: #000B1D;
-  --color-info-accent: #5C5CE0;
-  --color-info-accent-hover: #4646C6;
-  --color-info-accent-down: #3D3DB4;
+  --color-info-accent: #73c41d;
+  --color-info-accent-hover: #73c41d;
+  --color-info-accent-down: #73c41d;
   --color-info-accent-light: #DEDEF9;
 
   /* body */
   --body-background-color: var(--color-white);
   --body-alt-background-color: var(--color-gray-600);
-  --body-font-family: 'adobe-clean', 'Trebuchet MS', sans-serif;
+  --body-font-family: 'Lato', Arial, Helvetica, sans-serif;
   --body-font-weight: 300;
   --body-color: var(--color-black);
   --body-line-height: 1.5;
@@ -84,10 +84,11 @@ a.button:any-link {
   text-decoration: none;
   border-radius: 2rem;
   border: 2px solid transparent;
-  padding: 6px 1rem;
+  padding: 17px 25px;
   /* outline: none; (keep outline for a11n) */
   text-align: center;
-  font-size: var(--body-font-size-s);
+  font-size: var(--body-font-size-m);
+  font-family: 'Fira Sans';
   font-style: normal; 
   font-weight: 600;
   cursor: pointer;
