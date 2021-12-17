@@ -106,7 +106,7 @@ a.button:hover, a.button:focus {
 }
 
 a.button.small:any-link {
-  padding: 2px .8rem;
+  padding: 5px 1.5rem;
   font-size: var(--body-font-size-xs);
 }
 
@@ -160,7 +160,8 @@ a.button.primary.light:hover, a.button.primary.light:focus {
 
 a.button.secondary.light:any-link {
   color: var(--color-gray-600);
-  border-color: var(--color-gray-600);
+  border-color: var(--color-white);
+  background-color: var(--color-white);
 }
 
 a.button.secondary.light:hover, a.button.secondary.light:focus {

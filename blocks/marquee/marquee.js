@@ -1,6 +1,9 @@
 export default async function decorate($block) {
-    const picture = $block.querySelector('picture');
-    const h1 = $block.querySelector('h1');
+  const [ hero, callout ] = [...$block.children];
+  if (hero) {
+    hero.classList.add('marquee-hero');
+    const picture = hero.querySelector('picture');
+    const h1 = hero.querySelector('h1');
     if (picture && h1) {
         const attribution = document.createElement('div');
         attribution.classList.add('attribution');
@@ -13,5 +16,12 @@ export default async function decorate($block) {
         }
         h1.closest('div').appendChild(attribution);
     }
-    
+  }
+
+  if (callout) {
+    callout.classList.add('marquee-callout');
+    const button = callout.querySelector('.button');
+    button.classList.remove('accent');
+    button.classList.add('secondary', 'small', 'light');
+  }
 }

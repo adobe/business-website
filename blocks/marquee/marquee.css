@@ -1,65 +1,135 @@
 main .marquee-container {
-    margin: auto;
+  margin: auto;
 }
 
 main .marquee-container > div {
-    max-width: unset;
-    padding: 0;
-    position: relative;
-    background: linear-gradient(#00000000, #000000ff);
+  max-width: unset;
+  padding: 0;
+  position: relative;
+  background: linear-gradient(#00000000, #000000ff);
 }
 
 main .marquee {
-    margin: auto;
-    max-width: 800px;
-    padding: 20px;
-    color: white;
-    text-align: center;
-    font-size: var(--body-font-size-l);
+  margin: auto;
+  color: white;
+  text-align: center;
+  font-size: var(--body-font-size-l);
 }
 
-main .marquee .button {
-    width: 100%;
-    box-sizing: border-box;
+main .marquee .marquee-hero {
+  padding: 20px;
+  max-width: 800px;
+}
+
+main .marquee-hero .button {
+  width: 100%;
+  box-sizing: border-box;
 }
 
 main .marquee a:any-link {
-    color: white;
+  color: white;
 }
 
 main .marquee picture {
-    position: absolute;
-    z-index: -1;
-    top: 0;
-    left: 0;
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 0;
 }
 
 main .marquee picture img {
-    object-fit: cover;
-    object-position: 89% top;
-    height: 600px;
-    width: 100vw;
+  object-fit: cover;
+  object-position: 83% top;
+  height: 800px;
+  width: 100vw;
 }
 
 main .marquee .attribution {
-    text-align: center;
+  width: 180px;
+  font-size: var(--body-font-size-s);
+  margin: auto;
 }
 
 main .marquee .attribution em {
-    font-style: normal;
+  font-style: normal;
 }
 
 main .marquee .attribution p {
-    margin: 0;
+  margin: 0;
 }
 
 main .marquee h1 {
-    font-family: Fira Sans;
-    padding-top: 150px;
+  font-family: Fira Sans;
+  padding-top: 150px;
 }
 
 main .marquee h1 em {
-    display: block;
-    font-weight: 400;
-    font-family: Caveat;
+  display: block;
+  font-weight: 400;
+  font-family: Caveat;
+}
+
+main .marquee .marquee-callout {
+  background-image: url('./leaf.png');
+  background-size: max(1600px, 100%);
+  background-position-y: top;
+  background-repeat: no-repeat;
+  text-align: left;
+  padding: 20px 40px 80px 80px;
+  box-sizing: border-box;
+  font-size: var(--body-font-size-s);
+}
+
+main .marquee .marquee-callout .button-container {
+  text-align: left;
+}
+
+main .marquee .marquee-callout p {
+  margin: 10px 0;
+}
+
+main .marquee .marquee-callout h2 {
+  font-family: Fira Sans;
+  font-weight: 800;
+}
+
+@media (min-width: 600px) {
+
+  main .marquee-hero {
+    text-align: left;
+    width: 400px;
+    margin-left: 30px;
+  }
+
+  main .marquee-container > div {
+    background: unset;
+  }
+
+  main .marquee h1 {
+    width: 250px;
+    padding-top: 20px;
+    font-size: var(--heading-font-size-xxl);
+  }
+
+  main .marquee .attribution {
+    position: absolute;
+    top: 600px;
+    right: 15%;
+  }
+
+  main .marquee .marquee-hero {
+    height: 600px;
+  }
+
+  main .marquee picture img {
+    height: 956px;
+  } 
+}
+
+@media (min-width: 1200px) {
+  main .marquee .attribution {
+    position: absolute;
+    top: 200px;
+    right: 3%;
+  }
 }
