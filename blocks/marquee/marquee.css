@@ -1,3 +1,56 @@
+main .marquee-container {
+    margin: auto;
+}
+
+main .marquee-container > div {
+    max-width: unset;
+    padding: 0;
+    position: relative;
+    background: linear-gradient(#00000000, #000000ff);
+}
+
 main .marquee {
-    background-color: grey;
+    margin: auto;
+    max-width: 800px;
+    padding: 20px;
+    color: white;
+    text-align: center;
+}
+
+main .marquee a:any-link {
+    color: white;
+}
+
+main .marquee picture {
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 0;
+}
+
+main .marquee picture img {
+    object-fit: cover;
+    object-position: 89% top;
+    height: 600px;
+    width: 100vw;
+}
+
+main .marquee .attribution {
+    text-align: center;
+}
+
+main .marquee .attribution em {
+    font-style: normal;
+}
+
+main .marquee .attribution p {
+    margin: 0;
+}
+
+main .marquee h1 {
+    padding-top: 150px;
+}
+
+main .marquee h1 em {
+    display: block;
 }
