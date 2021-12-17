@@ -898,101 +898,6 @@ function hideBody(id) {
 }
 
 /**
- * sets digital data
- */
-
-async function setDigitalData(digitaldata) {
-  digitaldata.page.pageInfo.category = 'unknown: before instrumentation.json';
-  const resp = await fetch('/blog/instrumentation.json');
-  const json = await resp.json();
-  delete digitaldata.page.pageInfo.category;
-
-  const digitalDataMap = json.digitaldata.data;
-  digitalDataMap.forEach((mapping) => {
-    const metaValue = getMetadata(mapping.metadata);
-    if (metaValue) {
-      // eslint-disable-next-line no-underscore-dangle
-      digitaldata._set(mapping.digitaldata, metaValue);
-    }
-  });
-
-  const digitalDataLists = json['digitaldata-lists'].data;
-  digitalDataLists.forEach((listEntry) => {
-    const metaValue = getMetadata(listEntry.metadata);
-    if (metaValue) {
-      // eslint-disable-next-line no-underscore-dangle
-      let listValue = digitaldata._get(listEntry.digitaldata) || '';
-      const name = listEntry['list-item-name'];
-      const metaValueArr = listEntry.delimiter ? metaValue.split(listEntry.delimiter) : [metaValue];
-      metaValueArr.forEach((value) => {
-        const escapedValue = value.split('|').join(); // well, well...
-        listValue += `${listValue ? ' | ' : ''}${name}: ${escapedValue}`;
-      });
-      // eslint-disable-next-line no-underscore-dangle
-      digitaldata._set(listEntry.digitaldata, listValue);
-    }
-  });
-}
-
-async function loadMartech() {
-  const usp = new URLSearchParams(window.location.search);
-  const alloy = usp.get('alloy');
-
-  // set data layer properties
-  window.digitalData = {
-    page: {
-      pageInfo: {
-        language: LANG_LOC[getLanguage()] || '',
-        category: 'unknown: before setDigitalData()',
-      },
-    },
-  };
-
-  const target = getMetadata('target').toLocaleLowerCase() === 'on';
-
-  // load bootstrap script
-  let bootstrapScriptUrl = 'https://www.adobe.com/marketingtech/';
-  if (alloy === 'on') {
-    window.marketingtech = {
-      adobe: {
-        target,
-        launch: {
-          url: 'https://assets.adobedtm.com/d4d114c60e50/cf25c910a920/launch-1bba233684fa-development.js',
-          load: (l) => {
-            const delay = () => (
-              setTimeout(l, 3500)
-            );
-            if (document.readyState === 'complete') {
-              delay();
-            } else {
-              window.addEventListener('load', delay);
-            }
-          },
-        },
-      },
-    };
-    bootstrapScriptUrl += 'main.alloy.min.js';
-  } else {
-    window.marketingtech = {
-      adobe: {
-        target,
-        audienceManager: true,
-        launch: {
-          property: 'global',
-          environment: 'production',
-        },
-      },
-    };
-    window.targetGlobalSettings = window.targetGlobalSettings || {};
-    bootstrapScriptUrl += 'main.min.js';
-  }
-
-  loadScript(bootstrapScriptUrl, () => {
-    setDigitalData(window.digitalData);
-  });
-}
-
-/**
  * loads everything needed to get to LCP.
  */
 async function loadEager() {
@@ -1053,7 +958,6 @@ async function loadLazy() {
   loadBlocks(main);
   loadCSS('/styles/lazy-styles.css');
   addFavIcon('/styles/favicon.svg');
-  if (!window.hlx.lighthouse) loadMartech();
 }
 
 /**
