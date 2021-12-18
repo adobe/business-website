@@ -224,35 +224,7 @@ class Gnav {
     if (!blockEl) return null;
     const profileEl = createTag('div', { class: 'gnav-profile' });
 
-    window.adobeid = {
-      client_id: 'bizweb',
-      scope: 'AdobeID,openid,gnav',
-      locale: 'en_US',
-      autoValidateToken: true,
-      environment: this.env.ims,
-      useLocalStorage: false,
-      onReady: () => { this.imsReady(blockEl, profileEl); },
-    };
-    loadScript('https://auth.services.adobe.com/imslib/imslib.min.js');
-
     return profileEl;
-  }
-
-  imsReady = async (blockEl, profileEl) => {
-    const accessToken = window.adobeIMS.getAccessToken();
-    if (accessToken) {
-      const ioResp = await fetch(`https://${this.env.adobeIO}/profile`, {
-        headers: new Headers({ Authorization: `Bearer ${accessToken.token}` }),
-      });
-      if (ioResp.status === 200) {
-        const profile = await import('./gnav-profile.js');
-        profile.default(blockEl, profileEl, this.toggleMenu, ioResp);
-      } else {
-        this.decorateSignIn(blockEl, profileEl);
-      }
-    } else {
-      this.decorateSignIn(blockEl, profileEl);
-    }
   }
 
   decorateSignIn = (blockEl, profileEl) => {
@@ -261,7 +233,6 @@ class Gnav {
     profileEl.append(signIn);
     profileEl.addEventListener('click', (e) => {
       e.preventDefault();
-      window.adobeIMS.signIn();
     });
   }
 
