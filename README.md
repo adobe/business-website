@@ -1,10 +1,10 @@
 # Adobe Experience Cloud Website
 
 Inner CDN:
-- https://main--business-website--adobe.hlx3.page/
+- https://main--bamboohr-website--lamontacrook.hlx3.page/
 
 Outer CDN:
-- https://main--business-website--adobe.hlx.live/
+- https://main--bamboohr-website--lamontacrook.hlx.live/
 
 ## Installation
 
