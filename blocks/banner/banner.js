@@ -3,7 +3,11 @@ import {
 } from '../../scripts/scripts.js';
 
 export default function decorate(block) {
-  const bannerContents = document.createElement('div');
+  console.log(block);
+  const main = document.querySelector('main');
+  
+  main.insertBefore(block, main.firstChild);
+  /*const bannerContents = document.createElement('div');
   bannerContents.classList.add('banner-contents');
   block.querySelectorAll('a').forEach(async (a) => {
     if (a && a.href) {
@@ -45,5 +49,5 @@ export default function decorate(block) {
         block.remove();
       }
     }
-  });
+  });*/
 }

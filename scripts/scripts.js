@@ -90,17 +90,6 @@ const LANG = {
   BR: 'br',
 };
 
-const LANG_LOC = {
-  en: 'en-US',
-  de: 'de-DE',
-  fr: 'fr-FR',
-  ko: 'ko-KR',
-  es: 'es-ES', // es-MX?
-  it: 'it-IT',
-  jp: 'ja-JP',
-  br: 'pt-BR',
-};
-
 let language;
 
 export function getLanguage() {
@@ -734,7 +723,6 @@ export function decorateButtons(block = document) {
   });
 }
 
-
 /**
  * Decorates the main element.
  * @param {Element} main The main element
@@ -912,26 +900,6 @@ export function loadScript(url, callback, type) {
   return script;
 }
 
-function unhideBody(id) {
-  try {
-    document.head.removeChild(document.getElementById(id));
-  } catch (e) {
-    // nothing
-  }
-}
-
-function hideBody(id) {
-  const style = document.createElement('style');
-  style.id = id;
-  style.innerHTML = 'body{visibility: hidden !important}';
-
-  try {
-    document.head.appendChild(style);
-  } catch (e) {
-    // nothing
-  }
-}
-
 /**
  * loads everything needed to get to LCP.
  */
@@ -969,11 +937,17 @@ async function loadLazy() {
   // post LCP actions go here
   sampleRUM('lcp');
 
-  /* load gnav */
+  /* load gnav
   const header = document.querySelector('header');
   const gnavPath = getMetadata('gnav') || `${getRootPath()}/gnav`;
   header.setAttribute('data-block-name', 'gnav');
   header.setAttribute('data-gnav-source', gnavPath);
+  loadBlock(header); */
+
+  const header = document.querySelector('header');
+  header.setAttribute('data-nav-source', 'navigation');
+  header.setAttribute('data-block-name', 'nav');
+  header.classList.add('nav');
   loadBlock(header);
 
   /* load footer */
