@@ -1,0 +1,677 @@
+main .columns.columns-marquee {
+  min-height: unset;
+}
+
+main .columns-container,
+main .columns-dark-container,
+main .columns-center-container,
+main .columns-top-container,
+main .columns-highlight-container {
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-bottom: 40px;
+}
+
+main .columns-container > div,
+main .columns-dark-container > div,
+main .columns-center-container > div,
+main .columns-top-container > div {
+  padding: 0;
+  max-width: 500px;
+}
+
+main .columns-highlight-container,
+main .columns-dark-container {
+  padding-bottom: 120px;
+  color: var(--color-white);
+}
+
+main .columns-highlight-container .legal {
+  color: var(--color-black);
+  font-size: var(--body-font-size-m);
+}
+
+main .columns-highlight-container .legal a:any-link {
+  color: var(--color-black);
+  text-decoration: underline;
+}
+
+main .columns-dark-container {
+  background: var(--color-black);
+}
+
+main .columns-highlight-container {
+  background: var(--gradient-highlight-vertical);
+}
+
+main .columns p {
+  margin: 16px 0;
+  font-size: var(--body-font-size-l);
+  line-height: 1.33;
+}
+
+main .columns p.powered-by {
+  font-size: var(--body-font-size-m);
+  line-height: 1.2;
+}
+
+main .columns p.legal-copy {
+  font-size: var(--body-font-size-xs);
+  line-height: 1.5;
+}
+
+main .columns p.button-container {
+  margin: 0;
+  margin-top: 40px;
+}
+
+main .columns .button-container a {
+  margin: 0;
+}
+
+main .columns .column-picture {
+  margin: 15px 0;
+}
+
+main .columns h1{
+  font-size: var(--heading-font-size-xxl);
+  line-height: 1.06;
+}
+
+main .columns h1.columns-heading-long {
+  font-size: var(--heading-font-size-xl);
+}
+
+main .columns h1.columns-heading-very-long {
+  font-size: var(--heading-font-size-l);
+}
+
+main .columns h1.columns-heading-x-long {
+  font-size: var(--heading-font-size-m);
+}  
+
+
+@media (min-width: 1200px) {
+  main .columns h1.columns-heading-long {
+    font-size: var(--heading-font-size-xxl);
+  }  
+  main .columns h1.columns-heading-very-long {
+    font-size: var(--heading-font-size-xl);
+  }  
+
+  main .columns h1.columns-heading-x-long {
+    font-size: var(--heading-font-size-l);
+  }  
+}
+
+main .columns h2 {
+  font-size: var(--heading-font-size-xl);
+  line-height: 1.08;
+}
+
+main .columns h2.columns-heading-very-long {
+  font-size: var(--heading-font-size-l);
+}
+
+@media (min-width: 1200px) {
+  main .columns h2.columns-heading-very-long {
+    font-size: var(--heading-font-size-xl);
+  }  
+}
+
+main .columns h3 {
+  font-size: var(--heading-font-size-l);
+  line-height: 1.11;
+}
+
+main .columns h4,
+main .columns h5,
+main .columns h6 {
+  font-size: var(--heading-font-size-m);
+  line-height: 1.14; 
+  margin-top: 32px;
+}
+
+main .columns h2 + h2,
+main .columns h3 + h3,
+main .columns h4 + h4,
+main .columns h5 + h5,
+main .columns h6 + h6 {
+  margin-top: 0;
+}
+
+main .columns.width-2-columns .column-picture {
+  order: 2;
+}
+
+main .columns.width-3-columns h3 {
+  font-size: var(--heading-font-size-m);
+}
+
+main .columns > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+main .columns.center .column {
+  text-align: center;
+}
+
+main .columns.center .column p.button-container {
+  text-align: center;
+}
+
+main .columns a > p:empty {
+  display: none;
+}
+
+main .section-wrapper.columns-container.steps-container div .steps.block div.step-description h2 {
+  font-size: var(--heading-font-size-l);
+  line-height: 1.11;
+}
+
+main .section-wrapper.columns-container.steps-container div .steps.block div.step-description h3,
+main .section-wrapper.columns-container.steps-container div .steps.block div.step-description h4,
+main .section-wrapper.columns-container.steps-container div .steps.block div.step-description h6 {
+  font-size: var(--heading-font-size-s);
+  line-height: 1.18;
+}
+
+main .section-wrapper.columns-container.steps-container div .steps.block div.step-description p {
+  font-size: var(--body-font-size-s);
+  line-height: 1.28;
+}
+
+main .columns > div span.num {
+  position: relative;
+  font-weight: 900;
+  font-size: 36px;
+  line-height: 39px;
+  top: 0;
+  margin-right: 12px;
+}
+
+main .columns > div span.num + * {
+  display:inline;
+}
+
+main .columns .icon {
+  width: unset;
+  height: 22px;
+}
+
+main .columns .icon.icon-check {
+  width: 22px;
+  margin-right: 6px;
+}
+
+main .columns.columns-marquee .brand.icon {
+  display: none;
+}
+
+main .fixed-button.button-container {
+  display: none;
+}
+
+body.no-brand-header main .columns.columns-marquee .brand.icon {
+  display: unset;
+  height: 32px;
+  width: auto;
+  margin: 0 auto;
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+body.no-brand-header main .columns .has-brand {
+  padding-top: 72px;
+  position: relative;
+}
+
+main .columns .social.icon {
+  width: 32px;
+  height: 32px;
+  margin-right: 24px;
+}
+
+main .columns .column hr {
+  margin-top: 32px;
+}
+
+main .columns .column .columns-iconlist {
+  display: flex;
+  flex-direction: column;
+  margin-top: 8px;
+  margin-bottom: 40px;
+}
+
+main .columns .column .columns-iconlist > div {
+  display: flex;
+  align-items: center;
+  margin-top: 32px;
+}
+
+main .columns .column .columns-iconlist p {
+  margin: 0;
+}
+
+main .columns .column .columns-iconlist .columns-iconlist-icon {
+  display: flex;
+}
+
+main .columns .column .columns-iconlist .columns-iconlist-icon img.icon,
+main .columns .column .columns-iconlist .columns-iconlist-icon svg.icon {
+  height: 22px;
+  width: 22px;
+}
+
+main .columns .column .columns-iconlist .columns-iconlist-description {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  margin-left: 10px;
+  text-align: left;
+}
+
+main .columns .column,
+main .columns .column p.button-container,
+main .columns .column h1,
+main .columns .column h2,
+main .columns .column h3,
+main .columns .column h4,
+main .columns .column h5,
+main .columns .column h6 {
+  text-align: left;
+}
+
+main .columns.center .column,
+main .columns.center .column p.button-container,
+main .columns.center .column h1,
+main .columns.center .column h2,
+main .columns.center .column h3,
+main .columns.center .column h4,
+main .columns.center .column h5,
+main .columns.center .column h6 {
+  text-align: center;
+}
+
+main .columns.highlight > div {
+  background: var(--color-white);
+  color: var(--color-black);
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 20px 0;
+}
+
+main .columns.highlight > div:first-child {
+  margin-top: 50px;
+}
+
+main .columns.highlight.width-2-columns .column-picture {
+  order: -1
+}
+
+main .columns.highlight > div {
+  padding: 0;
+}
+
+main .columns.highlight .column-picture {
+  margin: 0;
+}
+
+main .columns-highlight-container h4 {
+  margin: 16px 0;
+  font-size: var(--heading-font-size-m);
+}
+
+main .columns-highlight-container h2 {
+  font-size: var(--heading-font-size-xl);
+}
+
+main .columns.highlight .column:not(.column-picture):not(.hero-animation-overlay) {
+  padding: 20px 16px;
+}
+
+main .columns.highlight .column h5 {
+  color: var(--color-info-accent);
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+
+main .columns.highlight .column h5 + h2,
+main .columns.highlight .column h5 + h3,
+main .columns.highlight .column h5 + h4 {
+  margin-top: 0;
+}
+
+main .columns.highlight h1,
+main .columns.highlight h2,
+main .columns.highlight h3 {
+  font-size: var(--heading-font-size-l);
+}
+
+main .columns.highlight h4 {
+  font-size: var(--heading-font-size-m);
+}
+
+main .columns.highlight h5,
+main .columns.highlight h6 {
+  font-size: var(--heading-font-size-s);
+}
+
+main .columns.highlight .column .columns-iconlist {
+  margin-bottom: 0;
+}
+
+main .columns.highlight .column .columns-iconlist > div {
+  margin-top: 8px;
+}
+
+main .columns.highlight .column p {
+  font-size: var(--body-font-size-s);
+}
+
+@media (min-width: 900px) {
+  body.no-brand-header main .columns.columns-marquee .brand.icon {
+    position: unset;
+    top: unset;
+    left: unset;
+    transform: unset;
+  }
+
+  body.no-brand-header main .columns .has-brand {
+    padding-top: 0;
+  }
+
+  main .columns.top > div {
+    align-items: flex-start;
+  }
+
+  main .columns-container > div,
+  main .columns-dark-container > div,
+  main .columns-center-container > div,
+  main .columns-top-container > div {
+    max-width: 836px;
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+  
+  main .columns > div {
+    flex-direction: row;
+    text-align: left;
+    align-items: center;
+  }
+  
+  main .section-wrapper div.columns > div {
+    position: relative;
+  }
+
+  main .section-wrapper div.columns > div > div {
+    width: 50%;
+    box-sizing: border-box;
+  }
+
+  main .section-wrapper div.columns > div > div:only-child {
+    width: 100%;
+  }
+
+  main .columns > div span.num {
+    font-size: 22px;
+    line-height: 29px;
+    display: block;
+  }
+  
+main .columns .column {
+  margin: 0;
+}
+
+  main .columns.width-2-columns .column-picture {
+    order: 0;
+  }
+
+  main .columns.highlight.width-2-columns .column-picture {
+    order: 0;
+  }
+
+  main .columns.highlight.width-2-columns .column-picture img {
+    height: 100%;
+    width: 50%;
+    position: absolute;
+    top: 0;
+    object-fit: cover;
+  }
+}
+
+@media (min-width: 1200px) {
+
+  main .columns-container > div,
+  main .columns-dark-container > div,
+  main .columns-center-container > div,
+  main .columns-top-container > div {
+    max-width: 1024px;
+  }
+
+  main .columns:not(.fullsize) .column:not(.column-picture):not(.hero-animation-overlay) {
+    padding: 40px;
+  }
+
+  main .columns.fullsize .column.hero-animation-overlay {
+    position: relative;
+    min-height: 610px;
+  }
+
+  main .columns.fullsize .column.columns-picture > p,
+  main .columns.fullsize .column.hero-animation-overlay > p {
+    margin: 0;
+  }
+
+  main .columns.fullsize .column video {
+    position: absolute;
+    left: 0;
+    max-width: max-content;
+  }
+
+  main .columns.fullsize + h2 {
+    margin-top: 0;
+  }
+}
+
+main .columns .column {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+body.no-brand-header main .columns.columns-marquee:not(.center) .brand.icon {
+  padding-left: 0;
+}
+
+main .columns-fullsize-center-container .columns.fullsize .hero-animation-overlay {
+  order: -1;
+}
+
+main .columns-fullsize-center-container .columns.fullsize > div > div {
+  display: grid;
+}
+
+main .columns-fullsize-center-container .columns.fullsize > div > div .button-container {
+  grid-row: 2;
+}
+
+main .columns-fullsize-center-container .columns.fullsize .has-brand > div .button-container {
+  grid-row: 3;
+}
+
+main .columns-fullsize-center-container .columns.fullsize > div > div p {
+  margin: 16px 0;
+}
+
+main .columns-fullsize-center-container .columns.fullsize > div > div .button-container {
+  margin: 16px 0;
+}
+
+main .columns-fullsize-center-container .columns.fullsize > div > div .button-container a {
+  margin: 16px 0 0 0;
+}
+
+main .columns-fullsize-center-container .columns.fullsize .has-brand > div p:first-child {
+  margin: 0;
+}
+
+main .columns-fullsize-center-container .columns.fullsize > div > div .button-container.fixed-button {
+  margin: 0;
+}
+
+main .fixed-button.button-container {
+  display: block;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding-bottom: 20px;
+  z-index: 2;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+  transform: translateY(101%);
+  transition: transform 1s;
+  pointer-events: none;
+}
+
+main .fixed-button.button-container.shown {
+  transform: none;
+  pointer-events: all;
+  bottom: 0;
+}
+
+main .columns .column {
+  padding-left: 32px;
+  padding-right: 32px;
+}
+
+main .columns-fullsize-center-container .columns.fullsize .column {
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+main .columns .column.column-picture {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+body.no-brand-header main .columns.columns-marquee:not(.center) .brand.icon {
+  transform: none;
+  left: 0;
+  padding-left: 32px;
+}
+
+main .columns-fullsize-center-container .columns.fullsize .hero-animation-overlay {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+main .columns-fullsize-center-container .columns.fullsize .has-brand > div:not(.column-picture):not(.hero-animation-overlay) {
+  padding-top: 16px;
+}
+
+
+body.has-fixed-button .button-container a.accent {
+  display: none;
+}
+
+body.has-fixed-button .button-container a.primaryCTA.accent,
+body.has-fixed-button .button-container.fixed-button a.accent,
+body.has-fixed-button .new-banner-container .button-container a.accent,
+body.has-fixed-button .banner-container .button-container a.accent {
+  display: inline-block;
+}
+
+main .columns.highlight .column.column-picture {
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+@media (min-width: 900px) {
+  main .fixed-button.button-container {
+    display: none;
+  }
+  
+  body.has-fixed-button .button-container a.accent {
+    display: inline-block;
+  }
+    
+  body.no-brand-header main .columns.columns-marquee:not(.center) .brand.icon {
+    padding-left: 0px;
+  }
+
+  main .columns-fullsize-center-container .columns.fullsize .has-brand > div:not(.column-picture):not(.hero-animation-overlay) {
+    padding-top: 0;
+  }
+
+  main .columns .column {
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+
+  main .columns .column:first-child:not(.column-picture):not(.hero-animation-overlay) {
+    padding-right: 16px;
+  }
+
+  main .columns .column:nth-child(2):not(.column-picture):not(.hero-animation-overlay) {
+    padding-left: 16px;
+  }
+
+  main .columns .column:nth-child(2):not(.column-picture):not(.hero-animation-overlay) {
+    padding-left: 16px;
+  }
+
+  main .columns.highlight .column:nth-child(2):not(.column-picture):not(.hero-animation-overlay) {
+    padding-left: 32px;
+  }
+
+  main .columns-fullsize-center-container .columns.fullsize .hero-animation-overlay {
+    padding-top: 0;
+    padding-bottom: 0;
+    order: unset;
+  }
+
+  main .columns-fullsize-center-container .columns.fullsize > div > div {
+    display: block;
+  }
+
+  main .columns-fullsize-center-container .columns.fullsize > div > div p {
+    margin: 16px 0;
+  }
+
+  main .columns-fullsize-center-container .columns.fullsize > div > div .button-container {
+    margin: 0;
+    margin-top: 40px;
+  }
+
+  main .columns-fullsize-center-container .columns.fullsize > div > div .button-container a {
+    margin: 0;
+  }
+
+  main .columns-fullsize-center-container .columns.fullsize .has-brand > div p:first-child {
+    margin: 16px 0;
+  }
+
+  main .columns-fullsize-center-container .columns.fullsize > div > div .button-container.fixed-button {
+    margin: 0;
+  }
+
+  main .columns .column {
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+
+  main .columns .column.column-picture {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  
+  main .columns .column:nth-child(2):not(.column-picture):not(.hero-animation-overlay) {
+    padding-left: 16px;
+  }
+}
