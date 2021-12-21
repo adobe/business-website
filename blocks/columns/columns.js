@@ -174,7 +174,7 @@ export default function decorate($block) {
       $cell.querySelectorAll(':scope p:empty').forEach(($p) => $p.remove());
 
       $cell.classList.add('column');
-      if ($cell.firstElementChild.tagName === 'PICTURE') {
+      if ($cell.firstElementChild && $cell.firstElementChild.tagName === 'PICTURE') {
         $cell.classList.add('column-picture');
       }
 
