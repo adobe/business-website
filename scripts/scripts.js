@@ -942,13 +942,15 @@ async function loadLazy() {
   const gnavPath = getMetadata('gnav') || `${getRootPath()}/gnav`;
   header.setAttribute('data-block-name', 'gnav');
   header.setAttribute('data-gnav-source', gnavPath);
-  loadBlock(header); 
+  loadBlock(header);
 
-  /*const header = document.querySelector('header');
+  /*
+  const header = document.querySelector('header');
   header.setAttribute('data-nav-source', 'navigation');
   header.setAttribute('data-block-name', 'nav');
   header.classList.add('nav');
-  loadBlock(header);*/
+  loadBlock(header);
+  */
 
   /* load footer */
   const footer = document.querySelector('footer');

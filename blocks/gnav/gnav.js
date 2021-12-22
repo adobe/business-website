@@ -1,5 +1,4 @@
 import {
-  loadScript,
   getHelixEnv,
   debug,
   makeLinkRelative,
