@@ -1,5 +1,3 @@
-import { createOptimizedPicture } from '../../scripts/scripts.js';
-
 export default async function decorate($block) {
   const [hero, callout] = [...$block.children];
   if (hero) {
@@ -7,8 +5,11 @@ export default async function decorate($block) {
     const picture = hero.querySelector('picture');
     const h1 = hero.querySelector('h1');
     if (picture && h1) {
-      const image = picture.querySelector('img');
-      const newPicture = createOptimizedPicture(image.src, image.altText, false, [{ media: '(min-width: 400px)', width: '2000' }, { width: '750', suffix: '&crop=9:16,offset-x86' }]);
+      // const image = picture.querySelector('img');
+      /* const newPicture = createOptimizedPicture(image.src, image.altText, false,
+       [{ media: '(min-width: 400px)', width: '2000' },
+        { width: '750', suffix: '&crop=9:16,offset-x86' }]);
+        */
       const attribution = document.createElement('div');
       attribution.classList.add('attribution');
       let nextEl = picture.parentNode.nextElementSibling;
@@ -17,7 +18,7 @@ export default async function decorate($block) {
         nextEl = nextEl.nextElementSibling;
         attribution.appendChild(currentEl);
       }
-      picture.parentNode.replaceChild(newPicture, picture);
+      // picture.parentNode.replaceChild(newPicture, picture);
       h1.closest('div').appendChild(attribution);
     }
   }
