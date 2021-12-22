@@ -603,3 +603,20 @@ body {
 body.appear {
   visibility: unset;
 }
+
+/* CLS protection */
+
+@media (min-width: 600px) {
+  main .marquee {
+    min-height: 960px;
+  }
+}
+
+main .marquee-container {
+  margin: auto;
+}
+
+main .marquee-container > div {
+  max-width: unset;
+  padding: 0;
+}
