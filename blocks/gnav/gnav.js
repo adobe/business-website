@@ -324,7 +324,6 @@ async function fetchGnav(url) {
 export default async function init(blockEl) {
   const url = blockEl.getAttribute('data-gnav-source');
   if (url) {
-    console.log(url);
     const html = await fetchGnav(url);
     if (html) {
       try {
