@@ -61,7 +61,7 @@ button.gnav-toggle:after {
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #fa0f00;
+  color: #97d700;
   font-size: 16px;
   line-height: 16px;
   font-weight: 700;
@@ -86,7 +86,7 @@ button.gnav-toggle:after {
 }
 
 .gnav .gnav-logo img {
-  width: 25px;
+  width: 125px;
 }
 
 .gnav .gnav-mainnav {
