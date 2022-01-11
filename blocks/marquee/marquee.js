@@ -10,7 +10,7 @@ export default function decorate(block) {
   textContent.classList.add('text-content');
   imageContent.classList.add('image-content');
   const theme = block.classList.contains('dark') ? 'dark' : 'light';
-  
+
   // for background image
   if (bgImg) {
     block.style.backgroundImage = `url(${bgImg.src})`;
@@ -26,8 +26,8 @@ export default function decorate(block) {
     textContent.appendChild(detail);
   }
   // for cta
-  const linkWrapper = document.createElement('div')
-  linkWrapper.classList.add('link-wrapper')
+  const linkWrapper = document.createElement('div');
+  linkWrapper.classList.add('link-wrapper');
   const primaryCTAs = block.querySelectorAll('strong a');
   primaryCTAs.forEach((link) => {
     link.classList.add('button', 'primary', theme);
@@ -52,13 +52,13 @@ export default function decorate(block) {
 
   // text content appending
   textContent.appendChild(title);
-  textContent.appendChild(body)
+  textContent.appendChild(body);
   textContent.appendChild(linkWrapper);
-  
+
   // for seperator
   const hr = block.querySelector('hr');
-  if(hr) {
-    textContent.appendChild(hr);  
+  if (hr) {
+    textContent.appendChild(hr);
   }
 
   // wraping up appending
