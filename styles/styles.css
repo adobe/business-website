@@ -1,8 +1,16 @@
-/* above the fold CSS goes here */
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
 
-/* default content */
-
-:root {
+ :root {
   --color-white: #FFF;
   --color-gray-100: #F8F8F8;
   --color-gray-200: #E8E8E8;
@@ -69,6 +77,10 @@
   }
 }
 
+header {
+  height: 64px;
+}
+
 body {
   background-color: var(--body-background-color);
   font-family: var(--body-font-family);
@@ -76,6 +88,11 @@ body {
   color: var(--body-color);
   margin: 0;
   padding: 0;
+  opacity: 0;
+}
+
+body.appear {
+  opacity: 1;
 }
 
 /* buttons */
@@ -190,7 +207,7 @@ a.button > svg > use {
 main {
   font-size: var(--body-font-size-m);
   line-height: var(--body-line-height);
-  margin: 64px 0 0 0;
+  margin: 0;
   font-weight: var(--body-font-weight);
 }
 
@@ -331,292 +348,14 @@ main .section-wrapper p.button-container {
   margin-bottom: 0;
 }
 
-/* gnav placeholder */
-
-header {
-  display: flex;
-  position: fixed;
-  top: 0;
-  width: 100%;
-  height: 65px;
-  background-color: var(--color-white);
-  z-index: 3;
+p, dl, ol, ul, pre, blockquote {
+  margin-top: 1em;
+  margin-bottom: 1em;
 }
 
-/* caption styling */
+/* above the fold CSS goes here to squash CLS */
 
-main .figure {
-  margin: 0;
-}
-
-main .figure .caption {
-  margin-top: 16px !important;
-  text-align: left;
-  font-style: italic;
-  font-size: var(--body-font-size-xs);
-  color: var(--color-gray-700);
-  padding: 0;
-  margin: 0;
-}
-
-@media (min-width: 700px) {
-  main .figure .caption {
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
+main .section-wrapper[data-section-status='loading'], main .section-wrapper[data-section-status='initialized'] {
+    display: none;
   }
-}
-
-/* article-card styles shared between blocks */
-
-.article-card {
-  cursor: pointer;
-  box-sizing: border-box;
-  display: inline-block;
-  border: solid 1px var(--color-gray-200);
-  border-radius: 4px;
-  width: 100%;
-  min-width: 268px;
-  max-width: 378px;
-  margin-bottom: 24px;
-}
-
-@media (min-width: 600px) {
-  .article-card {
-    min-width: unset;
-    width: calc(100%/2 - 16px);
-    margin-right: 32px;
-    margin-bottom: 32px;
-  }
-
-  .article-card:nth-of-type(2n),
-  .article-card:last-of-type {
-    margin-right: 0;
-  }
-}
-
-@media (min-width: 1200px) {
-  .article-card {
-    width: calc(100%/3 - 22px);
-  }
-
-  .article-card:nth-of-type(2n) {
-    margin-right: 32px;
-  }
-
-  .article-card:nth-of-type(3n),
-  .article-card:last-of-type {
-    margin-right: 0;
-  }
-}
-
-main a.article-card:any-link {
-  text-decoration: none;
-}
-
-.article-card .article-card-image {
-  width: 100%;
-  height: 250px;
-  line-height: 0;
-  background-color: var(--color-black);
-  border-radius: 4px 4px 0 0;
-}
-
-.article-card .article-card-image img {
-  border-radius: 4px 4px 0 0;
-  object-fit: cover;
-  height: 100%;
-  width: 100%;
-  transition: opacity .4s;
-  color: var(--color-white);
-  line-height: var(--body-line-height);
-}
-
-.article-card .article-card-image img:hover {
-  opacity: 0.6;
-}
-
-.article-card .article-card-body {
-  background: var(--color-white);
-  padding: 2rem;
-  border-radius: 0 0 4px 4px;
-  text-align: left;
-}
-
-.article-card .article-card-body p,
-.article-card .article-card-body h3 {
-  margin-left: 0;
-  margin-right: 0;
-  padding-left: 0;
-  padding-right: 0;
-}
-
-.article-card-body p.article-card-category,
-.article-card-body p.article-card-category a {
-  font-weight: var(--detail-font-weight);
-  color: var(--detail-color);
-  font-size: var(--detail-font-size-s);
-  line-height: var(--detail-line-height);
-  text-transform: uppercase;
-  letter-spacing: .1em;
-  margin-bottom: 0.5rem;
-  text-decoration: none;
-}
-
-.article-card-body h3 {
-  font-size: var(--heading-font-size-xs);
-  margin: 0;
-  margin-bottom: 1rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-}
-
-@media (min-width: 600px) {
-  .article-card-body h3 {
-    font-size: var(--heading-font-size-s);
-    margin-bottom: 0.5rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    min-height: 4.7rem;
-  }
-}
-
-.article-card .article-card-body p:not(:first-child) {
-  color: var(--color-gray-700);
-  font-size: var(--body-font-size-xs);
-  display: none;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-@media (min-width: 600px) {
-  .article-card .article-card-body p:not(:first-child) {
-    display: -webkit-box;
-    min-height: 2.6rem;
-  }
-}
-
-
-/* CLS and FOUC protection for lazy loaded content/styles */
-
-main .block {
-  visibility: hidden;
-}
-
-main .block.block-visible {
-  visibility: unset;
-}
-
-
-main .recommended-articles-container, main .recommended-articles-small-container,
-main .featured-article-container, main .article-feed-container, main .article-header-container,
-main .tag-header-container  {
-  visibility: hidden;
-}
-
-main div.section-wrapper.tag-header-container {
-  visibility: unset;
-  display: flex;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  margin-top: 0;
-}
-
-main .tag-header-container > div {
-  padding: 0;
-  width: 100%;
-  height: 133px;
-}
-
-@media (min-width: 700px) {
-  main .tag-header-container > div {
-    max-width: unset;
-  }
-}
-
-main .featured-article {
-  min-height: 680px;
-}
-
-main .tag-header-container {
-  min-height: 180px;
-}
-
-main .tag-header-container > div {
-  padding: 0;
-  width: 100%;
-}
-
-
-@media (min-width: 600px) {
-  main .featured-article {
-    min-height: 320px;
-  }
-}
-
-
-@media (min-width: 1200px) {
-  main .recommended-articles-small-container {
-    min-height: 295px;
-  }
-}
-
-main .featured-article-container > div {
-  padding: 0;
-}
-
-main .featured-article-container div h1 {
-  padding: 0 1.6rem;
-  text-align: center;
-}
-
-@media (min-width: 600px) {
-  main .featured-article-container div h1 {
-    text-align: left;
-    max-width: 800px;
-  }
-}
-
-main .featured-article {
-  min-height: 320px;
-  margin-bottom: 24px;
-}
-
-main .article-feed {
-  min-height: 2120px;  
-}
-
-main .article-header {
-  min-height: 691px;  
-}
-
-
-body {
-  visibility: hidden;
-}
-
-body.appear {
-  visibility: unset;
-}
-
-/* CLS protection */
-
-@media (min-width: 600px) {
-  main .marquee {
-    min-height: 960px;
-  }
-}
-
-main .marquee-container {
-  margin: auto;
-}
-
-main .marquee-container > div {
-  max-width: unset;
-  padding: 0;
-}
+  

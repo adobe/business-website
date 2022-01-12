@@ -33,8 +33,8 @@ export function sampleRUM(checkpoint, data = {}) {
     const { random, weight, id } = window.hlx.rum;
     if (random && (random * weight < 1)) {
       const sendPing = () => {
-        // eslint-disable-next-line object-curly-newline
-        const body = JSON.stringify({ weight, id, referer: window.location.href, generation: 'biz-gen1', checkpoint, ...data });
+        // eslint-disable-next-line object-curly-newline, max-len, no-use-before-define
+        const body = JSON.stringify({ weight, id, referer: window.location.href, generation: RUM_GENERATION, checkpoint, ...data });
         const url = `https://rum.hlx3.page/.rum/${weight}`;
         // eslint-disable-next-line no-unused-expressions
         navigator.sendBeacon(url, body);
@@ -60,10 +60,6 @@ export function sampleRUM(checkpoint, data = {}) {
   }
 }
 
-sampleRUM('top');
-window.addEventListener('load', () => sampleRUM('load'));
-document.addEventListener('click', () => sampleRUM('click'));
-
 /**
  * Loads a CSS file.
  * @param {string} href The path to the CSS file
@@ -73,51 +69,14 @@ export function loadCSS(href, callback) {
     const link = document.createElement('link');
     link.setAttribute('rel', 'stylesheet');
     link.setAttribute('href', href);
-    link.onload = () => { if (callback) callback(); };
-    link.onerror = () => { if (callback) callback(); };
-    document.head.appendChild(link);
-  } else if (callback) callback();
-}
-
-const LANG = {
-  EN: 'en',
-  DE: 'de',
-  FR: 'fr',
-  KO: 'ko',
-  ES: 'es',
-  IT: 'it',
-  JP: 'jp',
-  BR: 'br',
-};
-
-let language;
-
-export function getLanguage() {
-  if (language) return language;
-  language = LANG.EN;
-  const segs = window.location.pathname.split('/');
-  if (segs && segs.length > 0) {
-    // eslint-disable-next-line no-restricted-syntax
-    for (const [, value] of Object.entries(LANG)) {
-      if (value === segs[1]) {
-        language = value;
-        break;
-      }
+    if (typeof callback === 'function') {
+      link.onload = (e) => callback(e.type);
+      link.onerror = (e) => callback(e.type);
     }
+    document.head.appendChild(link);
+  } else if (typeof callback === 'function') {
+    callback('noop');
   }
-  return language;
-}
-
-/**
- * Returns the language dependent root path
- * @returns {string} The computed root path
- */
-export function getRootPath() {
-  const loc = getLanguage();
-  if (loc === LANG.EN) {
-    return '';
-  }
-  return `/${loc}`;
 }
 
 /**
@@ -127,57 +86,8 @@ export function getRootPath() {
  */
 export function getMetadata(name) {
   const attr = name && name.includes(':') ? 'property' : 'name';
-  const meta = [...document.head.querySelectorAll(`meta[${attr}="${name}"]`)].map((el) => el.content).join(', ');
-  return meta;
-}
-
-/**
- * Get the current Helix environment
- * @returns {Object} the env object
- */
-export function getHelixEnv() {
-  let envName = sessionStorage.getItem('helix-env');
-  if (!envName) envName = 'prod';
-  const envs = {
-    stage: {
-      ims: 'stg1',
-      adobeIO: 'cc-collab-stage.adobe.io',
-      adminconsole: 'stage.adminconsole.adobe.com',
-      account: 'stage.account.adobe.com',
-    },
-    prod: {
-      ims: 'prod',
-      adobeIO: 'cc-collab.adobe.io',
-      adminconsole: 'adminconsole.adobe.com',
-      account: 'account.adobe.com',
-    },
-  };
-  const env = envs[envName];
-
-  const overrideItem = sessionStorage.getItem('helix-env-overrides');
-  if (overrideItem) {
-    const overrides = JSON.parse(overrideItem);
-    const keys = Object.keys(overrides);
-    env.overrides = keys;
-
-    keys.forEach((value) => {
-      env[value] = overrides[value];
-    });
-  }
-
-  if (env) {
-    env.name = envName;
-  }
-  return env;
-}
-
-export function debug(message) {
-  const { hostname } = window.location;
-  const env = getHelixEnv();
-  if (env.name !== 'prod' || hostname === 'localhost') {
-    // eslint-disable-next-line no-console
-    console.log(message);
-  }
+  const $meta = document.head.querySelector(`meta[${attr}="${name}"]`);
+  return $meta && $meta.content;
 }
 
 /**
@@ -207,15 +117,18 @@ export function toClassName(name) {
 
 /**
  * Wraps each section in an additional {@code div}.
- * @param {[Element]} sections The sections
+ * @param {[Element]} $sections The sections
  */
-function wrapSections(sections) {
-  sections.forEach((div) => {
-    if (!div.id) {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'section-wrapper';
-      div.parentNode.appendChild(wrapper);
-      wrapper.appendChild(div);
+function wrapSections($sections) {
+  $sections.forEach(($div) => {
+    if ($div.childNodes.length === 0) {
+      // remove empty sections
+      $div.remove();
+    } else if (!$div.id) {
+      const $wrapper = document.createElement('div');
+      $wrapper.className = 'section-wrapper';
+      $div.parentNode.appendChild($wrapper);
+      $wrapper.appendChild($div);
     }
   });
 }
@@ -241,6 +154,49 @@ export function decorateBlock(block) {
 
   block.classList.add('block');
   block.setAttribute('data-block-name', shortBlockName);
+  block.setAttribute('data-block-status', 'initialized');
+}
+
+/**
+ * Decorates all sections in a container element.
+ * @param {Element} $main The container element
+ */
+function decorateSections($main) {
+  wrapSections($main.querySelectorAll(':scope > div'));
+  $main.querySelectorAll(':scope > div.section-wrapper').forEach((section) => {
+    section.setAttribute('data-section-status', 'initialized');
+  });
+}
+
+/**
+ * Updates all section status in a container element.
+ * @param {Element} $main The container element
+ */
+function updateSectionsStatus($main) {
+  const sections = [...$main.querySelectorAll(':scope > div.section-wrapper')];
+  for (let i = 0; i < sections.length; i += 1) {
+    const section = sections[i];
+    const status = section.getAttribute('data-section-status');
+    if (status !== 'loaded') {
+      const loadingBlock = section.querySelector('.block[data-block-status="initialized"], .block[data-block-status="loading"]');
+      if (loadingBlock) {
+        section.setAttribute('data-section-status', 'loading');
+        break;
+      } else {
+        section.setAttribute('data-section-status', 'loaded');
+      }
+    }
+  }
+}
+
+/**
+ * Decorates all blocks in a container element.
+ * @param {Element} $main The container element
+ */
+function decorateBlocks($main) {
+  $main
+    .querySelectorAll('div.section-wrapper > div > div')
+    .forEach(($block) => decorateBlock($block));
 }
 
 /**
@@ -275,303 +231,83 @@ function buildBlock(blockName, content) {
 }
 
 /**
- * removes formatting from images.
- * @param {Element} mainEl The container element
- */
-function removeStylingFromImages(mainEl) {
-  // remove styling from images, if any
-  const styledImgEls = [...mainEl.querySelectorAll('strong picture'), ...mainEl.querySelectorAll('em picture')];
-  styledImgEls.forEach((imgEl) => {
-    const parentEl = imgEl.closest('p');
-    parentEl.prepend(imgEl);
-    parentEl.lastChild.remove();
-  });
-}
-
-/**
- * returns an image caption of a picture elements
- * @param {Element} picture picture element
- */
-function getImageCaption(picture) {
-  const parentEl = picture.parentNode;
-  const parentSiblingEl = parentEl.nextElementSibling;
-  return (parentSiblingEl && parentSiblingEl.firstChild.nodeName === 'EM' ? parentSiblingEl : undefined);
-}
-
-/**
- * builds images blocks from default content.
- * @param {Element} mainEl The container element
- */
-function buildImageBlocks(mainEl) {
-  // select all non-featured, default (non-images block) images
-  const imgEls = [...mainEl.querySelectorAll(':scope > div > p > picture')];
-  imgEls.forEach((imgEl) => {
-    const parentEl = imgEl.parentNode;
-    const imagesBlockEl = buildBlock('images', {
-      elems: [parentEl.cloneNode(true), getImageCaption(imgEl)],
-    });
-    parentEl.parentNode.insertBefore(imagesBlockEl, parentEl);
-    parentEl.remove();
-  });
-}
-
-/**
- * builds article header block from meta and default content.
- * @param {Element} mainEl The container element
- */
-function buildArticleHeader(mainEl) {
-  const div = document.createElement('div');
-  const h1 = mainEl.querySelector('h1');
-  const picture = mainEl.querySelector('picture');
-  const category = getMetadata('category');
-  const author = getMetadata('author');
-  const publicationDate = getMetadata('publication-date');
-
-  const articleHeaderBlockEl = buildBlock('article-header', [
-    [`<p>${category}</p>`],
-    [h1],
-    [`<p><a href="${getRootPath()}/authors/${toClassName(author)}">${author}</a></p>
-      <p>${publicationDate}</p>`],
-    [{ elems: [picture.closest('p'), getImageCaption(picture)] }],
-  ]);
-  div.append(articleHeaderBlockEl);
-  mainEl.prepend(div);
-}
-
-function buildTagHeader(mainEl) {
-  const div = mainEl.querySelector('div');
-  const h1 = mainEl.querySelector('h1');
-  const picture = mainEl.querySelector('picture');
-  const tagHeaderBlockEl = buildBlock('tag-header', [
-    [h1],
-    [{ elems: [picture.closest('p')] }],
-  ]);
-  div.prepend(tagHeaderBlockEl);
-}
-
-function buildArticleFeed(mainEl, type) {
-  const div = document.createElement('div');
-  const title = mainEl.querySelector('h1').textContent.trim();
-  const articleFeedEl = buildBlock('article-feed', [
-    [type, title],
-  ]);
-  div.append(articleFeedEl);
-  mainEl.append(div);
-}
-
-function buildTagsBlock(mainEl) {
-  const tags = getMetadata('article:tag');
-  if (tags) {
-    const tagsBlock = buildBlock('tags', [
-      [`<p>${tags}</p>`],
-    ]);
-    const recBlock = mainEl.querySelector('.recommended-articles');
-    if (recBlock) {
-      recBlock.parentNode.insertBefore(tagsBlock, recBlock);
-    } else {
-      mainEl.lastElementChild.append(tagsBlock);
-    }
-  }
-}
-
-/**
- * Decorates all blocks in a container element.
- * @param {Element} main The container element
- */
-function decorateBlocks(main) {
-  main
-    .querySelectorAll('div.section-wrapper > div > div')
-    .forEach((block) => decorateBlock(block));
-}
-
-/**
- * Builds all synthetic blocks in a container element.
- * @param {Element} main The container element
- */
-function buildAutoBlocks(mainEl) {
-  removeStylingFromImages(mainEl);
-  try {
-    if (getMetadata('publication-date') && !mainEl.querySelector('.article-header')) {
-      buildArticleHeader(mainEl);
-      buildTagsBlock(mainEl);
-    }
-    if (window.location.pathname.includes('/tags/')) {
-      buildTagHeader(mainEl);
-      if (!document.querySelector('.article-feed')) {
-        buildArticleFeed(mainEl, 'tags');
-      }
-    }
-    buildImageBlocks(mainEl);
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Auto Blocking failed', error);
-  }
-}
-
-function unwrapBlock(block) {
-  const section = block.parentNode;
-  const els = [...section.children];
-  const blockSection = document.createElement('div');
-  const postBlockSection = document.createElement('div');
-  const nextSection = section.nextSibling;
-  section.parentNode.insertBefore(blockSection, nextSection);
-  section.parentNode.insertBefore(postBlockSection, nextSection);
-
-  let appendTo;
-  els.forEach((el) => {
-    if (el === block) appendTo = blockSection;
-    if (appendTo) {
-      appendTo.appendChild(el);
-      appendTo = postBlockSection;
-    }
-  });
-  if (!section.hasChildNodes()) {
-    section.remove();
-  }
-  if (!blockSection.hasChildNodes()) {
-    blockSection.remove();
-  }
-  if (!postBlockSection.hasChildNodes()) {
-    postBlockSection.remove();
-  }
-}
-
-function splitSections() {
-  document.querySelectorAll('main > div > div').forEach((block) => {
-    const blocksToSplit = ['article-header', 'article-feed', 'recommended-articles'];
-    if (blocksToSplit.includes(block.className)) {
-      unwrapBlock(block);
-    }
-  });
-}
-
-function removeEmptySections() {
-  document.querySelectorAll('main > div:empty').forEach((div) => {
-    div.remove();
-  });
-}
-
-/**
- * Build figcaption element
- * @param {Element} pEl The original element to be placed in figcaption.
- * @returns figCaptionEl Generated figcaption
- */
-export function buildCaption(pEl) {
-  const figCaptionEl = document.createElement('figcaption');
-  pEl.classList.add('caption');
-  figCaptionEl.append(pEl);
-  return figCaptionEl;
-}
-
-/**
- * Build figure element
- * @param {Element} blockEl The original element to be placed in figure.
- * @returns figEl Generated figure
- */
-export function buildFigure(blockEl) {
-  const figEl = document.createElement('figure');
-  figEl.classList.add('figure');
-  // content is picture only, no caption or link
-  if (blockEl.firstChild) {
-    if (blockEl.firstChild.nodeName === 'PICTURE' || blockEl.firstChild.nodeName === 'VIDEO') {
-      figEl.append(blockEl.firstChild);
-    } else if (blockEl.firstChild.nodeName === 'P') {
-      const pEls = Array.from(blockEl.children);
-      pEls.forEach((pEl) => {
-        if (pEl.firstChild) {
-          if (pEl.firstChild.nodeName === 'PICTURE' || pEl.firstChild.nodeName === 'VIDEO') {
-            figEl.append(pEl.firstChild);
-          } else if (pEl.firstChild.nodeName === 'EM') {
-            const figCapEl = buildCaption(pEl);
-            figEl.append(figCapEl);
-          } else if (pEl.firstChild.nodeName === 'A') {
-            const picEl = figEl.querySelector('picture');
-            if (picEl) {
-              pEl.firstChild.textContent = '';
-              pEl.firstChild.append(picEl);
-            }
-            figEl.prepend(pEl.firstChild);
-          }
-        }
-      });
-    // catch link-only figures (like embed blocks);
-    } else if (blockEl.firstChild.nodeName === 'A') {
-      figEl.append(blockEl.firstChild);
-    }
-  }
-  return figEl;
-}
-
-/**
  * Loads JS and CSS for a block.
- * @param {Element} block The block element
+ * @param {Element} $block The block element
  */
 export async function loadBlock(block, eager = false) {
-  if (!block.getAttribute('data-block-status')) {
+  if (!(block.getAttribute('data-block-status') === 'loading' || block.getAttribute('data-block-status') === 'loaded')) {
     block.setAttribute('data-block-status', 'loading');
     const blockName = block.getAttribute('data-block-name');
     try {
       const cssLoaded = new Promise((resolve) => {
-        loadCSS(`/blocks/${blockName}/${blockName}.css`, resolve);
+        loadCSS(`${window.hlx.codeBasePath}/blocks/${blockName}/${blockName}.css`, resolve);
       });
       const decorationComplete = new Promise((resolve) => {
-        const runBlock = async () => {
-          const mod = await import(`/blocks/${blockName}/${blockName}.js`);
-          if (mod.default) {
-            await mod.default(block, blockName, document, eager);
+        (async () => {
+          try {
+            const mod = await import(`../blocks/${blockName}/${blockName}.js`);
+            if (mod.default) {
+              await mod.default(block, blockName, document, eager);
+            }
+          } catch (err) {
+            // eslint-disable-next-line no-console
+            console.log(`failed to load module for ${blockName}`, err);
           }
           resolve();
-        };
-        runBlock();
+        })();
       });
       await Promise.all([cssLoaded, decorationComplete]);
     } catch (err) {
-      debug(`failed to load module for ${blockName}`, err);
+      // eslint-disable-next-line no-console
+      console.log(`failed to load block ${blockName}`, err);
     }
     block.setAttribute('data-block-status', 'loaded');
-    block.classList.add('block-visible');
   }
 }
 
 /**
  * Loads JS and CSS for all blocks in a container element.
- * @param {Element} main The container element
+ * @param {Element} $main The container element
  */
-async function loadBlocks(main) {
-  main
-    .querySelectorAll('div.section-wrapper > div > .block')
-    .forEach(async (block) => loadBlock(block));
+export async function loadBlocks($main) {
+  updateSectionsStatus($main);
+  const blocks = [...$main.querySelectorAll('div.block')];
+  for (let i = 0; i < blocks.length; i += 1) {
+    // eslint-disable-next-line no-await-in-loop
+    await loadBlock(blocks[i]);
+    updateSectionsStatus($main);
+  }
 }
 
 /**
  * Extracts the config from a block.
- * @param {Element} block The block element
+ * @param {Element} $block The block element
  * @returns {object} The block config
  */
-export function readBlockConfig(block) {
+export function readBlockConfig($block) {
   const config = {};
-  block.querySelectorAll(':scope>div').forEach((row) => {
-    if (row.children) {
-      const cols = [...row.children];
-      if (cols[1]) {
-        const valueEl = cols[1];
-        const name = toClassName(cols[0].textContent);
+  $block.querySelectorAll(':scope>div').forEach(($row) => {
+    if ($row.children) {
+      const $cols = [...$row.children];
+      if ($cols[1]) {
+        const $value = $cols[1];
+        const name = toClassName($cols[0].textContent);
         let value = '';
-        if (valueEl.querySelector('a')) {
-          const aArr = [...valueEl.querySelectorAll('a')];
-          if (aArr.length === 1) {
-            value = aArr[0].href;
+        if ($value.querySelector('a')) {
+          const $as = [...$value.querySelectorAll('a')];
+          if ($as.length === 1) {
+            value = $as[0].href;
           } else {
-            value = aArr.map((a) => a.href);
+            value = $as.map(($a) => $a.href);
           }
-        } else if (valueEl.querySelector('p')) {
-          const pArr = [...valueEl.querySelectorAll('p')];
-          if (pArr.length === 1) {
-            value = pArr[0].textContent;
+        } else if ($value.querySelector('p')) {
+          const $ps = [...$value.querySelectorAll('p')];
+          if ($ps.length === 1) {
+            value = $ps[0].textContent;
           } else {
-            value = pArr.map((p) => p.textContent);
+            value = $ps.map(($p) => $p.textContent);
           }
-        } else value = row.children[1].textContent;
+        } else value = $row.children[1].textContent;
         config[name] = value;
       }
     }
@@ -580,13 +316,67 @@ export function readBlockConfig(block) {
 }
 
 /**
+ * Returns a picture element with webp and fallbacks
+ * @param {string} src The image URL
+ * @param {boolean} eager load image eager
+ * @param {Array} breakpoints breakpoints and corresponding params (eg. width)
+ */
+export function createOptimizedPicture(src, alt = '', eager = false, breakpoints = [{ media: '(min-width: 400px)', width: '2000' }, { width: '750' }]) {
+  const url = new URL(src, window.location.href);
+  const picture = document.createElement('picture');
+  const { pathname } = url;
+  const ext = pathname.substring(pathname.lastIndexOf('.') + 1);
+
+  // webp
+  breakpoints.forEach((br) => {
+    const source = document.createElement('source');
+    if (br.media) source.setAttribute('media', br.media);
+    source.setAttribute('type', 'image/webp');
+    source.setAttribute('srcset', `${pathname}?width=${br.width}&format=webply&optimize=medium`);
+    picture.appendChild(source);
+  });
+
+  // fallback
+  breakpoints.forEach((br, i) => {
+    if (i < breakpoints.length - 1) {
+      const source = document.createElement('source');
+      if (br.media) source.setAttribute('media', br.media);
+      source.setAttribute('srcset', `${pathname}?width=${br.width}&format=${ext}&optimize=medium`);
+      picture.appendChild(source);
+    } else {
+      const img = document.createElement('img');
+      img.setAttribute('src', `${pathname}?width=${br.width}&format=${ext}&optimize=medium`);
+      img.setAttribute('loading', eager ? 'eager' : 'lazy');
+      img.setAttribute('alt', alt);
+      picture.appendChild(img);
+    }
+  });
+
+  return picture;
+}
+
+/**
+ * Removes formatting from images.
+ * @param {Element} main The container element
+ */
+function removeStylingFromImages(main) {
+  // remove styling from images, if any
+  const imgs = [...main.querySelectorAll('strong picture'), ...main.querySelectorAll('em picture')];
+  imgs.forEach((img) => {
+    const parentEl = img.closest('p');
+    parentEl.prepend(img);
+    parentEl.lastChild.remove();
+  });
+}
+
+/**
  * Normalizes all headings within a container element.
- * @param {Element} el The container element
+ * @param {Element} $elem The container element
  * @param {[string]]} allowedHeadings The list of allowed headings (h1 ... h6)
  */
-export function normalizeHeadings(el, allowedHeadings) {
+export function normalizeHeadings($elem, allowedHeadings) {
   const allowed = allowedHeadings.map((h) => h.toLowerCase());
-  el.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((tag) => {
+  $elem.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((tag) => {
     const h = tag.tagName.toLowerCase();
     if (allowed.indexOf(h) === -1) {
       // current heading is not in the allowed list -> try first to "promote" the heading
@@ -608,81 +398,8 @@ export function normalizeHeadings(el, allowedHeadings) {
 }
 
 /**
- * Returns a picture element with webp and fallbacks
- * @param {string} src The image URL
- * @param {boolean} eager load image eager
- * @param {Array} breakpoints breakpoints and corresponding params (eg. width)
- */
-
-export function createOptimizedPicture(src, alt = '', eager = false, breakpoints = [{ media: '(min-width: 400px)', width: '2000' }, { width: '750' }]) {
-  const url = new URL(src, window.location.href);
-  const picture = document.createElement('picture');
-  const { pathname } = url;
-  const ext = pathname.substring(pathname.lastIndexOf('.') + 1);
-
-  // webp
-  breakpoints.forEach((br) => {
-    const source = document.createElement('source');
-    const suffix = br.suffix || '';
-    if (br.media) source.setAttribute('media', br.media);
-    source.setAttribute('type', 'image/webp');
-    source.setAttribute('srcset', `${pathname}?width=${br.width}&format=webply&optimize=medium${suffix}`);
-    picture.appendChild(source);
-  });
-
-  // fallback
-  breakpoints.forEach((br, i) => {
-    const suffix = br.suffix || '';
-    if (i < breakpoints.length - 1) {
-      const source = document.createElement('source');
-      if (br.media) source.setAttribute('media', br.media);
-      source.setAttribute('srcset', `${pathname}?width=${br.width}&format=${ext}&optimize=medium${suffix}`);
-      picture.appendChild(source);
-    } else {
-      const img = document.createElement('img');
-      img.setAttribute('src', `${pathname}?width=${br.width}&format=${ext}&optimize=medium${suffix}`);
-      img.setAttribute('loading', eager ? 'eager' : 'lazy');
-      img.setAttribute('alt', alt);
-      picture.appendChild(img);
-    }
-  });
-
-  return picture;
-}
-
-/**
- * Build article card
- * @param {Element} article The article data to be placed in card.
- * @returns card Generated card
- */
-export function buildArticleCard(article, type = 'article') {
-  const {
-    title, description, image, imageAlt, category,
-  } = article;
-
-  const path = article.path.split('.')[0];
-
-  const picture = createOptimizedPicture(image, imageAlt || title, type === 'featured-article', [{ width: '750' }]);
-  const pictureTag = picture.outerHTML;
-  const card = document.createElement('a');
-  card.className = `${type}-card`;
-  card.href = path;
-  card.innerHTML = `<div class="${type}-card-image">
-      ${pictureTag}
-    </div>
-    <div class="${type}-card-body">
-      <p class="${type}-card-category">
-        <a href="${window.location.origin}${getRootPath()}/tags/${toClassName(category)}">${category}</a>
-      </p>
-      <h3>${title}</h3>
-      <p>${description}</p>
-    </div>`;
-  return card;
-}
-
-/**
- * Decorates the main element.
- * @param {Element} main The main element
+ * Decorates the picture elements.
+ * @param {Element} main The container element
  */
 function decoratePictures(main) {
   main.querySelectorAll('img[src*="/media_"').forEach((img, i) => {
@@ -690,6 +407,130 @@ function decoratePictures(main) {
     const picture = img.closest('picture');
     if (picture) picture.parentElement.replaceChild(newPicture, picture);
   });
+}
+
+/**
+ * Adds the favicon.
+ * @param {string} href The favicon URL
+ */
+export function addFavIcon(href) {
+  const link = document.createElement('link');
+  link.rel = 'icon';
+  link.type = 'image/svg+xml';
+  link.href = href;
+  const existingLink = document.querySelector('head link[rel="icon"]');
+  if (existingLink) {
+    existingLink.parentElement.replaceChild(link, existingLink);
+  } else {
+    document.getElementsByTagName('head')[0].appendChild(link);
+  }
+}
+
+/**
+ * load LCP block and/or wait for LCP in default content.
+ */
+async function waitForLCP() {
+  // eslint-disable-next-line no-use-before-define
+  const lcpBlocks = LCP_BLOCKS;
+  const block = document.querySelector('.block');
+  const hasLCPBlock = (block && lcpBlocks.includes(block.getAttribute('data-block-name')));
+  if (hasLCPBlock) await loadBlock(block, true);
+
+  document.querySelector('body').classList.add('appear');
+  const lcpCandidate = document.querySelector('main img');
+  await new Promise((resolve) => {
+    if (lcpCandidate && !lcpCandidate.complete) {
+      lcpCandidate.addEventListener('load', () => resolve());
+      lcpCandidate.addEventListener('error', () => resolve());
+    } else {
+      resolve();
+    }
+  });
+}
+
+/**
+ * Decorates the page.
+ */
+async function loadPage(doc) {
+  // eslint-disable-next-line no-use-before-define
+  await loadEager(doc);
+  // eslint-disable-next-line no-use-before-define
+  await loadLazy(doc);
+  // eslint-disable-next-line no-use-before-define
+  loadDelayed(doc);
+}
+
+function initHlx() {
+  window.hlx = window.hlx || {};
+  window.hlx.lighthouse = new URLSearchParams(window.location.search).get('lighthouse') === 'on';
+  window.hlx.codeBasePath = '';
+
+  const scriptEl = document.querySelector('script[src$="/scripts/scripts.js"]');
+  if (scriptEl) {
+    try {
+      [window.hlx.codeBasePath] = new URL(scriptEl.src).pathname.split('/scripts/scripts.js');
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.log(e);
+    }
+  }
+}
+
+initHlx();
+
+/*
+ * ------------------------------------------------------------
+ * Edit above at your own risk
+ * ------------------------------------------------------------
+ */
+
+const LCP_BLOCKS = ['marquee']; // add your LCP blocks to the list
+const RUM_GENERATION = 'bamboo-1'; // add your RUM generation information here
+
+sampleRUM('top');
+window.addEventListener('load', () => sampleRUM('load'));
+document.addEventListener('click', () => sampleRUM('click'));
+
+loadPage(document);
+
+// eslint-disable-next-line no-unused-vars
+function buildHeroBlock(main) {
+  const h1 = main.querySelector('h1');
+  const picture = main.querySelector('picture');
+  // eslint-disable-next-line no-bitwise
+  if (h1 && picture && (h1.compareDocumentPosition(picture) & Node.DOCUMENT_POSITION_PRECEDING)) {
+    const section = document.createElement('div');
+    section.append(buildBlock('hero', { elems: [picture, h1] }));
+    main.prepend(section);
+  }
+}
+
+function loadHeader(header) {
+  const headerBlock = buildBlock('header', '');
+  header.append(headerBlock);
+  decorateBlock(headerBlock);
+  loadBlock(headerBlock);
+}
+
+function loadFooter(footer) {
+  const footerBlock = buildBlock('footer', '');
+  footer.append(footerBlock);
+  decorateBlock(footerBlock);
+  loadBlock(footerBlock);
+}
+
+/**
+ * Builds all synthetic blocks in a container element.
+ * @param {Element} main The container element
+ */
+// eslint-disable-next-line no-unused-vars
+function buildAutoBlocks(main) {
+  try {
+    // buildHeroBlock(main);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Auto Blocking failed', error);
+  }
 }
 
 export function decorateButtons(block = document) {
@@ -732,237 +573,36 @@ export function decorateButtons(block = document) {
 export function decorateMain(main) {
   // forward compatible pictures redecoration
   decoratePictures(main);
-  decorateButtons(main);
+  removeStylingFromImages(main);
   buildAutoBlocks(main);
-  splitSections();
-  removeEmptySections();
-  wrapSections(main.querySelectorAll(':scope > div'));
+  decorateButtons(main);
+  decorateSections(main);
   decorateBlocks(main);
-
-  /* hide h1 on homepage */
-  if (window.location.pathname.endsWith('/blog/')) {
-    const h1 = document.querySelector('h1');
-    if (h1) h1.classList.add('hidden');
-  }
-}
-
-/**
- * Adds the favicon.
- * @param {string} href The favicon URL
- */
-export function addFavIcon(href) {
-  const link = document.createElement('link');
-  link.rel = 'icon';
-  link.type = 'image/svg+xml';
-  link.href = href;
-  const existingLink = document.querySelector('head link[rel="icon"]');
-  if (existingLink) {
-    existingLink.parentElement.replaceChild(link, existingLink);
-  } else {
-    document.getElementsByTagName('head')[0].appendChild(link);
-  }
-}
-
-/**
- * fetches blog article index.
- * @returns {object} index with data and path lookup
- */
-
-export async function fetchBlogArticleIndex() {
-  const pageSize = 1000;
-  window.blogIndex = window.blogIndex || {
-    data: [],
-    byPath: {},
-    offset: 0,
-    complete: false,
-  };
-  if (window.blogIndex.complete) return (window.blogIndex);
-  const index = window.blogIndex;
-  const resp = await fetch(`${getRootPath()}/query-index.json?limit=${pageSize}&offset=${index.offset}`);
-  const json = await resp.json();
-  const complete = (json.limit + json.offset) === json.total;
-  json.data.forEach((post) => {
-    index.data.push(post);
-    index.byPath[post.path.split('.')[0]] = post;
-  });
-  index.complete = complete;
-  index.offset = json.offset + pageSize;
-  return (index);
-}
-
-export function makeLinkRelative(href) {
-  const url = new URL(href);
-  const host = url.hostname;
-  if (host.endsWith('.page') || host.endsWith('.live') || host === 'business.adobe.com') return (`${url.pathname}${url.search}${url.hash}`);
-  return (href);
-}
-
-export function rewritePath(path) {
-  let newpath = path;
-  const replacements = [{
-    from: 'news',
-    to: 'the-latest',
-  }, {
-    from: 'insights',
-    to: 'perspectives',
-  }];
-  replacements.forEach((r) => {
-    newpath = newpath.replace(`/${r.from}/`, `/${r.to}/`);
-  });
-  return newpath;
-}
-
-/**
- * forward looking *.metadata.json experiment
- * fetches metadata.json of page
- * @param {path} path to *.metadata.json
- * @returns {Object} containing sanitized meta data
- */
-
-async function getMetadataJson(path) {
-  const resp = await fetch(path.split('.')[0]);
-  const text = await resp.text();
-  const meta = {};
-  if (resp.status === 200 && text && text.includes('<head>')) {
-    const headStr = text.split('<head>')[1].split('</head>')[0];
-    const head = document.createElement('head');
-    head.innerHTML = headStr;
-    const metaTags = head.querySelectorAll(':scope > meta');
-    metaTags.forEach((metaTag) => {
-      const name = metaTag.getAttribute('name') || metaTag.getAttribute('property');
-      const value = metaTag.getAttribute('content');
-      if (meta[name]) {
-        meta[name] += `, ${value}`;
-      } else {
-        meta[name] = value;
-      }
-    });
-  }
-  return (JSON.stringify(meta));
-}
-
-/**
- * gets a blog article index information by path.
- * @param {string} path indentifies article
- * @returns {object} article object
- */
-
-export async function getBlogArticle(path) {
-  const json = await getMetadataJson(`${path}.metadata.json`);
-  const meta = JSON.parse(json);
-  if (meta['og:title']) {
-    const articleMeta = {
-      description: meta.description,
-      title: meta['og:title'],
-      image: meta['og:image'],
-      imageAlt: meta['og:image:alt'],
-      date: meta['publication-date'],
-      path,
-      category: meta.category,
-    };
-    return (articleMeta);
-  }
-  return null;
-}
-
-/**
- * fetches the string variables.
- * @returns {object} localized variables
- */
-
-export async function fetchPlaceholders() {
-  if (!window.placeholders) {
-    const resp = await fetch(`${getRootPath()}/placeholders.json`);
-    const json = await resp.json();
-    window.placeholders = {};
-    json.data.forEach((placeholder) => {
-      window.placeholders[placeholder.Key] = placeholder.Text;
-    });
-  }
-  return window.placeholders;
-}
-
-/**
- * loads a script by adding a script tag to the head.
- * @param {string} url URL of the js file
- * @param {Function} callback callback on load
- * @param {string} type type attribute of script tag
- * @returns {Element} script element
- */
-
-export function loadScript(url, callback, type) {
-  const head = document.querySelector('head');
-  const script = document.createElement('script');
-  script.setAttribute('src', url);
-  if (type) {
-    script.setAttribute('type', type);
-  }
-  head.append(script);
-  script.onload = callback;
-  return script;
 }
 
 /**
  * loads everything needed to get to LCP.
  */
-async function loadEager() {
-  const main = document.querySelector('main');
+async function loadEager(doc) {
+  const main = doc.querySelector('main');
   if (main) {
     decorateMain(main);
-    document.querySelector('body').classList.add('appear');
-
-    const lcpBlocks = ['featured-article', 'article-header'];
-    const block = document.querySelector('.block');
-    const hasLCPBlock = (block && lcpBlocks.includes(block.getAttribute('data-block-name')));
-    if (hasLCPBlock) await loadBlock(block, true);
-    const lcpCandidate = document.querySelector('main img');
-    const loaded = {
-      then: (resolve) => {
-        if (lcpCandidate && !lcpCandidate.complete) {
-          lcpCandidate.addEventListener('load', () => resolve());
-          lcpCandidate.addEventListener('error', () => resolve());
-        } else {
-          resolve();
-        }
-      },
-    };
-    await loaded;
+    await waitForLCP();
   }
 }
 
 /**
  * loads everything that doesn't need to be delayed.
  */
-async function loadLazy() {
-  const main = document.querySelector('main');
+async function loadLazy(doc) {
+  const main = doc.querySelector('main');
+  await loadBlocks(main);
 
-  // post LCP actions go here
-  sampleRUM('lcp');
+  loadHeader(doc.querySelector('header'));
+  loadFooter(doc.querySelector('footer'));
 
-  /* load gnav */
-  const header = document.querySelector('header');
-  const gnavPath = getMetadata('gnav') || `${getRootPath()}/gnav`;
-  header.setAttribute('data-block-name', 'gnav');
-  header.setAttribute('data-gnav-source', gnavPath);
-  loadBlock(header);
-
-  /*
-  const header = document.querySelector('header');
-  header.setAttribute('data-nav-source', 'navigation');
-  header.setAttribute('data-block-name', 'nav');
-  header.classList.add('nav');
-  loadBlock(header);
-  */
-
-  /* load footer */
-  const footer = document.querySelector('footer');
-  footer.setAttribute('data-block-name', 'footer');
-  footer.setAttribute('data-footer-source', `${getRootPath()}/footer`);
-  loadBlock(footer);
-
-  loadBlocks(main);
-  loadCSS('/styles/lazy-styles.css');
-  addFavIcon('/styles/favicon.svg');
+  loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
+  addFavIcon(`${window.hlx.codeBasePath}/styles/favicon.svg`);
 }
 
 /**
@@ -970,109 +610,5 @@ async function loadLazy() {
  * the user experience.
  */
 function loadDelayed() {
-  /* trigger delayed.js load */
-  const delayedScript = '/scripts/delayed.js';
-  const usp = new URLSearchParams(window.location.search);
-  const delayed = usp.get('delayed');
-
-  if (!(delayed === 'off' || document.querySelector(`head script[src="${delayedScript}"]`))) {
-    let ms = 3500;
-    const delay = usp.get('delay');
-    if (delay) ms = +delay;
-    setTimeout(() => {
-      loadScript(delayedScript, null, 'module');
-    }, ms);
-  }
+  // load anything that can be postponed to the latest here
 }
-
-/**
- * Decorates the page.
- */
-async function decoratePage() {
-  await loadEager();
-  loadLazy();
-  loadDelayed();
-}
-window.hlx = window.hlx || {};
-window.hlx.lighthouse = new URLSearchParams(window.location.search).get('lighthouse') === 'on';
-
-decoratePage();
-
-function setHelixEnv(name, overrides) {
-  if (name) {
-    sessionStorage.setItem('helix-env', name);
-    if (overrides) {
-      sessionStorage.setItem('helix-env-overrides', JSON.stringify(overrides));
-    } else {
-      sessionStorage.removeItem('helix-env-overrides');
-    }
-  } else {
-    sessionStorage.removeItem('helix-env');
-    sessionStorage.removeItem('helix-env-overrides');
-  }
-}
-
-function displayEnv() {
-  try {
-    /* setup based on URL Params */
-    const usp = new URLSearchParams(window.location.search);
-    if (usp.has('helix-env')) {
-      const env = usp.get('helix-env');
-      setHelixEnv(env);
-    }
-
-    /* setup based on referrer */
-    if (document.referrer) {
-      const url = new URL(document.referrer);
-      if (window.location.hostname !== url.hostname) {
-        debug(`external referrer detected: ${document.referrer}`);
-      }
-    }
-  } catch (e) {
-    debug(`display env failed: ${e.message}`);
-  }
-}
-displayEnv();
-/*
- * lighthouse performance instrumentation helper
- * (needs a refactor)
- */
-
-export function stamp(message) {
-  if (window.name.includes('performance')) {
-    debug(`${new Date() - performance.timing.navigationStart}:${message}`);
-  }
-}
-
-stamp('start');
-
-function registerPerformanceLogger() {
-  try {
-    const polcp = new PerformanceObserver((entryList) => {
-      const entries = entryList.getEntries();
-      stamp(JSON.stringify(entries));
-      debug(entries[0].element);
-    });
-    polcp.observe({ type: 'largest-contentful-paint', buffered: true });
-
-    const pols = new PerformanceObserver((entryList) => {
-      const entries = entryList.getEntries();
-      stamp(JSON.stringify(entries));
-      debug(entries[0].sources[0].node);
-    });
-    pols.observe({ type: 'layout-shift', buffered: true });
-
-    const pores = new PerformanceObserver((entryList) => {
-      const entries = entryList.getEntries();
-      entries.forEach((entry) => {
-        stamp(`resource loaded: ${entry.name} - [${Math.round(entry.startTime + entry.duration)}]`);
-      });
-    });
-
-    pores.observe({ type: 'resource', buffered: true });
-  } catch (e) {
-    // no output
-  }
-}
-
-if (window.name.includes('performance')) registerPerformanceLogger();
