@@ -87,7 +87,14 @@ class Footer {
         linksContainer.classList = 'footer-nav-item-links';
         linksContainer.id = `${titleId}-menu`;
         if (!this.desktop.matches) {
+          title.setAttribute('tabindex', 0);
           title.addEventListener('click', this.toggleMenu);
+          title.addEventListener('focus', () => {
+            window.addEventListener('keydown', this.toggleOnKey);
+          });
+          title.addEventListener('blur', () => {
+            window.removeEventListener('keydown', this.toggleOnKey);
+          });
         }
         const links = linksContainer.querySelectorAll('li');
         links.forEach((link) => {
@@ -111,11 +118,19 @@ class Footer {
     const regionButton = createTag('a', {
       class: 'footer-region-button',
       id: 'region-button',
-      'aria-haspopup': true,
       'aria-expanded': false,
+      'aria-haspopup': true,
+      'aria-label': placeholders['change-language'],
       role: 'button',
+      tabindex: 0,
     });
     regionButton.addEventListener('click', this.toggleMenu);
+    regionButton.addEventListener('focus', () => {
+      window.addEventListener('keydown', this.toggleOnKey);
+    });
+    regionButton.addEventListener('blur', () => {
+      window.removeEventListener('keydown', this.toggleOnKey);
+    });
     const regionText = createTag('span', { class: 'footer-region-text' });
     regionText.textContent = placeholders['change-language'];
     regionButton.insertAdjacentHTML('afterbegin', GLOBE_IMG);
@@ -132,7 +147,10 @@ class Footer {
     regionLinks.forEach((link) => {
       const selected = link.parentNode.nodeName === 'STRONG';
       const options = { class: 'footer-region-option' };
-      if (selected) { options.class += ' footer-region-selected'; }
+      if (selected) {
+        options.class += ' footer-region-selected';
+        options['aria-current'] = 'page';
+      }
       const li = createTag('li', options);
       li.append(link);
       regionOptions.append(li);
@@ -225,6 +243,12 @@ class Footer {
     el.setAttribute('aria-expanded', true);
   }
 
+  toggleOnKey = (e) => {
+    if (e.code === 'Space' || e.code === 'Enter') {
+      this.toggleMenu(e);
+    }
+  }
+
   closeOnEscape = (e) => {
     const button = document.getElementById('region-button');
     if (e.code === 'Escape') {
@@ -243,11 +267,21 @@ class Footer {
   onMediaChange = (e) => {
     if (e.matches) {
       document.querySelectorAll('.footer-nav-item-title').forEach((button) => {
+        button.removeAttribute('tabindex');
+        window.removeEventListener('keydown', this.toggleOnKey);
+        window.removeEventListener('keydown', this.toggleOnKey);
         button.setAttribute('aria-expanded', true);
         button.removeEventListener('click', this.toggleMenu);
       });
     } else {
       document.querySelectorAll('.footer-nav-item-title').forEach((button) => {
+        button.setAttribute('tabindex', 0);
+        button.addEventListener('focus', () => {
+          window.addEventListener('keydown', this.toggleOnKey);
+        });
+        button.addEventListener('blur', () => {
+          window.removeEventListener('keydown', this.toggleOnKey);
+        });
         button.setAttribute('aria-expanded', false);
         button.addEventListener('click', this.toggleMenu);
       });
