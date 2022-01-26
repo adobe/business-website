@@ -175,7 +175,7 @@ const loadEmbed = (block) => {
     // loading embed function for given config and url.
     if (config) {
       a.outerHTML = config.embed(url);
-      block.classList = `block embed block-visible embed-${config.type}`;
+      block.classList.add(`embed-${config.type}`);
     } else {
       a.outerHTML = getDefaultEmbed(url);
       block.classList = `block embed block-visible embed-${simpleDomain}`;
