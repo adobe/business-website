@@ -175,10 +175,10 @@ const loadEmbed = (block) => {
     // loading embed function for given config and url.
     if (config) {
       a.outerHTML = config.embed(url);
-      block.classList = `block embed embed-${config.type}`;
+      block.classList.add(`embed-${config.type}`);
     } else {
       a.outerHTML = getDefaultEmbed(url);
-      block.classList = `block embed embed-${simpleDomain}`;
+      block.classList.add(`embed-${simpleDomain}`);
     }
     block.innerHTML = figure.outerHTML;
     block.classList.add('is-loaded');
