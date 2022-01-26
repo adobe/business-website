@@ -178,7 +178,7 @@ const loadEmbed = (block) => {
       block.classList.add(`embed-${config.type}`);
     } else {
       a.outerHTML = getDefaultEmbed(url);
-      block.classList = `block embed block-visible embed-${simpleDomain}`;
+      block.classList.add(`embed-${simpleDomain}`);
     }
     block.innerHTML = figure.outerHTML;
     block.classList.add('is-loaded');
