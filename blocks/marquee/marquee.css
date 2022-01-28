@@ -1,1 +1,6 @@
 @import '../../consonant/marquee/marquee.css';
+
+main .marquee-container > div {
+    max-width: none;
+    padding: 0;
+}

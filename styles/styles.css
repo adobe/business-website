@@ -247,7 +247,7 @@ main h1.hidden {
 
 /* links */
 
-main a:any-link {
+main a {
   color: var(--body-color);
   line-height: var(--body-line-height);
 }
