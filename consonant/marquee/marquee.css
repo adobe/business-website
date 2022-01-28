@@ -1,0 +1,91 @@
+@import '../styles.css';
+
+.marquee {
+    min-height: 560px;
+    position: relative;
+    color: #FFF;
+    display: flex;
+}
+
+.marquee.light, .marquee.quiet, .marquee.inline {
+    color: #000;
+}
+
+.marquee.small, .marquee.quiet, .marquee.inline {
+    min-height: 360px;
+}
+
+.marquee.large {
+    min-height: 700px;
+}
+
+.marquee.centered {
+    text-align: center;
+}
+
+.marquee .background picture {
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.marquee .background img {
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+}
+
+.marquee .foreground {
+    position: relative;
+    display: block;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.marquee .foreground > div {
+    flex: 0 0 calc(50% - calc(var(--grid-mobile-column-width) / 2));
+}
+
+.marquee.quiet .foreground > div {
+    flex: 0 0 100%;
+}
+
+.marquee .text .detail-M {
+    margin-bottom: 16px;
+}
+
+.marquee .text .heading-XL {
+    margin-bottom: 16px;
+}
+
+.marquee .text .body-M {
+    margin-bottom: 24px;
+}
+
+.marquee .text img {
+    max-height: 56px;
+}
+
+.marquee .text .action-area {
+    display: flex;
+    margin: 0 0 24px 0;
+    gap: 24px;
+}
+
+.marquee.quiet.centered .action-area {
+    justify-content: center;
+}
+
+.marquee .image img {
+    display: block;
+    width: 100%;
+}
+
+@media screen and (min-width: 1440px) {
+    .marquee .foreground {
+        display: flex;
+    }
+}

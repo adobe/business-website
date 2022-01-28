@@ -1,0 +1,101 @@
+@font-face {
+  font-family: 'Trebuchet MS';
+  size-adjust: 95%;
+  src: local('Trebuchet MS'),
+       local('TrebuchetMS');
+       font-weight: 700;
+}
+
+@font-face {
+  font-family: 'Trebuchet MS';
+  size-adjust: 87%;
+  src: local('Trebuchet MS'),
+       local('TrebuchetMS');
+       font-weight: 400;
+}
+
+:root {
+  /* Typography */
+  --type-detail-all-weight: 700;
+  --type-detail-m-size: 12px;
+  --type-detail-m-lh: 15px;
+  --type-detail-m-transform: uppercase;
+
+  --type-heading-all-weight: 700;
+  --type-heading-xl-size: 36px;
+  --type-heading-xl-lh: 45px;
+
+  --type-body-m-size: 18px;
+  --type-body-m-lh: 27px;
+  
+  /* Spacing */
+
+  /* Grid */
+  --grid-container-width: 83.4%;
+  --grid-mobile-column-width: 7.025%;
+}
+
+@media screen and (min-width: 1440px) {
+  :root {
+      --grid-container-width: 1200px;
+  }
+}
+
+body {
+  font-family: 'adobe-clean', 'Trebuchet MS', sans-serif;
+  margin: 0;
+  font-size: var(--type-body-m-size);
+  line-height: var(--type-body-m-lh);
+}
+
+/* Basics */
+.container {
+  max-width: var(--grid-container-width);
+  margin: 0 auto;
+}
+
+/* Typography */
+.heading-XL {
+  font-size: var(--type-heading-xl-size);
+  line-height: var(--type-heading-xl-lh);
+  font-weight: var(--type-heading-all-weight);
+  margin: 0;
+}
+
+.body-M {
+  font-size: var(--type-body-m-size);
+  line-height: var(--type-body-m-lh);
+  margin: 0;
+}
+
+.detail-M {
+  font-size: var(--type-detail-m-size);
+  line-height: var(--type-detail-m-lh);
+  font-weight: var(--type-detail-all-weight);
+  text-transform: var(--type-detail-m-transform);
+  margin: 0;
+}
+
+/* Buttons */
+.con-button {
+  color: #FFF;
+  border: 2px solid;
+  background-color: transparent;
+  border-radius: 16px;
+  display: inline-block;
+  line-height: 28px;
+  padding: 0 14px;
+  text-decoration: none;
+  font-size: 14px;
+  font-style: normal;
+}
+
+.light .con-button {
+  color: #000;
+}
+
+.con-button.blue {
+  color: #FFF;
+  background: rgb(20, 115, 230);
+  border: 2px solid rgb(20, 115, 230);
+}
