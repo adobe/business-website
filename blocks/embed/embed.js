@@ -211,7 +211,7 @@ export default function decorate(block) {
     observer.observe(block);
   };
 
-  if (document.readyState == 'complete') {
+  if (document.readyState === 'complete') {
     runObserver();
   } else {
     window.addEventListener('load', () => {
