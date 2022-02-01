@@ -188,7 +188,9 @@ const loadEmbed = (block) => {
 const intersectHandler = (entries) => {
   const entry = entries[0];
   if (entry.isIntersecting) {
+
     if (entry.intersectionRatio >= 0.25) {
+
       const block = entry.target;
       loadEmbed(block);
     }
@@ -200,7 +202,7 @@ const intersectHandler = (entries) => {
 };
 
 export default function decorate(block) {
-  window.addEventListener('load', () => {
+  const runObserver = () => {
     const options = {
       root: null,
       rootMargin: '0px',
@@ -209,5 +211,13 @@ export default function decorate(block) {
 
     const observer = new IntersectionObserver(intersectHandler, options);
     observer.observe(block);
-  });
+  };
+
+  if (document.readyState == 'complete') {
+    runObserver();
+  } else {
+    window.addEventListener('load', () => {
+      runObserver();
+    });
+  }
 }
