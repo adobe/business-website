@@ -15,10 +15,6 @@
     min-height: 360px;
 }
 
-.marquee.large {
-    min-height: 700px;
-}
-
 .marquee.centered {
     text-align: center;
 }
@@ -40,17 +36,26 @@
 
 .marquee .foreground {
     position: relative;
-    display: block;
+    display: flex;
     align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    padding: 48px 0 32px;
 }
 
-.marquee .foreground > div {
-    flex: 0 0 calc(50% - calc(var(--grid-mobile-column-width) / 2));
+.marquee.medium .foreground {
+    padding: 56px 0 24px;
+}
+
+.marquee.large .foreground {
+    padding: 0;
 }
 
 .marquee.quiet .foreground > div {
     flex: 0 0 100%;
+}
+
+.marquee .text {
+    margin-bottom: 8px;
 }
 
 .marquee .text .detail-M {
@@ -84,8 +89,37 @@
     width: 100%;
 }
 
+.marquee.medium .text,
+.marquee.large .text {
+    order: 2;
+}
+
+.marquee.medium .image,
+.marquee.large .image {
+    order: 1;
+}
+
 @media screen and (min-width: 1440px) {
     .marquee .foreground {
-        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    
+    .marquee .foreground > div {
+        flex: 0 0 calc(50% - calc(var(--grid-mobile-column-width) / 2));
+    }
+    
+    .marquee.medium .text,
+    .marquee.large .text {
+        order: unset;
+    }
+
+    .marquee.medium .image,
+    .marquee.large .image {
+        order: unset;
+    }
+    
+    .marquee.large {
+        min-height: 700px;
     }
 }
