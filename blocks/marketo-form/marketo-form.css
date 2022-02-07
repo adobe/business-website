@@ -1,0 +1,7 @@
+main .block.marketo-form {
+  visibility: hidden;
+}
+
+main .block.marketo-form.is-loaded {
+  visibility: unset;
+}
