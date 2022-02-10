@@ -17,6 +17,8 @@ const getMarketoForm = async (name) => {
   json.data.forEach((formItem) => {
     if (name.toLowerCase() === formItem.name.toLowerCase()) {
       formData = formItem;
+      // eslint-disable-next-line no-useless-return
+      return;
     }
   });
   return formData;
@@ -25,12 +27,14 @@ const getMarketoForm = async (name) => {
 const loadEmbed = async (block) => {
   const formName = block.textContent.trim();
   const formData = await getMarketoForm(formName);
-  block.innerHTML = '<form id="mktoForm_6"></form>';
-  loadScript(`${formData.baseUrl}/js/forms2/js/forms2.min.js`, () => {
-    // eslint-disable-next-line no-undef
-    MktoForms2.loadForm(formData.baseUrl, formData.munchkinId, formData.formId);
-    block.classList.add('is-loaded');
-  });
+  if (formData) {
+    block.innerHTML = '<form id="mktoForm_6"></form>';
+    loadScript(`${formData.baseUrl}/js/forms2/js/forms2.min.js`, () => {
+      // eslint-disable-next-line no-undef
+      MktoForms2.loadForm(formData.baseUrl, formData.munchkinId, formData.formId);
+      block.classList.add('is-loaded');
+    });
+  }
 };
 
 const intersectHandler = (entries) => {
