@@ -39,31 +39,30 @@
     display: flex;
     align-items: center;
     flex-direction: column;
-    padding: 48px 0 32px;
+    padding: 56px 0;
 }
 
-.marquee.medium .foreground {
-    padding: 56px 0 24px;
+.marquee.small .foreground {
+    padding: 48px 0;
 }
 
 .marquee.large .foreground {
-    padding: 0;
+    padding-top: 0;
 }
 
 .marquee.quiet .foreground > div {
     flex: 0 0 100%;
 }
 
-.marquee .text {
-    margin-bottom: 8px;
-}
-
 .marquee .text .detail-M {
     margin-bottom: 16px;
 }
 
-.marquee .text .heading-XL {
+.marquee .text .heading {
     margin-bottom: 16px;
+}
+.marquee .text .heading-XXL {
+    margin-bottom: 32px;
 }
 
 .marquee .text .body-M {
@@ -74,10 +73,24 @@
     max-height: 56px;
 }
 
+.marquee:not(.small) .image {
+    order: -1;
+    margin-bottom: 32px;
+}
+
+.marquee:not(.small) .text *:last-child,
+.marquee.large .text .body-M {
+    margin-bottom: 0;
+}
+
 .marquee .text .action-area {
     display: flex;
-    margin: 0 0 24px 0;
+    margin: 0 0 32px 0;
     gap: 24px;
+}
+
+.marquee.large .text .action-area {
+    margin-bottom: 24px;
 }
 
 .marquee.quiet.centered .action-area {
@@ -89,14 +102,12 @@
     width: 100%;
 }
 
-.marquee.medium .text,
 .marquee.large .text {
-    order: 2;
+    display: flex;
+    flex-direction: column;
 }
-
-.marquee.medium .image,
-.marquee.large .image {
-    order: 1;
+.marquee.large .text .body-M {
+    order: 10;
 }
 
 @media screen and (min-width: 1440px) {
@@ -109,17 +120,32 @@
         flex: 0 0 calc(50% - calc(var(--grid-mobile-column-width) / 2));
     }
     
-    .marquee.medium .text,
-    .marquee.large .text {
+    .marquee .foreground .image {
         order: unset;
-    }
-
-    .marquee.medium .image,
-    .marquee.large .image {
-        order: unset;
+        margin: 0;
     }
     
+    .marquee .text .action-area {
+        margin: 0;
+    }
+
     .marquee.large {
         min-height: 700px;
+    }
+    
+    .marquee.large .text {
+        display: block;
+    }
+
+    .marquee.large .text .body-M {
+        margin-bottom: 24px;
+    }
+
+    .marquee.large .text .action-area {
+        margin: 0;
+    }
+
+    .marquee .text .heading-XXL {
+        margin-bottom: 16px;
     }
 }

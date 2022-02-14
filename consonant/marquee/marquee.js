@@ -31,7 +31,12 @@ function decorateButtons(el) {
 function decorateText(el) {
   const headings = el.querySelectorAll('h1, h2, h3, h4, h5, h6');
   const heading = headings[headings.length - 1];
-  heading.classList.add('heading-XL');
+  heading.classList.add('heading');
+  if (el.closest('.marquee').classList.contains('large')) {
+    heading.classList.add('heading-XXL');
+  } else {
+    heading.classList.add('heading-XL');
+  }
   heading.nextElementSibling.classList.add('body-M');
   if (heading.previousElementSibling) {
     heading.previousElementSibling.classList.add('detail-M');

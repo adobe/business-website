@@ -22,6 +22,8 @@
   --type-detail-m-transform: uppercase;
 
   --type-heading-all-weight: 700;
+  --type-heading-xxl-size: 44px;
+  --type-heading-xxl-lh: 55px;
   --type-heading-xl-size: 36px;
   --type-heading-xl-lh: 45px;
 
@@ -58,6 +60,13 @@ body {
 .heading-XL {
   font-size: var(--type-heading-xl-size);
   line-height: var(--type-heading-xl-lh);
+  font-weight: var(--type-heading-all-weight);
+  margin: 0;
+}
+
+.heading-XXL {
+  font-size: var(--type-heading-xxl-size);
+  line-height: var(--type-heading-xxl-lh);
   font-weight: var(--type-heading-all-weight);
   margin: 0;
 }
