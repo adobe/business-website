@@ -4,9 +4,9 @@ function decorateButtons(el) {
     const parent = button.parentElement;
     let buttonType;
     if (parent.nodeName === 'STRONG') {
-      buttonType = ['button', 'primary'];
-    } else if (parent.nodeName === 'EM') {
       buttonType = ['button'];
+    } else if (parent.nodeName === 'EM') {
+      buttonType = ['button', 'primary'];
     } else {
       buttonType = ['cta-link'];
     }
