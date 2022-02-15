@@ -22,9 +22,14 @@ main .banner-cta-container > div {
   color: #FFF;
 }
 
-.banner-cta.light a:any-link:not(.button),
+.banner-cta.light .cta-link,
 .banner-cta.light {
-  color: #2C2C2C;
+  color: var(--color-gray-800);
+}
+
+.banner-cta.light .cta-link:hover,
+.banner-cta.light .cta-link:focus {
+  color: var(--color-black);
 }
 
 .banner-cta .background picture {
@@ -47,6 +52,15 @@ main .banner-cta-container > div {
 .banner-cta .foreground > div {
   max-width: 1200px;
   margin: 0 auto;
+}
+
+.banner-cta.centered .foreground > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  max-width: 100%;
+  text-align: center;
 }
 
 .banner-cta .foreground p,
