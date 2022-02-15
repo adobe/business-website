@@ -12,8 +12,8 @@ export default function decorate(block) {
       bannerContent.classList.add('content-wrapper');
 
       // get response from the URL
-      const { pathname } = new URL(a);
-      const response = await fetch(`${pathname}.plain.html`);
+      const href = new URL(a);
+      const response = await fetch(`${href}.plain.html`);
       if (response.ok) {
         const responseEl = document.createElement('div');
         responseEl.innerHTML = await response.text();
