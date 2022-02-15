@@ -231,12 +231,19 @@ function wrapSections(sections) {
   });
 }
 
+export function getBlockClasses(className) {
+  const trimDashes = (str) => str.replace(/(^\s*-)|(-\s*$)/g, '');
+  const blockWithVariants = className.split('--');
+  const name = trimDashes(blockWithVariants.shift());
+  const variants = blockWithVariants.map((v) => trimDashes(v));
+  return { name, variants };
+}
+
 /**
  * Decorates a block.
  * @param {Element} block The block element
  */
 export function decorateBlock(block) {
-  const trimDashes = (str) => str.replace(/(^\s*-)|(-\s*$)/g, '');
   const classes = Array.from(block.classList.values());
   const blockName = classes[0];
   if (!blockName) return;
@@ -244,14 +251,10 @@ export function decorateBlock(block) {
   if (section) {
     section.classList.add(`${blockName}-container`.replace(/--/g, '-'));
   }
-  const blockWithVariants = blockName.split('--');
-  const shortBlockName = trimDashes(blockWithVariants.shift());
-  const variants = blockWithVariants.map((v) => trimDashes(v));
-  block.classList.add(shortBlockName);
-  block.classList.add(...variants);
-
+  const { name, variants } = getBlockClasses(blockName);
+  block.classList.add(name, ...variants);
   block.classList.add('block');
-  block.setAttribute('data-block-name', shortBlockName);
+  block.setAttribute('data-block-name', name);
 }
 
 /**
