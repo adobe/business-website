@@ -1,0 +1,56 @@
+main .banner-cta-container > div {
+  max-width: 100%;
+  padding: 0;
+}
+.banner-cta {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 360px;
+  color: #FFF;
+}
+
+.banner-cta .foreground .action-area {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.banner-cta a:any-link {
+  color: #FFF;
+}
+
+.banner-cta.light a:any-link:not(.button),
+.banner-cta.light {
+  color: #2C2C2C;
+}
+
+.banner-cta .background picture {
+  display: block;
+  position: absolute;
+  inset: 0;
+}
+
+.banner-cta .background img {
+  object-fit: cover;
+  height: 100%;
+  width: 100%;
+}
+
+.banner-cta .foreground {
+  position: relative;
+  width: 100%;
+}
+
+.banner-cta .foreground > div {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.banner-cta .foreground p,
+.banner-cta .foreground .heading {
+  margin: 0 0 16px;
+  max-width: 550px;
+}
