@@ -1028,6 +1028,43 @@ async function loadEager() {
   }
 }
 
+async function loadfooterBanner(main) {
+  // getting Banner URL from the json
+  const { href, origin } = window.location;
+  let URLpattern;
+  const resp = await fetch('/blog/footer-banner.json');
+  const json = await resp.json();
+  let defaultBannerURL;
+  let footerBannerURL;
+  json.data.forEach((entry) => {
+    if (entry.URL === 'default') {
+      defaultBannerURL = entry.banner;
+    }
+    // eslint-disable-next-line no-undef
+    URLpattern = new URLPattern(entry.URL, origin);
+    if (URLpattern.test(href)) {
+      footerBannerURL = entry.banner;
+    }
+  });
+  if (!footerBannerURL) {
+    footerBannerURL = defaultBannerURL;
+  }
+
+  // get block body from the Banner URL
+  const response = await fetch(`${footerBannerURL}.plain.html`);
+  if (response.ok) {
+    const responseEl = document.createElement('div');
+    responseEl.innerHTML = await response.text();
+    responseEl.classList.add('section-wrapper');
+    const bannerCTABlock = responseEl.querySelector('div[class^="banner-cta"]');
+    main.append(responseEl);
+
+    // decorate the banner block
+    decorateBlock(bannerCTABlock);
+    loadBlock(bannerCTABlock);
+  }
+}
+
 /**
  * loads everything that doesn't need to be delayed.
  */
@@ -1049,6 +1086,7 @@ async function loadLazy() {
   footer.setAttribute('data-block-name', 'footer');
   footer.setAttribute('data-footer-source', `${getRootPath()}/footer`);
   loadBlock(footer);
+  loadfooterBanner(main);
 
   loadBlocks(main);
   loadCSS('/styles/lazy-styles.css');
