@@ -236,6 +236,19 @@ class Gnav {
   decorateCta = () => {
     const cta = this.body.querySelector('strong > a');
     if (cta) {
+      // Get the base URL of the link
+      const url = new URL(cta.href);
+      const { origin, pathname } = url;
+      const segs = pathname.split('/');
+      const aBase = `${origin}/${segs[0]}`;
+
+      // Get the base URL of the window
+      const wSegs = window.location.pathname.split('/');
+      const wOrigin = window.location.origin;
+      const wBase = `${wOrigin}/${wSegs[0]}`;
+      if (aBase !== wBase) {
+        cta.target = '_blank';
+      }
       cta.parentElement.classList.add('gnav-cta');
       return cta.parentElement;
     }
