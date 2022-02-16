@@ -5,6 +5,7 @@ import {
   debug,
   makeLinkRelative,
   loadCSS,
+  getRootPath,
 } from '../../scripts/scripts.js';
 import createTag from './gnav-utils.js';
 
@@ -236,17 +237,15 @@ class Gnav {
   decorateCta = () => {
     const cta = this.body.querySelector('strong > a');
     if (cta) {
-      // Get the base URL of the link
-      const url = new URL(cta.href);
-      const { origin, pathname } = url;
+      // Get the root path of the link
+      const { pathname } = new URL(cta.href);
       const segs = pathname.split('/');
-      const aBase = `${origin}/${segs[0]}`;
 
-      // Get the base URL of the window
-      const wSegs = window.location.pathname.split('/');
-      const wOrigin = window.location.origin;
-      const wBase = `${wOrigin}/${wSegs[0]}`;
-      if (aBase !== wBase) {
+      // Will not be 100% accurate until acom's
+      // loc scheme lands in this project.
+      const aRoot = `/${segs[1]}`;
+
+      if (aRoot !== getRootPath()) {
         cta.target = '_blank';
       }
       cta.parentElement.classList.add('gnav-cta');
