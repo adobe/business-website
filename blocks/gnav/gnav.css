@@ -428,7 +428,7 @@ button.gnav-toggle:after {
   justify-content: center;
   position: relative;
   min-width: 54.25px;
-  padding: 0 8px;
+  padding: 0 12px;
   box-sizing: border-box;
 }
 
@@ -671,6 +671,10 @@ button.gnav-toggle:after {
 
   .gnav-search-results .article-card:first-of-type {
     margin-top: unset;
+  }
+
+  .gnav-profile {
+    padding: 0 8px;
   }
 
   .gnav-profile .gnav-profile-menu {
