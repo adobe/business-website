@@ -993,6 +993,22 @@ async function loadMartech() {
 }
 
 /**
+ * Load the Privacy library
+ */
+function loadPrivacy() {
+  // Configure Privacy
+  window.fedsConfig = {
+    privacy: {
+      otDomainId: '7a5eb705-95ed-4cc4-a11d-0cc5760e93db',
+      footerLinkSelector: '[href="https://www.adobe.com/#openPrivacy"]',
+    },
+  };
+
+  const env = getHelixEnv().name === 'prod' ? '' : 'stage.';
+  loadScript(`https://www.${env}adobe.com/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js`);
+}
+
+/**
  * loads everything needed to get to LCP.
  */
 async function loadEager() {
@@ -1053,6 +1069,7 @@ async function loadLazy() {
   loadBlocks(main);
   loadCSS('/styles/lazy-styles.css');
   addFavIcon('/styles/favicon.svg');
+  if (!window.hlx.lighthouse) loadPrivacy();
   if (!window.hlx.lighthouse) loadMartech();
 }
 
