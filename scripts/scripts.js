@@ -1050,6 +1050,11 @@ async function loadfooterBanner(main) {
     footerBannerURL = defaultBannerURL;
   }
 
+  // Do nothing if footerBannerURL isn't available to avoid 404
+  if (!footerBannerURL) {
+    return;
+  }
+
   // get block body from the Banner URL
   const response = await fetch(`${footerBannerURL}.plain.html`);
   if (response.ok) {

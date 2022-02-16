@@ -5,7 +5,7 @@ function decorateButtons(el) {
     const parent = button.parentElement;
     let buttonType;
     if (parent.nodeName === 'STRONG') {
-      buttonType = ['button'];
+      buttonType = ['button', 'blue'];
     } else if (parent.nodeName === 'EM') {
       buttonType = ['button', 'primary'];
     } else {
