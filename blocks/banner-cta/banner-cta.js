@@ -1,6 +1,7 @@
 function decorateButtons(el) {
   const buttons = el.querySelectorAll('em a, strong a, p > a');
   buttons.forEach((button) => {
+    button.setAttribute('target', '_blank');
     const parent = button.parentElement;
     let buttonType;
     if (parent.nodeName === 'STRONG') {
