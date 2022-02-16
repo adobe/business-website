@@ -1,12 +1,15 @@
 import {
   loadScript,
   getHelixEnv,
+  getBlockClasses,
   debug,
   makeLinkRelative,
+  loadCSS,
+  getRootPath,
 } from '../../scripts/scripts.js';
 import createTag from './gnav-utils.js';
 
-const ADOBE_IMG = '<img alt="Adobe" src="/blocks/gnav/adobe-logo.svg">';
+const COMPANY_IMG = '<img alt="Adobe" src="/blocks/gnav/adobe-logo.svg">';
 const BRAND_IMG = '<img src="/blocks/gnav/brand-logo.svg">';
 const SEARCH_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" focusable="false">
 <path d="M14 2A8 8 0 0 0 7.4 14.5L2.4 19.4a1.5 1.5 0 0 0 2.1 2.1L9.5 16.6A8 8 0 1 0 14 2Zm0 14.1A6.1 6.1 0 1 1 20.1 10 6.1 6.1 0 0 1 14 16.1Z"></path>
@@ -18,6 +21,7 @@ class Gnav {
     this.el = el;
     this.body = body;
     this.env = getHelixEnv();
+    this.decorateBlocks();
     this.desktop = window.matchMedia('(min-width: 1200px)');
   }
 
@@ -35,9 +39,11 @@ class Gnav {
     }
 
     const mainNav = this.decorateMainNav();
-    if (mainNav) {
-      nav.append(mainNav);
+    const cta = this.decorateCta();
+    if (cta) {
+      mainNav.append(cta);
     }
+    nav.append(mainNav);
 
     const search = this.decorateSearch();
     if (search) {
@@ -85,15 +91,12 @@ class Gnav {
     const brandBlock = this.body.querySelector('[class^="gnav-brand"]');
     if (!brandBlock) return null;
     const brand = brandBlock.querySelector('a');
+    brand.className = brandBlock.className;
     const title = createTag('span', { class: 'gnav-brand-title' }, brand.textContent);
 
     brand.href = makeLinkRelative(brand.href);
     brand.setAttribute('aria-label', brand.textContent);
     brand.textContent = '';
-    const { className } = brandBlock;
-    const classNameClipped = className.slice(0, -1);
-    const classNames = classNameClipped.split('--');
-    brand.className = classNames.join(' ');
     if (brand.classList.contains('logo')) {
       brand.insertAdjacentHTML('afterbegin', BRAND_IMG);
     }
@@ -107,41 +110,85 @@ class Gnav {
     logo.classList.add('gnav-logo');
     logo.setAttribute('aria-label', logo.textContent);
     logo.textContent = '';
-    logo.insertAdjacentHTML('afterbegin', ADOBE_IMG);
+    logo.insertAdjacentHTML('afterbegin', COMPANY_IMG);
     return logo;
   }
 
   decorateMainNav = () => {
+    const mainNav = createTag('div', { class: 'gnav-mainnav' });
     const mainLinks = this.body.querySelectorAll('h2 > a');
     if (mainLinks.length > 0) {
-      return this.buildMainNav(mainLinks);
+      this.buildMainNav(mainNav, mainLinks);
     }
-    return null;
+    return mainNav;
   }
 
-  buildMainNav = (navLinks) => {
-    const mainNav = createTag('div', { class: 'gnav-mainnav' });
+  buildMainNav = (mainNav, navLinks) => {
     navLinks.forEach((navLink, idx) => {
       navLink.href = makeLinkRelative(navLink.href);
       const navItem = createTag('div', { class: 'gnav-navitem' });
+      const navBlock = navLink.closest('.large-menu');
       const menu = navLink.closest('div');
+
       menu.querySelector('h2').remove();
       navItem.appendChild(navLink);
 
-      if (menu.childElementCount > 0) {
+      // All menu types
+      if (menu.childElementCount > 0 || navBlock) {
         const id = `navmenu-${idx}`;
         menu.id = id;
         navItem.classList.add('has-Menu');
-        navLink.setAttribute('role', 'button');
-        navLink.setAttribute('aria-expanded', false);
-        navLink.setAttribute('aria-controls', id);
-
+        this.setNavLinkAttributes(id, navLink);
+      }
+      // Small and medium menu types
+      if (menu.childElementCount > 0) {
         const decoratedMenu = this.decorateMenu(navItem, navLink, menu);
         navItem.appendChild(decoratedMenu);
+      }
+      // Large Menus & Section Nav
+      if (navBlock) {
+        navItem.classList.add('large-menu');
+        if (navBlock.classList.contains('section')) {
+          navItem.classList.add('section');
+        }
+        this.decorateLargeMenu(navLink, navItem, menu);
       }
       mainNav.appendChild(navItem);
     });
     return mainNav;
+  }
+
+  setNavLinkAttributes = (id, navLink) => {
+    navLink.setAttribute('role', 'button');
+    navLink.setAttribute('aria-expanded', false);
+    navLink.setAttribute('aria-controls', id);
+  }
+
+  decorateLinkGroups = (menu) => {
+    const linkGroups = menu.querySelectorAll('.link-group');
+    linkGroups.forEach((linkGroup) => {
+      const image = linkGroup.querySelector('picture');
+      const anchor = linkGroup.querySelector('p a');
+      const title = anchor.textContent;
+      const subtitle = linkGroup.querySelector('p:last-of-type');
+      const titleWrapper = createTag('div');
+      anchor.href = makeLinkRelative(anchor.href);
+      const link = createTag('a', { class: 'link-block', href: anchor.href });
+
+      linkGroup.replaceChildren();
+      titleWrapper.append(title, subtitle);
+      const contents = !image ? [titleWrapper] : [image, titleWrapper];
+      link.append(...contents);
+      // this.linkBlockDomCheck(image, link, titleWrapper);
+      linkGroup.appendChild(link);
+    });
+  }
+
+  linkBlockDomCheck = (image, link, titleWrapper) => {
+    if (image) {
+      return link.append(image, titleWrapper);
+    }
+    return link.append(titleWrapper);
   }
 
   decorateMenu = (navItem, navLink, menu) => {
@@ -157,6 +204,7 @@ class Gnav {
       container.append(...Array.from(menu.children));
       menu.append(container);
     }
+    this.decorateLinkGroups(menu);
     navLink.addEventListener('focus', () => {
       window.addEventListener('keydown', this.toggleOnSpace);
     });
@@ -169,6 +217,41 @@ class Gnav {
       this.toggleMenu(navItem);
     });
     return menu;
+  }
+
+  decorateLargeMenu = (navLink, navItem, menu) => {
+    let path = navLink.href;
+    path = makeLinkRelative(path);
+    const promise = fetch(`${path}.plain.html`);
+    promise.then(async (resp) => {
+      if (resp.status === 200) {
+        await loadCSS('/blocks/gnav/large-menu.css');
+        const text = await resp.text();
+        menu.insertAdjacentHTML('beforeend', text);
+        const decoratedMenu = this.decorateMenu(navItem, navLink, menu);
+        navItem.appendChild(decoratedMenu);
+      }
+    });
+  }
+
+  decorateCta = () => {
+    const cta = this.body.querySelector('strong > a');
+    if (cta) {
+      // Get the root path of the link
+      const { pathname } = new URL(cta.href);
+      const segs = pathname.split('/');
+
+      // Will not be 100% accurate until acom's
+      // loc scheme lands in this project.
+      const aRoot = `/${segs[1]}`;
+
+      if (aRoot !== getRootPath()) {
+        cta.target = '_blank';
+      }
+      cta.parentElement.classList.add('gnav-cta');
+      return cta.parentElement;
+    }
+    return null;
   }
 
   decorateSearch = () => {
@@ -341,6 +424,14 @@ class Gnav {
     if (e.code === 'Escape') {
       this.toggleMenu(this.state.openMenu);
     }
+  }
+
+  decorateBlocks = () => {
+    const variantBlocks = this.body.querySelectorAll('[class$="-"]');
+    variantBlocks.forEach((block) => {
+      const { name, variants } = getBlockClasses(block.className);
+      block.classList.add(name, ...variants);
+    });
   }
 }
 
