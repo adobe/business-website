@@ -16,7 +16,7 @@
  * @param {Object} data additional data for RUM sample
  */
 
-export function sampleRUM(checkpoint, data = {}) {
+ export function sampleRUM(checkpoint, data = {}) {
   try {
     window.hlx = window.hlx || {};
     if (!window.hlx.rum) {
@@ -33,8 +33,8 @@ export function sampleRUM(checkpoint, data = {}) {
     const { random, weight, id } = window.hlx.rum;
     if (random && (random * weight < 1)) {
       const sendPing = () => {
-        // eslint-disable-next-line object-curly-newline
-        const body = JSON.stringify({ weight, id, referer: window.location.href, generation: 'biz-gen1', checkpoint, ...data });
+        // eslint-disable-next-line object-curly-newline, max-len, no-use-before-define
+        const body = JSON.stringify({ weight, id, referer: window.location.href, generation: RUM_GENERATION, checkpoint, ...data });
         const url = `https://rum.hlx3.page/.rum/${weight}`;
         // eslint-disable-next-line no-unused-expressions
         navigator.sendBeacon(url, body);
@@ -42,17 +42,22 @@ export function sampleRUM(checkpoint, data = {}) {
       sendPing();
       // special case CWV
       if (checkpoint === 'cwv') {
-        // eslint-disable-next-line import/no-unresolved
-        import('./web-vitals-module-2-1-2.js').then((mod) => {
+        // use classic script to avoid CORS issues
+        const script = document.createElement('script');
+        script.src = 'https://rum.hlx3.page/.rum/web-vitals/dist/web-vitals.iife.js';
+        script.onload = () => {
           const storeCWV = (measurement) => {
             data.cwv = {};
             data.cwv[measurement.name] = measurement.value;
             sendPing();
           };
-          mod.getCLS(storeCWV);
-          mod.getFID(storeCWV);
-          mod.getLCP(storeCWV);
-        });
+            // When loading `web-vitals` using a classic script, all the public
+            // methods can be found on the `webVitals` global namespace.
+          window.webVitals.getCLS(storeCWV);
+          window.webVitals.getFID(storeCWV);
+          window.webVitals.getLCP(storeCWV);
+        };
+        document.head.appendChild(script);
       }
     }
   } catch (e) {
@@ -60,6 +65,7 @@ export function sampleRUM(checkpoint, data = {}) {
   }
 }
 
+window.RUM_GENERATION = 'biz-gen2';
 sampleRUM('top');
 window.addEventListener('load', () => sampleRUM('load'));
 document.addEventListener('click', () => sampleRUM('click'));
