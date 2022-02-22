@@ -36,7 +36,7 @@ updateExternalLinks();
 /* Core Web Vitals RUM collection */
 
 sampleRUM('cwv');
-sampleRUM.observe(main.querySelectorAll('picture > img'))
+sampleRUM.observe(document.querySelectorAll('main picture > img'));
 
 function loadPrivacy() {
   function getOtDomainId() {
