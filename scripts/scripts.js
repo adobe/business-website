@@ -1036,15 +1036,24 @@ async function loadfooterBanner(main) {
   const json = await resp.json();
   let defaultBannerURL;
   let footerBannerURL;
-  json.data.forEach((entry) => {
+  const metaTags = getMetadata('article:tag').split(', ');
+  json.data.every((entry) => {
     if (entry.URL === 'default') {
       defaultBannerURL = entry.banner;
     }
+    // check URL column first
     // eslint-disable-next-line no-undef
     URLpattern = new URLPattern(entry.URL, origin);
     if (URLpattern.test(href)) {
       footerBannerURL = entry.banner;
+      return false;
     }
+    // check tag column next
+    if (metaTags.find((tag) => tag.toLowerCase() === entry.tag.toLowerCase())) {
+      footerBannerURL = entry.banner;
+      return false;
+    }
+    return true;
   });
   if (!footerBannerURL) {
     footerBannerURL = defaultBannerURL;
