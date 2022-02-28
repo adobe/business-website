@@ -1038,7 +1038,7 @@ async function loadfooterBanner(main) {
   let footerBannerURL;
   const metaTags = getMetadata('article:tag').split(', ');
   json.data.every((entry) => {
-    if (entry.URL === 'default') {
+    if (entry.URL === 'default' || entry.default === 'default') {
       defaultBannerURL = entry.banner;
     }
     // check URL column first
