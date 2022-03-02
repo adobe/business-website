@@ -2,4 +2,10 @@
 <sitemap>
 <loc>https://business.adobe.com/blog/sitemap.xml</loc>
 </sitemap>
+<sitemap>
+<loc>https://business.adobe.com/blog/sitemap-uk.xml</loc>
+</sitemap>
+<sitemap>
+<loc>https://business.adobe.com/blog/sitemap-au.xml</loc>
+</sitemap>
 </sitemapindex>
