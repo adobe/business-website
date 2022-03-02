@@ -822,7 +822,6 @@ export function addFavIcon(href) {
 async function addSegmentToIndex(url, index, pageSize) {
   const resp = await fetch(url);
   const json = await resp.json();
-  console.log(json.data.length);
   const complete = (json.limit + json.offset) === json.total;
   json.data.forEach((post) => {
     index.data.push(post);
