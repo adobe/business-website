@@ -1116,7 +1116,7 @@ async function loadfooterBanner(main) {
   // getting Banner URL from the json
   const { href, origin } = window.location;
   let URLpattern;
-  const resp = await fetch('/blog/footer-banner.json');
+  const resp = await fetch(`${getRootPath()}/footer-banner.json`);
   const json = await resp.json();
   let defaultBannerURL;
   let footerBannerURL;
