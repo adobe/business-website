@@ -11,12 +11,12 @@ sitemaps:
         hreflang: en
         alternate: /{path}
       uk:
-        source: /de/blog/query-index.json
+        source: /uk/blog/query-index.json
         destination: /blog/sitemap-uk.xml
         hreflang: en-gb
         alternate: /uk/{path}
       au:
-        source: /de/blog/query-index.json
+        source: /au/blog/query-index.json
         destination: /blog/sitemap-au.xml
         hreflang: en-au
         alternate: /au/{path}
