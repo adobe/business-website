@@ -1,18 +1,18 @@
 version: 1
 
 indices:
-  blog:
+  blog: &default
     include:
       - '/blog/**'
     exclude:
-      - '/blog/'
-      - '/blog/index*'
-      - '/blog/gnav*'
-      - '/blog/footer*'
-      - '/blog/authors/**'
-      - '/blog/banners/**'
-      - '/blog/categories/**'
-      - '/blog/tags/**'
+      - '**/blog/'
+      - '**/blog/index*'
+      - '**/blog/gnav*'
+      - '**/blog/footer*'
+      - '**/blog/authors/**'
+      - '**/blog/banners/**'
+      - '**/blog/categories/**'
+      - '**/blog/tags/**'
     target: /blog/query-index.xlsx
     properties:
       author:
@@ -55,3 +55,15 @@ indices:
         select: none
         value: |
           parseTimestamp(headers['last-modified'], 'ddd, DD MMM YYYY hh:mm:ss GMT')
+  
+  uk:
+    <<: *default
+    include:
+      - /uk/blog/**
+    target: /uk/blog/query-index.xlsx
+
+  au:
+    <<: *default
+    include:
+      - /au/blog/**
+    target: /au/blog/query-index.xlsx
