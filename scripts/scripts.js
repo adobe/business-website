@@ -203,11 +203,8 @@ export function getLanguage() {
  * @returns {string} The computed root path
  */
 export function getRootPath() {
-  const loc = getLanguage();
-  if (loc === LANG.EN) {
-    return '/blog';
-  }
-  return `/${loc}/blog`;
+  const loc = window.location.pathname.includes('/blog/') ? window.location.pathname.split('/blog/')[0] : '';
+  return `${loc}/blog`;
 }
 
 /**
