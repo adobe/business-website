@@ -203,11 +203,8 @@ export function getLanguage() {
  * @returns {string} The computed root path
  */
 export function getRootPath() {
-  const loc = getLanguage();
-  if (loc === LANG.EN) {
-    return '/blog';
-  }
-  return `/${loc}/blog`;
+  const loc = window.location.pathname.includes('/blog/') ? window.location.pathname.split('/blog/')[0] : '';
+  return `${loc}/blog`;
 }
 
 /**
@@ -822,6 +819,18 @@ export function addFavIcon(href) {
   }
 }
 
+async function addSegmentToIndex(url, index, pageSize) {
+  const resp = await fetch(url);
+  const json = await resp.json();
+  const complete = (json.limit + json.offset) === json.total;
+  json.data.forEach((post) => {
+    index.data.push(post);
+    index.byPath[post.path.split('.')[0]] = post;
+  });
+  index.complete = complete;
+  index.offset = json.offset + pageSize;
+}
+
 /**
  * fetches blog article index.
  * @returns {object} index with data and path lookup
@@ -837,15 +846,12 @@ export async function fetchBlogArticleIndex() {
   };
   if (window.blogIndex.complete) return (window.blogIndex);
   const index = window.blogIndex;
-  const resp = await fetch(`${getRootPath()}/query-index.json?limit=${pageSize}&offset=${index.offset}`);
-  const json = await resp.json();
-  const complete = (json.limit + json.offset) === json.total;
-  json.data.forEach((post) => {
-    index.data.push(post);
-    index.byPath[post.path.split('.')[0]] = post;
-  });
-  index.complete = complete;
-  index.offset = json.offset + pageSize;
+  const { offset } = index;
+  await addSegmentToIndex(`${getRootPath()}/query-index.json?limit=${pageSize}&offset=${offset}`, index, pageSize);
+  if (getRootPath() === '/uk/blog' || getRootPath() === '/au/blog') {
+    await addSegmentToIndex(`/blog/query-index.json?limit=${pageSize}&offset=${offset}`, index, pageSize);
+    index.data.sort((a, b) => b.date - a.date);
+  }
   return (index);
 }
 
