@@ -1114,7 +1114,7 @@ async function loadEager() {
 
 async function loadfooterBanner(main) {
   // getting Banner URL from the json
-  const { href, origin } = window.location;
+  const { href } = window.location;
   let URLpattern;
   const resp = await fetch(`${getRootPath()}/footer-banner.json`);
   const json = await resp.json();
@@ -1125,20 +1125,23 @@ async function loadfooterBanner(main) {
     if (entry.URL === 'default' || entry.default === 'default') {
       defaultBannerURL = entry.banner;
     }
-    // check URL column first
-    // eslint-disable-next-line no-undef
-    URLpattern = new URLPattern(entry.URL, origin);
-    if (URLpattern.test(href)) {
+
+    const endStrMark = entry.URL.slice(-1) !== '*' ? '$' : '';
+    URLpattern = new RegExp(`${entry.URL}${endStrMark}`);
+
+    if (entry.URL && URLpattern.test(href)) {
       footerBannerURL = entry.banner;
       return false;
     }
-    // check tag column next
+
+    // checking tag's column
     if (metaTags.find((tag) => tag.toLowerCase() === entry.tag.toLowerCase())) {
       footerBannerURL = entry.banner;
       return false;
     }
     return true;
   });
+
   if (!footerBannerURL) {
     footerBannerURL = defaultBannerURL;
   }
