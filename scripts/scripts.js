@@ -1126,9 +1126,9 @@ async function loadfooterBanner(main) {
       defaultBannerURL = entry.banner;
     }
 
+    // checking URL's column
     const endStrMark = entry.URL.slice(-1) !== '*' ? '$' : '';
     URLpattern = new RegExp(`${entry.URL}${endStrMark}`);
-
     if (entry.URL && URLpattern.test(href)) {
       footerBannerURL = entry.banner;
       return false;
