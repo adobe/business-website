@@ -1118,6 +1118,60 @@ async function loadEager() {
   }
 }
 
+async function loadfooterBanner(main) {
+  // getting Banner URL from the json
+  const { href } = window.location;
+  let URLpattern;
+  const resp = await fetch(`${getRootPath()}/footer-banner.json`);
+  const json = await resp.json();
+  let defaultBannerURL;
+  let footerBannerURL;
+  const metaTags = getMetadata('article:tag').split(', ');
+  json.data.every((entry) => {
+    if (entry.URL === 'default' || entry.default === 'default') {
+      defaultBannerURL = entry.banner;
+    }
+
+    // checking URL's column
+    const endStrMark = entry.URL.slice(-1) !== '*' ? '$' : '';
+    URLpattern = new RegExp(`${entry.URL}${endStrMark}`);
+    if (entry.URL && URLpattern.test(href)) {
+      footerBannerURL = entry.banner;
+      return false;
+    }
+
+    // checking tag's column
+    if (metaTags.find((tag) => tag.toLowerCase() === entry.tag.toLowerCase())) {
+      footerBannerURL = entry.banner;
+      return false;
+    }
+    return true;
+  });
+
+  if (!footerBannerURL) {
+    footerBannerURL = defaultBannerURL;
+  }
+
+  // Do nothing if footerBannerURL isn't available to avoid 404
+  if (!footerBannerURL) {
+    return;
+  }
+
+  // get block body from the Banner URL
+  const response = await fetch(`${footerBannerURL}.plain.html`);
+  if (response.ok) {
+    const responseEl = document.createElement('div');
+    responseEl.innerHTML = await response.text();
+    responseEl.classList.add('section-wrapper');
+    const bannerCTABlock = responseEl.querySelector('div[class^="banner-cta"]');
+    main.append(responseEl);
+
+    // decorate the banner block
+    decorateBlock(bannerCTABlock);
+    loadBlock(bannerCTABlock);
+  }
+}
+
 /**
  * loads everything that doesn't need to be delayed.
  */
@@ -1139,6 +1193,7 @@ async function loadLazy() {
   footer.setAttribute('data-block-name', 'footer');
   footer.setAttribute('data-footer-source', `${getRootPath()}/footer`);
   loadBlock(footer);
+  loadfooterBanner(main);
 
   loadBlocks(main);
   loadCSS('/styles/lazy-styles.css');

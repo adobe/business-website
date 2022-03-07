@@ -14,6 +14,8 @@
   --color-gray-800: #242424;
   --color-black: #000;
   --color-brand-title: #000B1D;
+  --color-accent: rgb(20, 115, 230);
+  --color-accent-hover: rgb(13, 102, 208);
   --color-info-accent: #5C5CE0;
   --color-info-accent-hover: #4646C6;
   --color-info-accent-down: #3D3DB4;
@@ -166,6 +168,14 @@ a.button.secondary.light:hover, a.button.secondary.light:focus {
   background-color: var(--color-gray-700);
   border-color: var(--color-gray-700);
   color: var(--color-white);
+}
+
+a.button.blue:any-link {
+  background-color: var(--color-accent);
+}
+
+a.button.blue:hover, a.button.blue:focus {
+  background-color: var(--color-accent-hover);
 }
 
 a.button > svg {
