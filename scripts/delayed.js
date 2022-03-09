@@ -134,5 +134,5 @@ const intl = sessionStorage.getItem('blog-international') || getCookie('internat
 if (intl) {
   setLinksToGeo({ country: intl });
 } else {
-  loadScript('http://geo2.adobe.com/json/?callback=setLinksToGeo');
+  loadScript('https://geo2.adobe.com/json/?callback=setLinksToGeo');
 }
