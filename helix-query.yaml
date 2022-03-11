@@ -67,3 +67,35 @@ indices:
     include:
       - /au/blog/**
     target: /au/blog/query-index.xlsx
+
+  fr:
+    <<: *default
+    exclude: 
+      - '/blog/**'
+    include:
+      - /fr/blog/**
+    target: /fr/blog/query-index.xlsx
+
+  de:
+    <<: *default
+    exclude: 
+      - '/blog/**'    
+    include:
+      - /de/blog/**
+    target: /de/blog/query-index.xlsx
+
+  jp:
+    <<: *default
+    exclude: 
+      - '/blog/**'    
+    include:
+      - /jp/blog/**
+    target: /jp/blog/query-index.xlsx
+
+  kr:
+    <<: *default
+    exclude: 
+      - '/blog/**'    
+    include:
+      - /kr/blog/**
+    target: /kr/blog/query-index.xlsx
