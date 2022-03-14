@@ -20,3 +20,23 @@ sitemaps:
         destination: /blog/sitemap-au.xml
         hreflang: en-au
         alternate: /au/{path}
+      fr:
+        source: /fr/blog/query-index.json
+        destination: /blog/sitemap-fr.xml
+        hreflang: fr
+        alternate: /fr/{path}
+      de:
+        source: /de/blog/query-index.json
+        destination: /blog/sitemap-de.xml
+        hreflang: de
+        alternate: /de/{path}
+      jp:
+        source: /jp/blog/query-index.json
+        destination: /blog/sitemap-jp.xml
+        hreflang: ja
+        alternate: /jp/{path}
+      kr:
+        source: /kr/blog/query-index.json
+        destination: /blog/sitemap-kr.xml
+        hreflang: ko
+        alternate: /kr/{path}
