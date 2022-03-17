@@ -29,7 +29,7 @@ async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
       recommendedArticlesEl.append(articleCardsContainer);
     }
   }
-  recommendedArticlesEl.closest('.section-wrapper').classList.add('appear');
+  recommendedArticlesEl.closest('.section').classList.add('appear');
   if (!articleCardsContainer.hasChildNodes()) {
     recommendedArticlesEl.parentNode.parentNode.remove();
   }

@@ -16,7 +16,7 @@
  * @param {Object} data additional data for RUM sample
  */
 
-export function sampleRUM(checkpoint, data = {}) {
+ export function sampleRUM(checkpoint, data = {}) {
   try {
     window.hlx = window.hlx || {};
     if (!window.hlx.rum) {
@@ -511,7 +511,6 @@ initHlx();
  * ------------------------------------------------------------
  */
 
-const LCP_BLOCKS = ['marquee']; // add your LCP blocks to the list
 const RUM_GENERATION = 'project-1'; // add your RUM generation information here
 const PRODUCTION_DOMAINS = [];
 
@@ -599,24 +598,133 @@ document.addEventListener('click', () => sampleRUM('click'));
 
 loadPage(document);
 
-function buildHeroBlock(main) {
-  const h1 = main.querySelector('h1');
-  const picture = main.querySelector('picture');
-  // eslint-disable-next-line no-bitwise
-  if (h1 && picture && (h1.compareDocumentPosition(picture) & Node.DOCUMENT_POSITION_PRECEDING)) {
-    const section = document.createElement('div');
-    section.append(buildBlock('hero', { elems: [picture, h1] }));
-    main.prepend(section);
+/**
+ * Returns the language dependent root path
+ * @returns {string} The computed root path
+ */
+export function getRootPath() {
+  const loc = window.location.pathname.includes('/blog/') ? window.location.pathname.split('/blog/')[0] : '';
+  return `${loc}/blog`;
+}
+
+/**
+ * removes formatting from images.
+ * @param {Element} mainEl The container element
+ */
+function removeStylingFromImages(mainEl) {
+  // remove styling from images, if any
+  const styledImgEls = [...mainEl.querySelectorAll('strong picture'), ...mainEl.querySelectorAll('em picture')];
+  styledImgEls.forEach((imgEl) => {
+    const parentEl = imgEl.closest('p');
+    parentEl.prepend(imgEl);
+    parentEl.lastChild.remove();
+  });
+}
+
+/**
+ * returns an image caption of a picture elements
+ * @param {Element} picture picture element
+ */
+function getImageCaption(picture) {
+  const parentEl = picture.parentNode;
+  const parentSiblingEl = parentEl.nextElementSibling;
+  return (parentSiblingEl && parentSiblingEl.firstChild.nodeName === 'EM' ? parentSiblingEl : undefined);
+}
+
+/**
+ * builds article header block from meta and default content.
+ * @param {Element} mainEl The container element
+ */
+function buildArticleHeader(mainEl) {
+  const div = document.createElement('div');
+  const h1 = mainEl.querySelector('h1');
+  const picture = mainEl.querySelector('picture');
+  const category = getMetadata('category');
+  const author = getMetadata('author');
+  const publicationDate = getMetadata('publication-date');
+
+  const articleHeaderBlockEl = buildBlock('article-header', [
+    [`<p>${category}</p>`],
+    [h1],
+    [`<p><a href="${getRootPath()}/authors/${toClassName(author)}">${author}</a></p>
+      <p>${publicationDate}</p>`],
+    [{ elems: [picture.closest('p'), getImageCaption(picture)] }],
+  ]);
+  div.append(articleHeaderBlockEl);
+  mainEl.prepend(div);
+}
+
+function buildTagsBlock(mainEl) {
+  const tags = getMetadata('article:tag');
+  if (tags) {
+    const tagsBlock = buildBlock('tags', [
+      [`<p>${tags}</p>`],
+    ]);
+    const recBlock = mainEl.querySelector('.recommended-articles');
+    if (recBlock) {
+      recBlock.parentNode.insertBefore(tagsBlock, recBlock);
+    } else {
+      mainEl.lastElementChild.append(tagsBlock);
+    }
   }
+}
+
+function buildTagHeader(mainEl) {
+  const div = mainEl.querySelector('div');
+  const h1 = mainEl.querySelector('h1');
+  const picture = mainEl.querySelector('picture');
+  const tagHeaderBlockEl = buildBlock('tag-header', [
+    [h1],
+    [{ elems: [picture.closest('p')] }],
+  ]);
+  div.prepend(tagHeaderBlockEl);
+}
+
+function buildArticleFeed(mainEl, type) {
+  const div = document.createElement('div');
+  const title = mainEl.querySelector('h1').textContent.trim();
+  const articleFeedEl = buildBlock('article-feed', [
+    [type, title],
+  ]);
+  div.append(articleFeedEl);
+  mainEl.append(div);
+}
+
+/**
+ * builds images blocks from default content.
+ * @param {Element} mainEl The container element
+ */
+function buildImageBlocks(mainEl) {
+  // select all non-featured, default (non-images block) images
+  const imgEls = [...mainEl.querySelectorAll(':scope > div > p > picture')];
+  imgEls.forEach((imgEl) => {
+    const parentEl = imgEl.parentNode;
+    const imagesBlockEl = buildBlock('images', {
+      elems: [parentEl.cloneNode(true), getImageCaption(imgEl)],
+    });
+    parentEl.parentNode.insertBefore(imagesBlockEl, parentEl);
+    parentEl.remove();
+  });
 }
 
 /**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
-function buildAutoBlocks(main) {
+function buildAutoBlocks(mainEl) {
+  removeStylingFromImages(mainEl);
   try {
-    buildHeroBlock(main);
+    if (getMetadata('publication-date') && !mainEl.querySelector('.article-header')) {
+      buildArticleHeader(mainEl);
+      buildTagsBlock(mainEl);
+    }
+    if (window.location.pathname.includes('/tags/')) {
+      buildTagHeader(mainEl);
+      if (!document.querySelector('.article-feed')) {
+        buildArticleFeed(mainEl, 'tags');
+      }
+    }
+    buildImageBlocks(mainEl);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);
@@ -637,24 +745,60 @@ export function decorateMain(main) {
   decorateBlocks(main);
 }
 
-/**
- * loads everything needed to get to LCP.
- */
-async function loadEager(doc) {
-  const main = doc.querySelector('main');
-  if (main) {
-    decorateMain(main);
-    await waitForLCP();
+function unhideBody(id) {
+  try {
+    document.head.removeChild(document.getElementById(id));
+  } catch (e) {
+    // nothing
+  }
+}
+
+function hideBody(id) {
+  const style = document.createElement('style');
+  style.id = id;
+  style.innerHTML = 'body{visibility: hidden !important}';
+
+  try {
+    document.head.appendChild(style);
+  } catch (e) {
+    // nothing
   }
 }
 
 /**
- * Returns the language dependent root path
- * @returns {string} The computed root path
+ * loads everything needed to get to LCP.
  */
-export function getRootPath() {
-  const loc = window.location.pathname.includes('/blog/') ? window.location.pathname.split('/blog/')[0] : '';
-  return `${loc}/blog`;
+async function loadEager() {
+  const main = document.querySelector('main');
+  if (main) {
+    const bodyHideStyleId = 'at-body-style';
+    decorateMain(main);
+    document.querySelector('body').classList.add('appear');
+    const target = getMetadata('target');
+    if (target && target.toLocaleLowerCase() === 'on') {
+      hideBody(bodyHideStyleId);
+      setTimeout(() => {
+        unhideBody(bodyHideStyleId);
+      }, 3000);
+    }
+
+    const lcpBlocks = ['featured-article', 'article-header'];
+    const block = document.querySelector('.block');
+    const hasLCPBlock = (block && lcpBlocks.includes(block.getAttribute('data-block-name')));
+    if (hasLCPBlock) await loadBlock(block, true);
+    const lcpCandidate = document.querySelector('main img');
+    const loaded = {
+      then: (resolve) => {
+        if (lcpCandidate && !lcpCandidate.complete) {
+          lcpCandidate.addEventListener('load', () => resolve());
+          lcpCandidate.addEventListener('error', () => resolve());
+        } else {
+          resolve();
+        }
+      },
+    };
+    await loaded;
+  }
 }
 
 /**
@@ -1134,4 +1278,49 @@ export function makeLinkRelative(href) {
   const host = url.hostname;
   if (host.endsWith('.page') || host.endsWith('.live') || host === 'business.adobe.com') return (`${url.pathname}${url.search}${url.hash}`);
   return (href);
+}
+
+async function addSegmentToIndex(url, index, pageSize) {
+  const resp = await fetch(url);
+  const json = await resp.json();
+  const complete = (json.limit + json.offset) === json.total;
+  json.data.forEach((post) => {
+    index.data.push(post);
+    index.byPath[post.path.split('.')[0]] = post;
+  });
+  index.complete = complete;
+  index.offset = json.offset + pageSize;
+}
+
+/**
+ * fetches blog article index.
+ * @returns {object} index with data and path lookup
+ */
+export async function fetchBlogArticleIndex() {
+  const pageSize = 1000;
+  window.blogIndex = window.blogIndex || {
+    data: [],
+    byPath: {},
+    offset: 0,
+    complete: false,
+  };
+  if (window.blogIndex.complete) return (window.blogIndex);
+  const index = window.blogIndex;
+  const { offset } = index;
+  await addSegmentToIndex(`${getRootPath()}/query-index.json?limit=${pageSize}&offset=${offset}`, index, pageSize);
+  if (getRootPath() === '/uk/blog' || getRootPath() === '/au/blog') {
+    await addSegmentToIndex(`/blog/query-index.json?limit=${pageSize}&offset=${offset}`, index, pageSize);
+    index.data.sort((a, b) => b.date - a.date);
+  }
+  return (index);
+}
+
+/*
+ * lighthouse performance instrumentation helper
+ * (needs a refactor)
+ */
+export function stamp(message) {
+  if (window.name.includes('performance')) {
+    debug(`${new Date() - performance.timing.navigationStart}:${message}`);
+  }
 }
