@@ -10,43 +10,129 @@
  * governing permissions and limitations under the License.
  */
 
-/* globals webVitals */
-import { loadScript, sampleRUM } from './scripts.js';
+/* globals */
+import { loadScript, sampleRUM, getHelixEnv } from './scripts.js';
 
-window.marketingtech = window.marketingtech || {};
-window.marketingtech.adobe = {
-  target: true,
-  audienceManager: true,
-  launch: {
-    property: 'global',
-    environment: 'production',
-  },
-};
-window.targetGlobalSettings = window.targetGlobalSettings || {};
-window.targetGlobalSettings.bodyHidingEnabled = false;
+function updateExternalLinks() {
+  document.querySelectorAll('main a, footer a').forEach((a) => {
+    if (!a.href) {
+      return;
+    }
 
-const launchScriptEl = loadScript('https://www.adobe.com/marketingtech/main.no-promise.min.js');
-launchScriptEl.setAttribute('data-seed-adobelaunch', 'true');
+    const { origin } = new URL(a);
+    if (origin && origin !== window.location.origin) {
+      a.setAttribute('rel', 'noopener');
+      a.setAttribute('target', '_blank');
+    }
+  });
+}
+
+if (document.querySelector('.article-header') && !document.querySelector('[data-origin]')) {
+  loadScript('/blog/blocks/interlinks/interlinks.js', null, 'module');
+}
+
+updateExternalLinks();
 
 /* Core Web Vitals RUM collection */
 
 sampleRUM('cwv');
+sampleRUM.observe(document.querySelectorAll('main picture > img'));
 
-function storeCWV(measurement) {
-  const rum = { cwv: { } };
-  rum.cwv[measurement.name] = measurement.value;
-  sampleRUM('cwv', rum);
+function loadPrivacy() {
+  function getOtDomainId() {
+    const domains = {
+      'adobe.com': '7a5eb705-95ed-4cc4-a11d-0cc5760e93db',
+      'hlx.page': '3a6a37fe-9e07-4aa9-8640-8f358a623271',
+    };
+
+    const currentDomain = Object.keys(domains)
+      .find((domain) => window.location.host.indexOf(domain) > -1);
+
+    return `${domains[currentDomain] || domains[Object.keys(domains)[0]]}`;
+  }
+
+  // Configure Privacy
+  window.fedsConfig = {
+    privacy: {
+      otDomainId: getOtDomainId(),
+    },
+  };
+
+  const preferenceCenter = document.querySelector('[href="https://www.adobe.com/#openPrivacy"]');
+  if (preferenceCenter) {
+    preferenceCenter.addEventListener('click', (event) => {
+      event.preventDefault();
+      window?.adobePrivacy?.showConsentPopup();
+    });
+  }
+
+  const env = getHelixEnv().name === 'prod' ? '' : 'stage.';
+  loadScript(`https://www.${env}adobe.com/etc/beagle/public/globalnav/adobe-privacy/latest/privacy.min.js`);
 }
 
-if (window.hlx.rum.isSelected) {
-  const script = document.createElement('script');
-  script.src = 'https://unpkg.com/web-vitals';
-  script.onload = () => {
-    // When loading `web-vitals` using a classic script, all the public
-    // methods can be found on the `webVitals` global namespace.
-    webVitals.getCLS(storeCWV);
-    webVitals.getFID(storeCWV);
-    webVitals.getLCP(storeCWV);
-  };
-  document.head.appendChild(script);
+if (!window.hlx.lighthouse) loadPrivacy();
+
+async function setupLinkTracking() {
+  const resp = await fetch('/blog/instrumentation.json');
+  const json = await resp.json();
+  const linkTracking = json['link-tracking'].data;
+  linkTracking.forEach((entry) => {
+    // eslint-disable-next-line no-underscore-dangle
+    document.querySelectorAll(entry.selector).forEach((el) => {
+      el.setAttribute('daa-lh', el.getAttribute('data-block-name'));
+      el.querySelectorAll('a').forEach((a) => {
+        if (a.href) {
+          let value = '';
+          const img = a.querySelector('img');
+          if (img) {
+            value = img.getAttribute('alt');
+          } else {
+            value = a.textContent.substr(0, 64);
+          }
+          a.setAttribute('daa-ll', value);
+        }
+      });
+    });
+  });
+}
+
+setupLinkTracking();
+
+function getCookie(cname) {
+  const name = `${cname}=`;
+  const decodedCookie = decodeURIComponent(document.cookie);
+  const ca = decodedCookie.split(';');
+  for (let i = 0; i < ca.length; i += 1) {
+    let c = ca[i];
+    while (c.charAt(0) === ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) === 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return '';
+}
+
+function setLinksToGeo(location) {
+  const glocalCountries = ['AU', 'UK'];
+  sessionStorage.setItem('blog-international', location.country);
+  if (glocalCountries.includes(location.country)) {
+    const prefix = `/${location.country.toLowerCase()}`;
+    document.querySelectorAll('a[href^="https://business.adobe.com"], a[href^="https://www.adobe.com"]').forEach((a) => {
+      const url = new URL(a.href);
+      if (!url.pathname.startsWith(prefix) || !url.pathname.startsWith('/blog')) {
+        a.href = `${url.protocol}//${url.host}${prefix}${url.pathname}${url.search}`;
+      }
+    });
+  }
+}
+
+window.setLinksToGeo = setLinksToGeo;
+
+const intl = sessionStorage.getItem('blog-international') || getCookie('international');
+if (intl) {
+  setLinksToGeo({ country: intl });
+} else {
+  loadScript('http://geo2.adobe.com/json/?callback=setLinksToGeo');
 }

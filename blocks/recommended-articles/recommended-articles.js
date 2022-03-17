@@ -1,7 +1,8 @@
 import {
   buildArticleCard,
   getBlogArticle,
-  fetchVariables,
+  fetchPlaceholders,
+  rewritePath,
 } from '../../scripts/scripts.js';
 
 async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
@@ -12,14 +13,14 @@ async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
     recommendedArticlesEl.parentNode.classList.add('recommended-articles-small-content-wrapper');
   } else {
     const title = document.createElement('h3');
-    const vars = await fetchVariables();
-    title.textContent = vars['recommended-for-you'];
+    const placeholders = await fetchPlaceholders();
+    title.textContent = placeholders['recommended-for-you'];
     recommendedArticlesEl.prepend(title);
   }
   const articleCardsContainer = document.createElement('div');
   articleCardsContainer.className = 'article-cards';
   for (let i = 0; i < paths.length; i += 1) {
-    const articlePath = paths[i];
+    const articlePath = rewritePath(paths[i]);
     // eslint-disable-next-line no-await-in-loop
     const article = await getBlogArticle(articlePath);
     if (article) {
@@ -28,14 +29,15 @@ async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
       recommendedArticlesEl.append(articleCardsContainer);
     }
   }
+  recommendedArticlesEl.closest('.section-wrapper').classList.add('appear');
   if (!articleCardsContainer.hasChildNodes()) {
     recommendedArticlesEl.parentNode.parentNode.remove();
   }
 }
 
-export default function decorate(blockEl) {
+export default async function decorate(blockEl) {
   const anchors = [...blockEl.querySelectorAll('a')];
   blockEl.innerHTML = '';
   const paths = anchors.map((a) => new URL(a.href).pathname);
-  decorateRecommendedArticles(blockEl, paths);
+  await decorateRecommendedArticles(blockEl, paths);
 }

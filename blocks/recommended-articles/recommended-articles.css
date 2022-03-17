@@ -4,15 +4,15 @@ main .recommended-articles-small-container {
   padding-bottom: 1rem;
 }
 
+main .recommended-articles-container.appear,
+main .recommended-articles-small-container.appear {
+  visibility: unset;
+}
+
 main .recommended-articles-container > div {
   max-width: 100%;
   text-align: center;
   padding-top: 16px;
-}
-
-main .recommended-articles {
-  visibility: unset;
-  min-height: unset;
 }
 
 main .recommended-articles .article-cards {
@@ -41,6 +41,10 @@ main div.recommended-articles-small-content-wrapper {
   margin: 0 auto;
 }
 
+main div.recommended-articles-small-container .article-card .article-card-body p {
+  display: none;
+}
+
 @media (min-width: 700px) {
   main div.recommended-articles-small-content-wrapper {
     width: calc(100% - 64px);
@@ -60,7 +64,7 @@ main div.recommended-articles-small-content-wrapper {
   }
 }
 
-main div.recommended-articles-small-content-wrapper h3 {
+main div.recommended-articles-small-content-wrapper h3, main div.recommended-articles-small-content-wrapper h2 {
   min-width: 100%;
   margin-left: 0;
   margin-right: 0;
@@ -71,10 +75,14 @@ main div.recommended-articles-small-content-wrapper p {
 }
 
 @media (min-width: 1200px) {
-  main div.recommended-articles-small-content-wrapper h3 {
+  main div.recommended-articles-small-content-wrapper h3, main div.recommended-articles-small-content-wrapper h2 {
     margin-bottom: 0;
   }
 
+}
+
+main .recommended-articles-small-container .article-cards {
+  padding-top: 1rem;
 }
 
 main .recommended-articles-small-container .article-card {

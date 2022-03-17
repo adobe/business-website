@@ -1,17 +1,19 @@
 version: 1
 
 indices:
-  blog:
-    # note, the following 2 properties are no longer used with Helix3
-    source: html
-    fetch: https://{ref}--{repo}--{owner}.hlx.live{path}
+  blog: &default
     include:
       - '/blog/**'
-    target: https://adobe.sharepoint.com/sites/BizWeb/Shared%20Documents/website/blog/query-index.xlsx
-    sitemap:
-      source: /blog/query-index.json
-      path: /blog/sitemap.xml
-      origin: https://business.adobe.com
+    exclude:
+      - '**/blog/'
+      - '**/blog/index*'
+      - '**/blog/gnav*'
+      - '**/blog/footer*'
+      - '**/blog/authors/**'
+      - '**/blog/banners/**'
+      - '**/blog/categories/**'
+      - '**/blog/tags/**'
+    target: /blog/query-index.xlsx
     properties:
       author:
         select: head > meta[name="author"]
@@ -29,6 +31,10 @@ indices:
         select: head > meta[property="og:image"]
         value: |
           match(attribute(el, 'content'), 'https:\/\/[^/]+(\/.*)')
+      imageAlt:
+        select: head > meta[property="og:image:alt"]
+        value: |
+          attribute(el, 'content')
       description:
         select: head > meta[name="description"]
         value: |
@@ -41,10 +47,6 @@ indices:
         select: head > meta[property="article:tag"]
         values: |
           attribute(el, 'content')
-      description:
-        select: head > meta[name="description"]
-        value: |
-          attribute(el, 'content')
       robots:
         select: head > meta[name="robots"]
         value: |
@@ -53,3 +55,47 @@ indices:
         select: none
         value: |
           parseTimestamp(headers['last-modified'], 'ddd, DD MMM YYYY hh:mm:ss GMT')
+  
+  uk:
+    <<: *default
+    include:
+      - /uk/blog/**
+    target: /uk/blog/query-index.xlsx
+
+  au:
+    <<: *default
+    include:
+      - /au/blog/**
+    target: /au/blog/query-index.xlsx
+
+  fr:
+    <<: *default
+    exclude: 
+      - '/blog/**'
+    include:
+      - /fr/blog/**
+    target: /fr/blog/query-index.xlsx
+
+  de:
+    <<: *default
+    exclude: 
+      - '/blog/**'    
+    include:
+      - /de/blog/**
+    target: /de/blog/query-index.xlsx
+
+  jp:
+    <<: *default
+    exclude: 
+      - '/blog/**'    
+    include:
+      - /jp/blog/**
+    target: /jp/blog/query-index.xlsx
+
+  kr:
+    <<: *default
+    exclude: 
+      - '/blog/**'    
+    include:
+      - /kr/blog/**
+    target: /kr/blog/query-index.xlsx
