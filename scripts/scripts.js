@@ -13,10 +13,12 @@
 const usp = new URLSearchParams(window.location.search);
 
 // feature flag for alloy
-const alloy = (
-  usp.get('alloy') === 'on'
-  || localStorage.getItem('alloy') === 'on'
-);
+// const alloy = (
+//   usp.get('alloy') === 'on'
+//   || localStorage.getItem('alloy') === 'on'
+// );
+// turning on permanently for stage.business.adobe.com/blog/
+const alloy = true;
 
 /**
  * log RUM if part of the sample.
