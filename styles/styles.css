@@ -288,53 +288,53 @@ main video {
 
 /* section wrapper */
 
-main .section-wrapper {
+main .section {
   margin-top: 64px;
 }
 
-main .section-wrapper:first-of-type {
+main .section:first-of-type {
   padding-top: 0;
   margin-top: 128px;
 }
 
-main .section-wrapper:last-of-type {
+main .section:last-of-type {
   margin-bottom: 0;
 }
 
-main .section-wrapper:first-of-type {
+main .section:first-of-type {
   padding: 0;
 }
 
 @media (min-width:600px) {
-  main .section-wrapper > div {
+  main .section > div {
     max-width: unset;
   }
 }
 
-main .section-wrapper > div:empty {
+main .section > div:empty {
   padding: 0;
 }
 
-main .section-wrapper > div {
+main .section > div {
   margin: auto;
   padding: 0 2rem;
 }
 
 @media (min-width: 700px) {
-  main .section-wrapper > div {
+  main .section > div {
     max-width: 800px;
     margin-left: auto;
     margin-right: auto;
   }
 
-  main .section-wrapper > div > :not(div) {
+  main .section > div > :not(div) {
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
   }
 }
 
-main .section-wrapper p.button-container {
+main .section p.button-container {
   text-align: center;
   margin-top: 16px;
   margin-bottom: 0;
@@ -516,7 +516,7 @@ main .block {
   visibility: hidden;
 }
 
-main .block.block-visible {
+main .block[data-block-status=loaded] {
   visibility: unset;
 }
 
@@ -527,7 +527,7 @@ main .tag-header-container  {
   visibility: hidden;
 }
 
-main div.section-wrapper.tag-header-container {
+main div.section.tag-header-container {
   visibility: unset;
   display: flex;
   background-position: center;
