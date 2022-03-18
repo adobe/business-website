@@ -551,31 +551,9 @@ main .tag-header-wrapper > div {
   }
 }
 
-main .featured-article {
-  min-height: 680px;
-}
-
-main .tag-header-wrapper {
-  min-height: 180px;
-}
-
 main .tag-header-wrapper > div {
   padding: 0;
   width: 100%;
-}
-
-
-@media (min-width: 600px) {
-  main .featured-article {
-    min-height: 320px;
-  }
-}
-
-
-@media (min-width: 1200px) {
-  main .recommended-articles-small-container {
-    min-height: 295px;
-  }
 }
 
 main .featured-article-container > div {
@@ -595,18 +573,8 @@ main .featured-article-container div h1 {
 }
 
 main .featured-article {
-  min-height: 320px;
   margin-bottom: 24px;
 }
-
-main .article-feed {
-  min-height: 2120px;  
-}
-
-main .article-header {
-  min-height: 691px;  
-}
-
 
 body {
   visibility: hidden;
