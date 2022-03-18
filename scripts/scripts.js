@@ -91,8 +91,8 @@ export function loadCSS(href, callback) {
  */
 export function getMetadata(name) {
   const attr = name && name.includes(':') ? 'property' : 'name';
-  const meta = document.head.querySelector(`meta[${attr}="${name}"]`);
-  return meta && meta.content;
+  const meta = [...document.head.querySelectorAll(`meta[${attr}="${name}"]`)].map((el) => el.content).join(', ');
+  return meta;
 }
 
 /**
@@ -910,7 +910,7 @@ async function loadMartech() {
     },
   };
 
-  const target = getMetadata('target') ? getMetadata('target').toLocaleLowerCase() === 'on' : false;
+  const target = getMetadata('target').toLocaleLowerCase() === 'on';
 
   // load bootstrap script
   let bootstrapScriptUrl = 'https://www.adobe.com/marketingtech/';
@@ -1002,7 +1002,7 @@ async function loadfooterBanner(main) {
   if (response.ok) {
     const responseEl = document.createElement('div');
     responseEl.innerHTML = await response.text();
-    responseEl.classList.add('section-wrapper');
+    responseEl.classList.add('section');
     const bannerCTABlock = responseEl.querySelector('div[class^="banner-cta"]');
     main.append(responseEl);
 
