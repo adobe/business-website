@@ -16,7 +16,7 @@
  * @param {Object} data additional data for RUM sample
  */
 
- export function sampleRUM(checkpoint, data = {}) {
+export function sampleRUM(checkpoint, data = {}) {
   try {
     window.hlx = window.hlx || {};
     if (!window.hlx.rum) {
@@ -511,6 +511,7 @@ initHlx();
  * ------------------------------------------------------------
  */
 
+const LCP_BLOCKS = ['featured-article', 'article-header'];
 const RUM_GENERATION = 'project-1'; // add your RUM generation information here
 const PRODUCTION_DOMAINS = [];
 
@@ -781,23 +782,7 @@ async function loadEager() {
         unhideBody(bodyHideStyleId);
       }, 3000);
     }
-
-    const lcpBlocks = ['featured-article', 'article-header'];
-    const block = document.querySelector('.block');
-    const hasLCPBlock = (block && lcpBlocks.includes(block.getAttribute('data-block-name')));
-    if (hasLCPBlock) await loadBlock(block, true);
-    const lcpCandidate = document.querySelector('main img');
-    const loaded = {
-      then: (resolve) => {
-        if (lcpCandidate && !lcpCandidate.complete) {
-          lcpCandidate.addEventListener('load', () => resolve());
-          lcpCandidate.addEventListener('error', () => resolve());
-        } else {
-          resolve();
-        }
-      },
-    };
-    await loaded;
+    await waitForLCP();
   }
 }
 
