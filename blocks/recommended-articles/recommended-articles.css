@@ -32,7 +32,7 @@ main .recommended-articles .article-cards {
 }
 
 /* small specific */
-main .recommended-articles-small-container .default-content-wrapper {
+main div.recommended-articles-small-content-wrapper {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -46,39 +46,36 @@ main div.recommended-articles-small-container .article-card .article-card-body p
 }
 
 @media (min-width: 700px) {
-  main .recommended-articles-small-container .default-content-wrapper,
-  main .recommended-articles-small-container .recommended-articles-small-content-wrapper {
+  main div.recommended-articles-small-content-wrapper {
     width: calc(100% - 64px);
     min-width: 568px;
     max-width: 790px;
   }
 
-  main .recommended-articles-small-container .default-content-wrapper p,
-  main .recommended-articles-small-container .recommended-articles-small-content-wrapper p {
+  main div.recommended-articles-small-content-wrapper p {
     max-width: unset;
   }
 }
 
 @media (min-width: 1200px) {
-  main .recommended-articles-small-container .default-content-wrapper,
-  main .recommended-articles-small-container .recommended-articles-small-content-wrapper {
+  main div.recommended-articles-small-content-wrapper {
     width: calc(100% - 64px);
     max-width: 1200px;
   }
 }
 
-main .recommended-articles-small-container .default-content-wrapper h3, main .recommended-articles-small-container .default-content-wrapper h2 {
+main div.recommended-articles-small-content-wrapper h3, main div.recommended-articles-small-content-wrapper h2 {
   min-width: 100%;
   margin-left: 0;
   margin-right: 0;
 }
 
-main .recommended-articles-small-container .default-content-wrapper p {
+main div.recommended-articles-small-content-wrapper p {
   margin: 0;
 }
 
 @media (min-width: 1200px) {
-  main .recommended-articles-small-container .default-content-wrapper h3, main .recommended-articles-small-container .default-content-wrapper h2 {
+  main div.recommended-articles-small-content-wrapper h3, main div.recommended-articles-small-content-wrapper h2 {
     margin-bottom: 0;
   }
 
