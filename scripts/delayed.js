@@ -119,6 +119,7 @@ function setLinksToGeo(location) {
   sessionStorage.setItem('blog-international', location.country);
   if (glocalCountries.includes(location.country)) {
     const prefix = `/${location.country.toLowerCase()}`;
+    console.log(`setting links to: ${prefix}`);
     document.querySelectorAll('a[href^="https://business.adobe.com"], a[href^="https://www.adobe.com"]').forEach((a) => {
       const url = new URL(a.href);
       if (!url.pathname.startsWith(prefix) || !url.pathname.startsWith('/blog')) {
@@ -130,9 +131,11 @@ function setLinksToGeo(location) {
 
 window.setLinksToGeo = setLinksToGeo;
 
-const intl = sessionStorage.getItem('blog-international') || getCookie('international');
-if (intl) {
-  setLinksToGeo({ country: intl });
-} else {
-  loadScript('https://geo2.adobe.com/json/?callback=setLinksToGeo');
-}
+setTimeout(() => {
+  const intl = sessionStorage.getItem('blog-international') || getCookie('international');
+  if (intl) {
+    setLinksToGeo({ country: intl });
+  } else {
+    loadScript('https://geo2.adobe.com/json/?callback=setLinksToGeo');
+  }
+}, 2000);
