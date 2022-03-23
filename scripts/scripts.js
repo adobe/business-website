@@ -732,6 +732,64 @@ function buildAutoBlocks(mainEl) {
   }
 }
 
+function unwrapBlock(block) {
+  const section = block.parentNode;
+  const els = [...section.children];
+  const blockSection = document.createElement('div');
+  const postBlockSection = document.createElement('div');
+  const nextSection = section.nextSibling;
+  section.parentNode.insertBefore(blockSection, nextSection);
+  section.parentNode.insertBefore(postBlockSection, nextSection);
+
+  let appendTo;
+  els.forEach((el) => {
+    if (el === block) appendTo = blockSection;
+    if (appendTo) {
+      appendTo.appendChild(el);
+      appendTo = postBlockSection;
+    }
+  });
+  if (!section.hasChildNodes()) {
+    section.remove();
+  }
+  if (!blockSection.hasChildNodes()) {
+    blockSection.remove();
+  }
+  if (!postBlockSection.hasChildNodes()) {
+    postBlockSection.remove();
+  }
+}
+
+function splitSections() {
+  document.querySelectorAll('main > div > div').forEach((block) => {
+    const blocksToSplit = ['article-header', 'article-feed', 'recommended-articles'];
+    if (blocksToSplit.includes(block.className)) {
+      unwrapBlock(block);
+    }
+  });
+}
+
+function removeEmptySections() {
+  document.querySelectorAll('main > div:empty').forEach((div) => {
+    div.remove();
+  });
+}
+
+/**
+ * Wraps each section in an additional {@code div}.
+ * @param {[Element]} sections The sections
+ */
+function wrapSections(sections) {
+  sections.forEach((div) => {
+    if (!div.id) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'section-wrapper';
+      div.parentNode.appendChild(wrapper);
+      wrapper.appendChild(div);
+    }
+  });
+}
+
 /**
  * Decorates the main element.
  * @param {Element} main The main element
@@ -739,11 +797,19 @@ function buildAutoBlocks(mainEl) {
 export function decorateMain(main) {
   // forward compatible pictures redecoration
   decoratePictures(main);
-  // forward compatible link rewriting
-  makeLinksRelative(main);
   buildAutoBlocks(main);
-  decorateSections(main);
+  splitSections();
+  removeEmptySections();
+  wrapSections(main.querySelectorAll(':scope > div'));
   decorateBlocks(main);
+
+  sampleRUM.observe(main.querySelectorAll('div[data-block-name]'));
+
+  /* hide h1 on homepage */
+  if (window.location.pathname.endsWith('/blog/')) {
+    const h1 = document.querySelector('h1');
+    if (h1) h1.classList.add('hidden');
+  }
 }
 
 function unhideBody(id) {
