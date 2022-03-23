@@ -115,9 +115,9 @@ function getCookie(cname) {
 }
 
 function setLinksToGeo(location) {
-  const glocalCountries = ['AU', 'UK'];
+  const glocalCountries = ['au', 'uk'];
   sessionStorage.setItem('blog-international', location.country);
-  if (glocalCountries.includes(location.country)) {
+  if (location.country && glocalCountries.includes(location.country.toLowerCase())) {
     const prefix = `/${location.country.toLowerCase()}`;
     console.log(`setting links to: ${prefix}`);
     document.querySelectorAll('a[href^="https://business.adobe.com"], a[href^="https://www.adobe.com"]').forEach((a) => {
