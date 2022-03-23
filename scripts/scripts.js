@@ -783,7 +783,7 @@ function wrapSections(sections) {
   sections.forEach((div) => {
     if (!div.id) {
       const wrapper = document.createElement('div');
-      wrapper.className = 'section-wrapper';
+      wrapper.className = 'section';
       div.parentNode.appendChild(wrapper);
       wrapper.appendChild(div);
     }
