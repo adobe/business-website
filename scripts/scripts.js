@@ -512,7 +512,7 @@ initHlx();
  */
 
 const LCP_BLOCKS = ['featured-article', 'article-header'];
-const RUM_GENERATION = 'project-1'; // add your RUM generation information here
+window.RUM_GENERATION = 'biz-gen3'; // add your RUM generation information here
 const PRODUCTION_DOMAINS = [];
 
 sampleRUM.mediaobserver = (window.IntersectionObserver) ? new IntersectionObserver((entries) => {
@@ -572,7 +572,6 @@ sampleRUM.targetselector = (element) => {
   return value;
 };
 
-window.RUM_GENERATION = 'biz-gen2';
 sampleRUM('top');
 window.addEventListener('load', () => sampleRUM('load'));
 document.addEventListener('click', (event) => {
