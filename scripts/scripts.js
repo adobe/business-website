@@ -10,6 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
+const usp = new URLSearchParams(window.location.search);
+
+// feature flag for alloy
+const alloy = (
+  usp.get('alloy') === 'on'
+  || localStorage.getItem('alloy') === 'on'
+);
+// permanently on
+// const alloy = true;
+
 /**
  * log RUM if part of the sample.
  * @param {string} checkpoint identifies the checkpoint in funnel
@@ -20,7 +30,6 @@ export function sampleRUM(checkpoint, data = {}) {
   try {
     window.hlx = window.hlx || {};
     if (!window.hlx.rum) {
-      const usp = new URLSearchParams(window.location.search);
       const weight = (usp.get('rum') === 'on') ? 1 : 100; // with parameter, weight is 1. Defaults to 100.
       // eslint-disable-next-line no-bitwise
       const hashCode = (s) => s.split('').reduce((a, b) => (((a << 5) - a) + b.charCodeAt(0)) | 0, 0);
@@ -987,70 +996,54 @@ function hideBody(id) {
   }
 }
 
-/**
- * sets digital data
- */
-
-async function setDigitalData(digitaldata) {
-  digitaldata.page.pageInfo.category = 'unknown: before instrumentation.json';
-  const resp = await fetch('/blog/instrumentation.json');
-  const json = await resp.json();
-  delete digitaldata.page.pageInfo.category;
-
-  const digitalDataMap = json.digitaldata.data;
-  digitalDataMap.forEach((mapping) => {
-    const metaValue = getMetadata(mapping.metadata);
-    if (metaValue) {
-      // eslint-disable-next-line no-underscore-dangle
-      digitaldata._set(mapping.digitaldata, metaValue);
-    }
-  });
-
-  const digitalDataLists = json['digitaldata-lists'].data;
-  digitalDataLists.forEach((listEntry) => {
-    const metaValue = getMetadata(listEntry.metadata);
-    if (metaValue) {
-      // eslint-disable-next-line no-underscore-dangle
-      let listValue = digitaldata._get(listEntry.digitaldata) || '';
-      const name = listEntry['list-item-name'];
-      const metaValueArr = listEntry.delimiter ? metaValue.split(listEntry.delimiter) : [metaValue];
-      metaValueArr.forEach((value) => {
-        const escapedValue = value.split('|').join(); // well, well...
-        listValue += `${listValue ? ' | ' : ''}${name}: ${escapedValue}`;
-      });
-      // eslint-disable-next-line no-underscore-dangle
-      digitaldata._set(listEntry.digitaldata, listValue);
-    }
-  });
-}
-
 async function loadMartech() {
-  const usp = new URLSearchParams(window.location.search);
-  const alloy = usp.get('alloy');
-
-  // set data layer properties
-  window.digitalData = {
-    page: {
-      pageInfo: {
-        language: LANG_LOC[getLanguage()] || '',
-        category: 'unknown: before setDigitalData()',
-      },
-    },
-  };
-
   const target = getMetadata('target').toLocaleLowerCase() === 'on';
+  const prod = window.location.href.includes('//business.adobe.com/blogs/');
 
-  // load bootstrap script
-  let bootstrapScriptUrl = 'https://www.adobe.com/marketingtech/';
-  if (alloy === 'on') {
+  // new alloy implementation
+  if (alloy) {
+    window.alloy_all = {
+      xdm: {
+        _adobe_corpnew: {
+          digitalData: {
+            page: {
+              pageInfo: {
+                language: LANG_LOC[getLanguage()] || '',
+                legacyMarketSegment: 'COM',
+              },
+            },
+          },
+        },
+      },
+    };
+    window.alloy_deferred = {
+      xdm: {
+        _adobe_corpnew: {
+          digitalData: {
+          },
+        },
+      },
+      promises: [],
+    };
     window.marketingtech = {
       adobe: {
         target,
+        alloy: {
+          edgeConfigId: (
+            prod
+              ? '65acfd54-d9fe-405c-ba04-8342d6782ab0'
+              : '7d1ba912-10b6-4384-a8ff-4bfb1178e869'
+          ),
+        },
         launch: {
-          url: 'https://assets.adobedtm.com/d4d114c60e50/cf25c910a920/launch-1bba233684fa-development.js',
+          url: (
+            prod
+              ? 'https://assets.adobedtm.com/d4d114c60e50/cf25c910a920/launch-9e8f94c77339.min.js'
+              : 'https://assets.adobedtm.com/d4d114c60e50/cf25c910a920/launch-1bba233684fa-development.js'
+          ),
           load: (l) => {
             const delay = () => (
-              setTimeout(l, 3500)
+              setTimeout(l, 4000)
             );
             if (document.readyState === 'complete') {
               delay();
@@ -1061,8 +1054,98 @@ async function loadMartech() {
         },
       },
     };
-    bootstrapScriptUrl += 'main.alloy.min.js';
+    window.alloy_deferred.promises.push(new Promise((resolve) => {
+      loadScript(`https://www.adobe.com/marketingtech/${(
+        prod ? 'main.alloy.min.js' : 'main.alloy.js'
+      )}`, async () => {
+        const resp = await fetch('/blog/instrumentation.json');
+        const json = await resp.json();
+        const get = (obj, str) => {
+          const segs = str.split('');
+          let temp = obj;
+          let i = 0;
+          const il = segs.length - 1;
+          // get to the path
+          // eslint-disable-next-line no-plusplus
+          for (; i < il; i++) {
+            const seg = segs[i];
+            if (!temp[seg]) {
+              return undefined;
+            }
+            temp = temp[seg];
+          }
+          // get the value
+          return temp[segs[i]];
+        };
+        const set = (obj, str, value) => {
+          const segs = str.split('');
+          let temp = obj;
+          let i = 0;
+          const il = segs.length - 1;
+          // get to the path
+          // eslint-disable-next-line no-plusplus
+          for (; i < il; i++) {
+            const seg = segs[i];
+            temp[seg] = temp[seg] || {};
+            temp = temp[seg];
+          }
+          // set the value
+          temp[segs[i]] = value;
+          return obj;
+        };
+        // set digitalData
+        const digitalDataMap = json.digitaldata.data;
+        digitalDataMap.forEach((mapping) => {
+          const metaValue = getMetadata(mapping.metadata);
+          if (metaValue) {
+            set(
+              // eslint-disable-next-line no-underscore-dangle
+              window.alloy_deferred.xdm._adobe_corpnew.digitalData,
+              mapping.digitaldata,
+              metaValue,
+            );
+          }
+        });
+        // set lists
+        const digitalDataLists = json['digitaldata-lists'].data;
+        digitalDataLists.forEach((listEntry) => {
+          const metaValue = getMetadata(listEntry.metadata);
+          if (metaValue) {
+            let listValue = get(
+              // eslint-disable-next-line no-underscore-dangle
+              window.alloy_deferred.xdm._adobe_corpnew.digitalData,
+              listEntry.digitaldata,
+            ) || '';
+            const name = listEntry['list-item-name'];
+            const metaValueArr = listEntry.delimiter
+              ? metaValue.split(listEntry.delimiter)
+              : [metaValue];
+            metaValueArr.forEach((value) => {
+              const escapedValue = value.split('|').join(); // well, well...
+              listValue += `${listValue ? ' | ' : ''}${name}: ${escapedValue}`;
+            });
+            set(
+              // eslint-disable-next-line no-underscore-dangle
+              window.alloy_deferred.xdm._adobe_corpnew.digitalData,
+              listEntry.digitaldata,
+              listValue,
+            );
+          }
+        });
+        resolve();
+      });
+    }));
+
+  // legacy implementation
   } else {
+    window.digitalData = {
+      page: {
+        pageInfo: {
+          language: LANG_LOC[getLanguage()] || '',
+          category: 'unknown: before setDigitalData()',
+        },
+      },
+    };
     window.marketingtech = {
       adobe: {
         target,
@@ -1074,12 +1157,40 @@ async function loadMartech() {
       },
     };
     window.targetGlobalSettings = window.targetGlobalSettings || {};
-    bootstrapScriptUrl += 'main.min.js';
+    loadScript('https://www.adobe.com/marketingtech/main.min.js', async () => {
+      const digitaldata = window.digitalData;
+      digitaldata.page.pageInfo.category = 'unknown: before instrumentation.json';
+      const resp = await fetch('/blog/instrumentation.json');
+      const json = await resp.json();
+      delete digitaldata.page.pageInfo.category;
+      const digitalDataMap = json.digitaldata.data;
+      digitalDataMap.forEach((mapping) => {
+        const metaValue = getMetadata(mapping.metadata);
+        if (metaValue) {
+          // eslint-disable-next-line no-underscore-dangle
+          digitaldata._set(mapping.digitaldata, metaValue);
+        }
+      });
+      const digitalDataLists = json['digitaldata-lists'].data;
+      digitalDataLists.forEach((listEntry) => {
+        const metaValue = getMetadata(listEntry.metadata);
+        if (metaValue) {
+          // eslint-disable-next-line no-underscore-dangle
+          let listValue = digitaldata._get(listEntry.digitaldata) || '';
+          const name = listEntry['list-item-name'];
+          const metaValueArr = listEntry.delimiter
+            ? metaValue.split(listEntry.delimiter)
+            : [metaValue];
+          metaValueArr.forEach((value) => {
+            const escapedValue = value.split('|').join(); // well, well...
+            listValue += `${listValue ? ' | ' : ''}${name}: ${escapedValue}`;
+          });
+          // eslint-disable-next-line no-underscore-dangle
+          digitaldata._set(listEntry.digitaldata, listValue);
+        }
+      });
+    });
   }
-
-  loadScript(bootstrapScriptUrl, () => {
-    setDigitalData(window.digitalData);
-  });
 }
 
 /**
@@ -1208,7 +1319,6 @@ async function loadLazy() {
 function loadDelayed() {
   /* trigger delayed.js load */
   const delayedScript = '/scripts/delayed.js';
-  const usp = new URLSearchParams(window.location.search);
   const delayed = usp.get('delayed');
 
   if (!(delayed === 'off' || document.querySelector(`head script[src="${delayedScript}"]`))) {
@@ -1230,7 +1340,7 @@ async function decoratePage() {
   loadDelayed();
 }
 window.hlx = window.hlx || {};
-window.hlx.lighthouse = new URLSearchParams(window.location.search).get('lighthouse') === 'on';
+window.hlx.lighthouse = usp.get('lighthouse') === 'on';
 
 decoratePage();
 
@@ -1251,7 +1361,6 @@ function setHelixEnv(name, overrides) {
 function displayEnv() {
   try {
     /* setup based on URL Params */
-    const usp = new URLSearchParams(window.location.search);
     if (usp.has('helix-env')) {
       const env = usp.get('helix-env');
       setHelixEnv(env);
