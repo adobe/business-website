@@ -998,7 +998,10 @@ function hideBody(id) {
 
 async function loadMartech() {
   const target = getMetadata('target').toLocaleLowerCase() === 'on';
-  const prod = window.location.href.includes('//business.adobe.com/blogs/');
+  const prod = (
+    window.location.hostname === 'business.adobe.com' && 
+    usp.get('alloy-env') !== 'qa'
+  );
 
   // new alloy implementation
   if (alloy) {
@@ -1199,9 +1202,16 @@ async function loadMartech() {
 async function loadEager() {
   const main = document.querySelector('main');
   if (main) {
-    const bodyHideStyleId = 'at-body-style';
+    const bodyHideStyleId = (
+      alloy
+      ? 'alloy-prehiding'
+      : 'at-body-style'
+    );
     decorateMain(main);
     document.querySelector('body').classList.add('appear');
+    if (alloy) {
+      document.querySelector('body').classList.add('personalization-container');
+    }
     const target = getMetadata('target').toLocaleLowerCase() === 'on';
     if (target) {
       hideBody(bodyHideStyleId);
