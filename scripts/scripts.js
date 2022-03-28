@@ -999,8 +999,8 @@ function hideBody(id) {
 async function loadMartech() {
   const target = getMetadata('target').toLocaleLowerCase() === 'on';
   const prod = (
-    window.location.hostname === 'business.adobe.com' && 
-    usp.get('alloy-env') !== 'qa'
+    window.location.hostname === 'business.adobe.com'
+    && usp.get('alloy-env') !== 'qa'
   );
 
   // new alloy implementation
@@ -1204,8 +1204,8 @@ async function loadEager() {
   if (main) {
     const bodyHideStyleId = (
       alloy
-      ? 'alloy-prehiding'
-      : 'at-body-style'
+        ? 'alloy-prehiding'
+        : 'at-body-style'
     );
     decorateMain(main);
     document.querySelector('body').classList.add('appear');
