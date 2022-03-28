@@ -10,16 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-const usp = new URLSearchParams(window.location.search);
-
-// feature flag for alloy
-const alloy = (
-  usp.get('alloy') === 'on'
-  || localStorage.getItem('alloy') === 'on'
-);
-// permanently on
-// const alloy = true;
-
 /**
  * log RUM if part of the sample.
  * @param {string} checkpoint identifies the checkpoint in funnel
@@ -30,6 +20,7 @@ export function sampleRUM(checkpoint, data = {}) {
   try {
     window.hlx = window.hlx || {};
     if (!window.hlx.rum) {
+      const usp = new URLSearchParams(window.location.search);
       const weight = (usp.get('rum') === 'on') ? 1 : 100; // with parameter, weight is 1. Defaults to 100.
       // eslint-disable-next-line no-bitwise
       const hashCode = (s) => s.split('').reduce((a, b) => (((a << 5) - a) + b.charCodeAt(0)) | 0, 0);
@@ -519,6 +510,16 @@ initHlx();
  * Edit above at your own risk
  * ------------------------------------------------------------
  */
+
+const usp = new URLSearchParams(window.location.search);
+
+// feature flag for alloy
+const alloy = (
+  usp.get('alloy') === 'on'
+  || localStorage.getItem('alloy') === 'on'
+);
+// permanently on
+// const alloy = true;
 
 const LCP_BLOCKS = ['featured-article', 'article-header'];
 window.RUM_GENERATION = 'biz-gen3'; // add your RUM generation information here
