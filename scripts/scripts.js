@@ -511,6 +511,16 @@ initHlx();
  * ------------------------------------------------------------
  */
 
+const usp = new URLSearchParams(window.location.search);
+
+// feature flag for alloy
+const alloy = (
+  usp.get('alloy') === 'on'
+  || localStorage.getItem('alloy') === 'on'
+);
+// permanently on
+// const alloy = true;
+
 const LCP_BLOCKS = ['featured-article', 'article-header'];
 window.RUM_GENERATION = 'biz-gen3'; // add your RUM generation information here
 const PRODUCTION_DOMAINS = [];
@@ -837,9 +847,16 @@ function hideBody(id) {
 async function loadEager() {
   const main = document.querySelector('main');
   if (main) {
-    const bodyHideStyleId = 'at-body-style';
+    const bodyHideStyleId = (
+      alloy
+        ? 'alloy-prehiding'
+        : 'at-body-style'
+    );
     decorateMain(main);
     document.querySelector('body').classList.add('appear');
+    if (alloy) {
+      document.querySelector('body').classList.add('personalization-container');
+    }
     const target = getMetadata('target');
     if (target && target.toLocaleLowerCase() === 'on') {
       hideBody(bodyHideStyleId);
@@ -911,65 +928,91 @@ export function getLanguage() {
 }
 
 /**
- * sets digital data
+ * Get the current Helix environment
+ * @returns {Object} the env object
  */
-async function setDigitalData(digitaldata) {
-  digitaldata.page.pageInfo.category = 'unknown: before instrumentation.json';
-  const resp = await fetch('/blog/instrumentation.json');
-  const json = await resp.json();
-  delete digitaldata.page.pageInfo.category;
+export function getHelixEnv() {
+  let envName = sessionStorage.getItem('helix-env');
+  if (!envName) envName = 'prod';
+  const envs = {
+    stage: {
+      ims: 'stg1',
+      adobeIO: 'cc-collab-stage.adobe.io',
+      adminconsole: 'stage.adminconsole.adobe.com',
+      account: 'stage.account.adobe.com',
+    },
+    prod: {
+      ims: 'prod',
+      adobeIO: 'cc-collab.adobe.io',
+      adminconsole: 'adminconsole.adobe.com',
+      account: 'account.adobe.com',
+    },
+  };
+  const env = envs[envName];
 
-  const digitalDataMap = json.digitaldata.data;
-  digitalDataMap.forEach((mapping) => {
-    const metaValue = getMetadata(mapping.metadata);
-    if (metaValue) {
-      // eslint-disable-next-line no-underscore-dangle
-      digitaldata._set(mapping.digitaldata, metaValue);
-    }
-  });
+  const overrideItem = sessionStorage.getItem('helix-env-overrides');
+  if (overrideItem) {
+    const overrides = JSON.parse(overrideItem);
+    const keys = Object.keys(overrides);
+    env.overrides = keys;
 
-  const digitalDataLists = json['digitaldata-lists'].data;
-  digitalDataLists.forEach((listEntry) => {
-    const metaValue = getMetadata(listEntry.metadata);
-    if (metaValue) {
-      // eslint-disable-next-line no-underscore-dangle
-      let listValue = digitaldata._get(listEntry.digitaldata) || '';
-      const name = listEntry['list-item-name'];
-      const metaValueArr = listEntry.delimiter ? metaValue.split(listEntry.delimiter) : [metaValue];
-      metaValueArr.forEach((value) => {
-        const escapedValue = value.split('|').join(); // well, well...
-        listValue += `${listValue ? ' | ' : ''}${name}: ${escapedValue}`;
-      });
-      // eslint-disable-next-line no-underscore-dangle
-      digitaldata._set(listEntry.digitaldata, listValue);
-    }
-  });
+    keys.forEach((value) => {
+      env[value] = overrides[value];
+    });
+  }
+
+  if (env) {
+    env.name = envName;
+  }
+  return env;
 }
 
 async function loadMartech() {
-  const usp = new URLSearchParams(window.location.search);
-  const alloy = usp.get('alloy');
-
-  // set data layer properties
-  window.digitalData = {
-    page: {
-      pageInfo: {
-        language: LANG_LOC[getLanguage()] || '',
-        category: 'unknown: before setDigitalData()',
-      },
-    },
-  };
-
   const target = getMetadata('target').toLocaleLowerCase() === 'on';
+  const env = getHelixEnv();
+  const prod = env.name === 'prod';
 
-  // load bootstrap script
-  let bootstrapScriptUrl = 'https://www.adobe.com/marketingtech/';
-  if (alloy === 'on') {
+  // new alloy implementation
+  if (alloy) {
+    window.alloy_all = {
+      xdm: {
+        _adobe_corpnew: {
+          digitalData: {
+            page: {
+              pageInfo: {
+                language: LANG_LOC[getLanguage()] || '',
+                legacyMarketSegment: 'COM',
+              },
+            },
+          },
+        },
+      },
+    };
+    window.alloy_deferred = {
+      xdm: {
+        _adobe_corpnew: {
+          digitalData: {
+          },
+        },
+      },
+      promises: [],
+    };
     window.marketingtech = {
       adobe: {
         target,
+        alloy: {
+          edgeConfigId: (
+            prod
+              ? '65acfd54-d9fe-405c-ba04-8342d6782ab0'
+              : '7d1ba912-10b6-4384-a8ff-4bfb1178e869'
+          ),
+        },
         launch: {
-          url: 'https://assets.adobedtm.com/d4d114c60e50/cf25c910a920/launch-1bba233684fa-development.js',
+          url: (
+            prod
+              ? 'https://assets.adobedtm.com/d4d114c60e50/cf25c910a920/launch-9e8f94c77339.min.js'
+              : 'https://assets.adobedtm.com/d4d114c60e50/cf25c910a920/launch-1bba233684fa-development.js'
+          ),
           load: (l) => {
             const delay = () => (
               setTimeout(l, 3500)
@@ -983,8 +1026,98 @@ async function loadMartech() {
         },
       },
     };
-    bootstrapScriptUrl += 'main.alloy.min.js';
+    window.alloy_deferred.promises.push(new Promise((resolve) => {
+      loadScript(`https://www.adobe.com/marketingtech/${(
+        prod ? 'main.alloy.min.js' : 'main.alloy.js'
+      )}`, async () => {
+        const resp = await fetch('/blog/instrumentation.json');
+        const json = await resp.json();
+        const get = (obj, str) => {
+          const segs = str.split('');
+          let temp = obj;
+          let i = 0;
+          const il = segs.length - 1;
+          // get to the path
+          // eslint-disable-next-line no-plusplus
+          for (; i < il; i++) {
+            const seg = segs[i];
+            if (!temp[seg]) {
+              return undefined;
+            }
+            temp = temp[seg];
+          }
+          // get the value
+          return temp[segs[i]];
+        };
+        const set = (obj, str, value) => {
+          const segs = str.split('');
+          let temp = obj;
+          let i = 0;
+          const il = segs.length - 1;
+          // get to the path
+          // eslint-disable-next-line no-plusplus
+          for (; i < il; i++) {
+            const seg = segs[i];
+            temp[seg] = temp[seg] || {};
+            temp = temp[seg];
+          }
+          // set the value
+          temp[segs[i]] = value;
+          return obj;
+        };
+        // set digitalData
+        const digitalDataMap = json.digitaldata.data;
+        digitalDataMap.forEach((mapping) => {
+          const metaValue = getMetadata(mapping.metadata);
+          if (metaValue) {
+            set(
+              // eslint-disable-next-line no-underscore-dangle
+              window.alloy_deferred.xdm._adobe_corpnew.digitalData,
+              mapping.digitaldata,
+              metaValue,
+            );
+          }
+        });
+        // set lists
+        const digitalDataLists = json['digitaldata-lists'].data;
+        digitalDataLists.forEach((listEntry) => {
+          const metaValue = getMetadata(listEntry.metadata);
+          if (metaValue) {
+            let listValue = get(
+              // eslint-disable-next-line no-underscore-dangle
+              window.alloy_deferred.xdm._adobe_corpnew.digitalData,
+              listEntry.digitaldata,
+            ) || '';
+            const name = listEntry['list-item-name'];
+            const metaValueArr = listEntry.delimiter
+              ? metaValue.split(listEntry.delimiter)
+              : [metaValue];
+            metaValueArr.forEach((value) => {
+              const escapedValue = value.split('|').join(); // well, well...
+              listValue += `${listValue ? ' | ' : ''}${name}: ${escapedValue}`;
+            });
+            set(
+              // eslint-disable-next-line no-underscore-dangle
+              window.alloy_deferred.xdm._adobe_corpnew.digitalData,
+              listEntry.digitaldata,
+              listValue,
+            );
+          }
+        });
+        resolve();
+      });
+    }));
+
+  // legacy implementation
   } else {
+    window.digitalData = {
+      page: {
+        pageInfo: {
+          language: LANG_LOC[getLanguage()] || '',
+          category: 'unknown: before setDigitalData()',
+        },
+      },
+    };
     window.marketingtech = {
       adobe: {
         target,
@@ -996,12 +1129,40 @@ async function loadMartech() {
       },
     };
     window.targetGlobalSettings = window.targetGlobalSettings || {};
-    bootstrapScriptUrl += 'main.min.js';
+    loadScript('https://www.adobe.com/marketingtech/main.min.js', async () => {
+      const digitaldata = window.digitalData;
+      digitaldata.page.pageInfo.category = 'unknown: before instrumentation.json';
+      const resp = await fetch('/blog/instrumentation.json');
+      const json = await resp.json();
+      delete digitaldata.page.pageInfo.category;
+      const digitalDataMap = json.digitaldata.data;
+      digitalDataMap.forEach((mapping) => {
+        const metaValue = getMetadata(mapping.metadata);
+        if (metaValue) {
+          // eslint-disable-next-line no-underscore-dangle
+          digitaldata._set(mapping.digitaldata, metaValue);
+        }
+      });
+      const digitalDataLists = json['digitaldata-lists'].data;
+      digitalDataLists.forEach((listEntry) => {
+        const metaValue = getMetadata(listEntry.metadata);
+        if (metaValue) {
+          // eslint-disable-next-line no-underscore-dangle
+          let listValue = digitaldata._get(listEntry.digitaldata) || '';
+          const name = listEntry['list-item-name'];
+          const metaValueArr = listEntry.delimiter
+            ? metaValue.split(listEntry.delimiter)
+            : [metaValue];
+          metaValueArr.forEach((value) => {
+            const escapedValue = value.split('|').join(); // well, well...
+            listValue += `${listValue ? ' | ' : ''}${name}: ${escapedValue}`;
+          });
+          // eslint-disable-next-line no-underscore-dangle
+          digitaldata._set(listEntry.digitaldata, listValue);
+        }
+      });
+    });
   }
-
-  loadScript(bootstrapScriptUrl, () => {
-    setDigitalData(window.digitalData);
-  });
 }
 
 async function loadfooterBanner(main) {
@@ -1204,7 +1365,6 @@ export async function fetchPlaceholders() {
  * @param {path} path to *.metadata.json
  * @returns {Object} containing sanitized meta data
  */
-
 async function getMetadataJson(path) {
   const resp = await fetch(path.split('.')[0]);
   const text = await resp.text();
@@ -1232,7 +1392,6 @@ async function getMetadataJson(path) {
  * @param {string} path indentifies article
  * @returns {object} article object
  */
-
 export async function getBlogArticle(path) {
   const json = await getMetadataJson(`${path}.metadata.json`);
   const meta = JSON.parse(json);
@@ -1264,46 +1423,6 @@ export function rewritePath(path) {
     newpath = newpath.replace(`/${r.from}/`, `/${r.to}/`);
   });
   return newpath;
-}
-
-/**
- * Get the current Helix environment
- * @returns {Object} the env object
- */
-export function getHelixEnv() {
-  let envName = sessionStorage.getItem('helix-env');
-  if (!envName) envName = 'prod';
-  const envs = {
-    stage: {
-      ims: 'stg1',
-      adobeIO: 'cc-collab-stage.adobe.io',
-      adminconsole: 'stage.adminconsole.adobe.com',
-      account: 'stage.account.adobe.com',
-    },
-    prod: {
-      ims: 'prod',
-      adobeIO: 'cc-collab.adobe.io',
-      adminconsole: 'adminconsole.adobe.com',
-      account: 'account.adobe.com',
-    },
-  };
-  const env = envs[envName];
-
-  const overrideItem = sessionStorage.getItem('helix-env-overrides');
-  if (overrideItem) {
-    const overrides = JSON.parse(overrideItem);
-    const keys = Object.keys(overrides);
-    env.overrides = keys;
-
-    keys.forEach((value) => {
-      env[value] = overrides[value];
-    });
-  }
-
-  if (env) {
-    env.name = envName;
-  }
-  return env;
 }
 
 export function debug(message) {
