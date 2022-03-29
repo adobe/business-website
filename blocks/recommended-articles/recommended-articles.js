@@ -7,7 +7,7 @@ import {
 
 async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
   if (recommendedArticlesEl.classList.contains('small')) {
-    recommendedArticlesEl.parentNode.querySelectorAll('a').forEach((aEl) => {
+    recommendedArticlesEl.closest('.recommended-articles-small-container').querySelectorAll('a').forEach((aEl) => {
       aEl.classList.add('button', 'primary', 'small', 'light');
     });
     recommendedArticlesEl.parentNode.classList.add('recommended-articles-small-content-wrapper');
@@ -29,7 +29,7 @@ async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
       recommendedArticlesEl.append(articleCardsContainer);
     }
   }
-  recommendedArticlesEl.closest('.section-wrapper').classList.add('appear');
+  recommendedArticlesEl.closest('.section').classList.add('appear');
   if (!articleCardsContainer.hasChildNodes()) {
     recommendedArticlesEl.parentNode.parentNode.remove();
   }

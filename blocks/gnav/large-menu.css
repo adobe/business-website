@@ -1,0 +1,124 @@
+.gnav-navitem.large-menu h5 {
+    font-size: 14px;
+    color: #4B4B4B;
+  }
+  
+  .gnav-navitem.large-menu h5 {
+    border-bottom: 1px solid #E1E1E1;
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 5px;
+  }
+  
+  .gnav-navitem.has-Menu.is-Open .gnav-menu-container,
+  .gnav-navitem.has-Menu.is-Open .gnav-navitem-menu.large-Variant:scope > div {
+    display: flex;
+    flex-flow: column wrap;
+    padding: 20px 20px 30px;
+  }
+  
+  .gnav-navitem.has-Menu.is-Open .gnav-navitem-menu.large-Variant {
+    padding-top: 0;
+    left: 0;
+    right: 0;
+  }
+  
+  .gnav-navitem.has-Menu.is-Open .gnav-navitem-menu.large-Variant > div > div > ul {
+    margin: 0;
+  }
+  
+  .gnav-navitem.has-Menu.is-Open .gnav-navitem-menu.large-Variant > div > div > h5 {
+    margin: 6px 6px 12px 12px;
+  }
+  
+  .gnav-navitem.large-menu .gnav-navitem-menu a {
+    padding: 16px 20px;
+  }
+  
+  .gnav-navitem.large-menu .gnav-navitem-menu strong a {
+    padding: 0 20px;
+  }
+  
+  .gnav-navitem.large-menu .link-group {
+    margin-top: 10px;
+  }
+  
+  .gnav-navitem.large-menu .link-group:first-of-type {
+    margin-top: 0;
+  }
+  
+  .gnav-navitem.large-menu .link-group a img{
+    width: 26px;
+    margin-right: 15px;
+  }
+  
+  .gnav-navitem.large-menu .link-group .link-block,
+  .gnav-navitem.large-menu .link-group .link-block picture {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+  }
+  
+  .gnav-navitem-menu a.link-block {
+    padding: 12px;
+  }
+  
+  .gnav-navitem.large-menu.gnav-navitem.has-Menu.is-Open .link-group .link-block div {
+    padding-left: 0;
+    line-height: 1.3;
+  }
+  
+  .gnav-navitem.large-menu .link-group .link-block p {
+    margin: 0;
+  }
+  
+  .gnav-navitem.large-menu .link-group .link-block  p:last-of-type {
+    font-size: 13px;
+    font-weight: 300;
+    color: #656565;
+  }
+  
+  @media (min-width: 1200px) {
+    .gnav-navitem.large-menu {
+      position: static;
+    }
+  
+    .gnav-navitem.large-menu .gnav-navitem-menu a.link-block,
+    .gnav-navitem.large-menu .gnav-navitem-menu a {
+      padding: 6px 20px;
+    }
+  
+    .gnav-navitem.has-Menu.is-Open .gnav-menu-container,
+    .gnav-navitem.has-Menu.is-Open .gnav-navitem-menu.large-Variant:scope > div {
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: space-between;
+        padding: 40px 20px 60px;
+        width: 1200px;
+        margin: 0 auto;
+    }
+  
+    .gnav-navitem.has-Menu.is-Open .gnav-navitem-menu.large-Variant > div div h5 {
+        margin: 0 0 0 20px;
+    }
+  
+    .gnav-navitem.has-Menu.is-Open .gnav-navitem-menu.large-Variant > div div ul + h5,
+    .gnav-navitem.has-Menu.is-Open .gnav-navitem-menu.large-Variant > div div h5 + h5,
+    .gnav-navitem.has-Menu.is-Open .gnav-navitem-menu.large-Variant > div div + h5 {
+        margin: 32px 0 0px 20px;
+    }
+  
+    .gnav-navitem.has-Menu.is-Open .gnav-navitem-menu.large-Variant > div > div:not(.gnav-promo) {
+        padding-left: 10px;
+    }
+    
+    .gnav-navitem.has-Menu.is-Open .gnav-navitem-menu > div div:first-child{
+        padding-left: 0;
+    }
+  }
+  
+  @media (min-width: 1440px) {
+    .gnav-navitem.has-Menu.is-Open .large-Variant .gnav-menu-container {
+      width: 1440px;
+    }
+  }
