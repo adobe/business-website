@@ -1,14 +1,6 @@
-const loadScript = (url, callback, type) => {
-  const head = document.querySelector('head');
-  const script = document.createElement('script');
-  script.src = url;
-  if (type) {
-    script.setAttribute('type', type);
-  }
-  head.append(script);
-  script.onload = callback;
-  return script;
-};
+import {
+  loadScript,
+} from '../../scripts/scripts.js';
 
 const getMarketoForm = async (name) => {
   let formData = false;
