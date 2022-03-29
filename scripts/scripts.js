@@ -970,7 +970,7 @@ export function getHelixEnv() {
 async function loadMartech() {
   const target = getMetadata('target').toLocaleLowerCase() === 'on';
   const env = getHelixEnv();
-  const prod = env.name === 'prod';
+  const prod = env.name === 'prod' && usp.get('alloy-env') !== 'stage';
 
   // new alloy implementation
   if (alloy) {
