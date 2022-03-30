@@ -1033,7 +1033,7 @@ async function loadMartech() {
         const resp = await fetch('/blog/instrumentation.json');
         const json = await resp.json();
         const get = (obj, str) => {
-          const segs = str.split('');
+          const segs = str.split('.');
           let temp = obj;
           let i = 0;
           const il = segs.length - 1;
@@ -1050,7 +1050,7 @@ async function loadMartech() {
           return temp[segs[i]];
         };
         const set = (obj, str, value) => {
-          const segs = str.split('');
+          const segs = str.split('.');
           let temp = obj;
           let i = 0;
           const il = segs.length - 1;
