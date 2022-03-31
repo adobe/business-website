@@ -1,14 +1,20 @@
 import {
   loadScript,
+  fetchMarketoFormConfig,
 } from '../../scripts/scripts.js';
 
 const getMarketoForm = async (name) => {
   let formData = false;
-  const resp = await fetch('/blog/marketo-form.json');
-  const json = await resp.json();
-  json.data.forEach((formItem) => {
+  const marketoFormConfig = await fetchMarketoFormConfig();
+  marketoFormConfig.forEach((formItem) => {
     if (name.toLowerCase() === formItem.name.toLowerCase()) {
       formData = formItem;
+      if (formData.setValues) {
+        formData.setValues = JSON.parse(formData.setValues);
+      }
+      if (formData.addHiddenFields) {
+        formData.addHiddenFields = JSON.parse(formData.addHiddenFields);
+      }
       // eslint-disable-next-line no-useless-return
       return;
     }
@@ -21,9 +27,16 @@ const loadEmbed = async (block) => {
   const formData = await getMarketoForm(formName);
   if (formData) {
     block.innerHTML = '<form id="mktoForm_6"></form>';
-    loadScript(`${formData.baseUrl}/js/forms2/js/forms2.min.js`, () => {
+    loadScript(`${formData.baseURL}/js/forms2/js/forms2.min.js`, () => {
       // eslint-disable-next-line no-undef
-      MktoForms2.loadForm(formData.baseUrl, formData.munchkinId, formData.formId);
+      MktoForms2.loadForm(formData.baseURL, formData.munchkinId, formData.formId, (form) => {
+        if (formData.setValues) {
+          form.setValues(formData.setValues);
+        }
+        if (formData.addHiddenFields) {
+          form.addHiddenFields(formData.addHiddenFields);
+        }
+      });
       block.classList.add('is-loaded');
     });
   }

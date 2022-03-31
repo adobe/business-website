@@ -1360,6 +1360,19 @@ export async function fetchPlaceholders() {
 }
 
 /**
+ * fetches the marketo form config from the spreadsheet.
+ * @returns {object} localized variables
+ */
+export async function fetchMarketoFormConfig() {
+  if (!window.marketoFormConfig) {
+    const resp = await fetch('/marketo-form.json');
+    const json = await resp.json();
+    window.marketoFormConfig = json.data;
+  }
+  return window.marketoFormConfig;
+}
+
+/**
  * forward looking *.metadata.json experiment
  * fetches metadata.json of page
  * @param {path} path to *.metadata.json
