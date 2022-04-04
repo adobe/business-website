@@ -1217,7 +1217,7 @@ async function loadfooterBanner(main) {
     const bannerCTABlock = responseEl.querySelector('div[class^="banner-cta"]');
     main.append(responseEl);
     const header = document.querySelector('header');
-    header.addEventListener('gnav.init', () => {
+    header.addEventListener('gnav:init', () => {
       const gnavCta = header.querySelector('.gnav-cta a');
       if (gnavCta) {
         bannerCTABlock.querySelector('a').href = gnavCta.href;
