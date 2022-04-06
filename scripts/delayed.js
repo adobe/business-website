@@ -115,10 +115,12 @@ function getCookie(cname) {
 }
 
 function setLinksToGeo(location) {
-  const glocalCountries = ['AU', 'UK'];
+  const glocalCountries = ['au', 'uk'];
   sessionStorage.setItem('blog-international', location.country);
-  if (glocalCountries.includes(location.country)) {
+  if (location.country && glocalCountries.includes(location.country.toLowerCase())) {
     const prefix = `/${location.country.toLowerCase()}`;
+    // eslint-disable-next-line no-console
+    console.log(`setting links to: ${prefix}`);
     document.querySelectorAll('a[href^="https://business.adobe.com"], a[href^="https://www.adobe.com"]').forEach((a) => {
       const url = new URL(a.href);
       if (!url.pathname.startsWith(prefix) || !url.pathname.startsWith('/blog')) {
@@ -130,9 +132,11 @@ function setLinksToGeo(location) {
 
 window.setLinksToGeo = setLinksToGeo;
 
-const intl = sessionStorage.getItem('blog-international') || getCookie('international');
-if (intl) {
-  setLinksToGeo({ country: intl });
-} else {
-  loadScript('http://geo2.adobe.com/json/?callback=setLinksToGeo');
-}
+setTimeout(() => {
+  const intl = sessionStorage.getItem('blog-international') || getCookie('international');
+  if (intl) {
+    setLinksToGeo({ country: intl });
+  } else {
+    loadScript('https://geo2.adobe.com/json/?callback=setLinksToGeo');
+  }
+}, 2000);

@@ -23,7 +23,7 @@ function decorateButtons(el) {
 }
 
 export default function init(block) {
-  block.closest('.section-wrapper').classList.add('banner-cta-container');
+  block.closest('.section').classList.add('banner-cta-container');
   const children = block.querySelectorAll(':scope > div');
   const foreground = children[children.length - 1];
   if (children.length > 1) {

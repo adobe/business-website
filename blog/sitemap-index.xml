@@ -8,4 +8,16 @@
 <sitemap>
 <loc>https://business.adobe.com/blog/sitemap-au.xml</loc>
 </sitemap>
+<sitemap>
+<loc>https://business.adobe.com/blog/sitemap-fr.xml</loc>
+</sitemap>
+<sitemap>
+<loc>https://business.adobe.com/blog/sitemap-de.xml</loc>
+</sitemap>
+<sitemap>
+<loc>https://business.adobe.com/blog/sitemap-jp.xml</loc>
+</sitemap>
+<sitemap>
+<loc>https://business.adobe.com/blog/sitemap-kr.xml</loc>
+</sitemap>
 </sitemapindex>
