@@ -853,10 +853,11 @@ async function loadEager() {
     );
     decorateMain(main);
     document.querySelector('body').classList.add('appear');
+    let target = getMetadata('target');
     if (alloy) {
       document.querySelector('body').classList.add('personalization-container');
+      target = true;
     }
-    const target = getMetadata('target');
     if (target && target.toLocaleLowerCase() === 'on') {
       hideBody(bodyHideStyleId);
       setTimeout(() => {
