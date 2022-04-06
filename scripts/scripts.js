@@ -967,8 +967,7 @@ export function getHelixEnv() {
 }
 
 async function loadMartech() {
-  // const target = getMetadata('target').toLocaleLowerCase() === 'on';
-  const target = true;
+  const target = getMetadata('target').toLocaleLowerCase() === 'on';
   const env = getHelixEnv();
   const prod = env.name === 'prod' && usp.get('alloy-env') !== 'stage';
 
@@ -999,7 +998,8 @@ async function loadMartech() {
     };
     window.marketingtech = {
       adobe: {
-        target,
+        // NOTE: enable target everywhere all the time
+        target: true,
         alloy: {
           edgeConfigId: (
             prod
