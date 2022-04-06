@@ -842,8 +842,8 @@ function hideBody() {
   );
   style.innerHTML = (
     alloy
-      ? 'body{visibility: hidden !important}'
-      : '.personalization-container{opacity:0.01 !important}'
+      ? '.personalization-container{opacity:0.01 !important}'
+      : 'body{visibility: hidden !important}'
   );
 
   try {
