@@ -820,18 +820,31 @@ export function decorateMain(main) {
   }
 }
 
-function unhideBody(id) {
+function unhideBody() {
   try {
+    const id = (
+      alloy
+        ? 'alloy-prehiding'
+        : 'at-body-style'
+    );
     document.head.removeChild(document.getElementById(id));
   } catch (e) {
     // nothing
   }
 }
 
-function hideBody(id) {
+function hideBody() {
   const style = document.createElement('style');
-  style.id = id;
-  style.innerHTML = 'body{visibility: hidden !important}';
+  style.id = (
+    alloy
+      ? 'alloy-prehiding'
+      : 'at-body-style'
+  );
+  style.innerHTML = (
+    alloy
+      ? 'body{visibility: hidden !important}'
+      : '.personalization-container{opacity:0.01 !important}'
+  );
 
   try {
     document.head.appendChild(style);
@@ -846,11 +859,6 @@ function hideBody(id) {
 async function loadEager() {
   const main = document.querySelector('main');
   if (main) {
-    const bodyHideStyleId = (
-      alloy
-        ? 'alloy-prehiding'
-        : 'at-body-style'
-    );
     decorateMain(main);
     document.querySelector('body').classList.add('appear');
     let target = getMetadata('target').toLocaleLowerCase() === 'on';
@@ -859,9 +867,9 @@ async function loadEager() {
       target = true;
     }
     if (target) {
-      hideBody(bodyHideStyleId);
+      hideBody();
       setTimeout(() => {
-        unhideBody(bodyHideStyleId);
+        unhideBody();
       }, 3000);
     }
     await waitForLCP();
