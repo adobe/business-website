@@ -514,12 +514,12 @@ initHlx();
 const usp = new URLSearchParams(window.location.search);
 
 // feature flag for alloy
-const alloy = (
-  usp.get('alloy') === 'on'
-  || localStorage.getItem('alloy') === 'on'
-);
+// const alloy = (
+//   usp.get('alloy') === 'on'
+//   || localStorage.getItem('alloy') === 'on'
+// );
 // permanently on
-// const alloy = true;
+const alloy = true;
 
 const LCP_BLOCKS = ['featured-article', 'article-header'];
 window.RUM_GENERATION = 'biz-gen3'; // add your RUM generation information here
@@ -1028,7 +1028,7 @@ async function loadMartech() {
     };
     window.alloy_deferred.promises.push(new Promise((resolve) => {
       loadScript(`https://www.adobe.com/marketingtech/${(
-        prod ? 'main.alloy.min.js' : 'main.alloy.js'
+        prod ? 'main.alloy.min.js' : 'main.stage.alloy.js'
       )}`, async () => {
         const resp = await fetch('/blog/instrumentation.json');
         const json = await resp.json();
