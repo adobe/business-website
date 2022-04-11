@@ -1166,6 +1166,10 @@ async function loadMartech() {
 }
 
 async function loadfooterBanner(main) {
+  const getPath = (url) => {
+    const u = new URL(url);
+    return u.pathname;
+  };
   // getting Banner URL from the json
   const { href } = window.location;
   let URLpattern;
@@ -1209,20 +1213,14 @@ async function loadfooterBanner(main) {
   }
 
   // get block body from the Banner URL
-  const response = await fetch(`${footerBannerURL}.plain.html`);
+  const response = await fetch(getPath(`${footerBannerURL}.plain.html`));
   if (response.ok) {
     const responseEl = document.createElement('div');
     responseEl.innerHTML = await response.text();
     responseEl.classList.add('section');
     const bannerCTABlock = responseEl.querySelector('div[class^="banner-cta"]');
     main.append(responseEl);
-    const header = document.querySelector('header');
-    header.addEventListener('gnav:init', () => {
-      const gnavCta = header.querySelector('.gnav-cta a');
-      if (gnavCta) {
-        bannerCTABlock.querySelector('a').href = gnavCta.href;
-      }
-    });
+
     // decorate the banner block
     decorateBlock(bannerCTABlock);
     loadBlock(bannerCTABlock);
