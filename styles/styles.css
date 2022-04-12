@@ -202,6 +202,12 @@ main {
   font-weight: var(--body-font-weight);
 }
 
+main .container {
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 main p:not(:last-of-type) {
   margin-bottom: 32px;
 }
