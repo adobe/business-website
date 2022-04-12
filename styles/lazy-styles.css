@@ -53,14 +53,14 @@
 .tk-adobe-clean { font-family: "adobe-clean",sans-serif; }
 .tk-adobe-clean-serif { font-family: "adobe-clean-serif",sans-serif; }
 
-main div.article-header-container + div a:any-link:not([class]), li a:any-link:not([class]) {
+main div.article-header-container + div a:any-link:not([class]), main li a:any-link:not([class]) {
   color: var(--color-info-accent);
   text-decoration: underline;
   text-decoration-thickness: 2px;
 }
 
 main div.article-header-container + div a:hover:not([class]),
-main div.article-header-container + div a:focus:not([class]), li a:hover:not([class]) {
+main div.article-header-container + div a:focus:not([class]), main li a:hover:not([class]) {
   color: var(--color-info-accent-hover);
 }
 
