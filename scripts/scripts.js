@@ -371,9 +371,36 @@ export function createOptimizedPicture(src, alt = '', eager = false, breakpoints
 
 /**
  * Normalizes all headings within a container element.
+ * @param {Element} el The container element
+ * @param {[string]]} allowedHeadings The list of allowed headings (h1 ... h6)
  */
-export function normalizeHeadings() {
-  // wrap all headings in a <div> with the class "region"
+export function normalizeHeadings(el, allowedHeadings) {
+  const allowed = allowedHeadings.map((h) => h.toLowerCase());
+  el.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((tag) => {
+    const h = tag.tagName.toLowerCase();
+    if (allowed.indexOf(h) === -1) {
+      // current heading is not in the allowed list -> try first to "promote" the heading
+      let level = parseInt(h.charAt(1), 10) - 1;
+      while (allowed.indexOf(`h${level}`) === -1 && level > 0) {
+        level -= 1;
+      }
+      if (level === 0) {
+        // did not find a match -> try to "downgrade" the heading
+        while (allowed.indexOf(`h${level}`) === -1 && level < 7) {
+          level += 1;
+        }
+      }
+      if (level !== 7) {
+        tag.outerHTML = `<h${level} id="${tag.id}">${tag.textContent}</h${level}>`;
+      }
+    }
+  });
+}
+
+/**
+ *  Wraps headings in a '.region' container for SEO compliance.
+ */
+export function compliantHeadings() {
   document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((tag) => {
     tag.outerHTML = `<div class="region container">${tag.outerHTML}</div>`;
   });
@@ -1236,8 +1263,8 @@ async function loadLazy() {
   // set <html> lang attribute
   setLanguage();
 
-  // Noramlize headings.
-  normalizeHeadings();
+  // Compliant headings.
+  compliantHeadings();
 
   // post LCP actions go here
   sampleRUM('lcp');
