@@ -1028,7 +1028,7 @@ async function loadMartech() {
     };
     window.alloy_deferred.promises.push(new Promise((resolve) => {
       loadScript(`https://www.adobe.com/marketingtech/${(
-        prod ? 'main.alloy.min.js' : 'main.stage.alloy.js'
+        prod ? 'main.alloy.min.js' : 'main.alloy.stage.js'
       )}`, async () => {
         const resp = await fetch('/blog/instrumentation.json');
         const json = await resp.json();
