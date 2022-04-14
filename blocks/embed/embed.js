@@ -74,11 +74,12 @@ const embedTiktok = (url) => {
   resultHtml.setAttribute('id', 'tiktok');
 
   const tiktokBuild = async (fetchUrl) => {
-    loadScript('https://www.tiktok.com/embed.js');
     const response = await fetch(fetchUrl);
-    const json = await response.json();
-    const tiktok = document.getElementById('tiktok');
-    tiktok.outerHTML = json.html;
+    response.json().then((data) => {
+      const tiktok = document.getElementById('tiktok');
+      tiktok.outerHTML = data.html;
+      loadScript('https://www.tiktok.com/embed.js');
+    });
   };
   tiktokBuild(`https://www.tiktok.com/oembed?url=${url}`);
 
