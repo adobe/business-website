@@ -321,7 +321,7 @@ main .section > div {
 }
 
 @media (min-width: 700px) {
-  main .section > div {
+  main .section > div:not('.tag-header-wrapper') {
     max-width: 800px;
     margin-left: auto;
     margin-right: auto;
