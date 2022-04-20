@@ -398,15 +398,6 @@ export function normalizeHeadings(el, allowedHeadings) {
 }
 
 /**
- *  Wraps headings in a '.region' container for SEO compliance.
- */
-export function compliantHeadings() {
-  document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((tag) => {
-    tag.outerHTML = `<div class="region container">${tag.outerHTML}</div>`;
-  });
-}
-
-/**
  * Turns absolute links within the domain into relative links.
  * @param {Element} main The container element
  */
@@ -519,6 +510,15 @@ initHlx();
  * Edit above at your own risk
  * ------------------------------------------------------------
  */
+
+/**
+ *  Wraps headings in a '.region' container for SEO compliance.
+ */
+export function compliantHeadings() {
+  document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((tag) => {
+    tag.outerHTML = `<div class="region container">${tag.outerHTML}</div>`;
+  });
+}
 
 const usp = new URLSearchParams(window.location.search);
 
