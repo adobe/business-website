@@ -984,7 +984,8 @@ export function getHelixEnv() {
 }
 
 async function loadMartech() {
-  const target = getMetadata('target').toLocaleLowerCase() === 'on';
+  // const target = getMetadata('target').toLocaleLowerCase() === 'on';
+  const target = true;
   const env = getHelixEnv();
   const prod = env.name === 'prod' && usp.get('alloy-env') !== 'stage';
 
