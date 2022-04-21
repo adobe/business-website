@@ -511,6 +511,15 @@ initHlx();
  * ------------------------------------------------------------
  */
 
+/**
+ *  Wraps headings in a '.region' container for SEO compliance.
+ */
+export function compliantHeadings() {
+  document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((tag) => {
+    tag.outerHTML = `<div class="region container">${tag.outerHTML}</div>`;
+  });
+}
+
 const usp = new URLSearchParams(window.location.search);
 
 // feature flag for alloy
@@ -927,6 +936,13 @@ export function getLanguage() {
   return language;
 }
 
+// add language to html tag
+export function setLanguage() {
+  const lang = getLanguage();
+  const html = document.querySelector('html');
+  html.setAttribute('lang', LANG_LOC[lang]);
+}
+
 /**
  * Get the current Helix environment
  * @returns {Object} the env object
@@ -1243,6 +1259,12 @@ async function loadfooterBanner(main) {
  */
 async function loadLazy() {
   const main = document.querySelector('main');
+
+  // set <html> lang attribute
+  setLanguage();
+
+  // Compliant headings.
+  compliantHeadings();
 
   // post LCP actions go here
   sampleRUM('lcp');
