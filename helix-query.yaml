@@ -72,6 +72,13 @@ indices:
     <<: *default
     exclude: 
       - '/blog/**'
+      - '**/blog/index*'
+      - '**/blog/gnav*'
+      - '**/blog/footer*'
+      - '**/blog/authors/**'
+      - '**/blog/banners/**'
+      - '**/blog/categories/**'
+      - '**/blog/tags/**'      
     include:
       - /fr/blog/**
     target: /fr/blog/query-index.xlsx
@@ -79,7 +86,14 @@ indices:
   de:
     <<: *default
     exclude: 
-      - '/blog/**'    
+      - '/blog/**'  
+      - '**/blog/index*'
+      - '**/blog/gnav*'
+      - '**/blog/footer*'
+      - '**/blog/authors/**'
+      - '**/blog/banners/**'
+      - '**/blog/categories/**'
+      - '**/blog/tags/**'      
     include:
       - /de/blog/**
     target: /de/blog/query-index.xlsx
