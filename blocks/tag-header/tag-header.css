@@ -1,7 +1,7 @@
 main .tag-header {
   background-image: rgba(0, 0, 0, 0.8);
   background-image: linear-gradient(to right, rgba(0,0,0,0.8), rgba(0,0,0,0));
-  margin: 40px 0 16px;
+  margin: 50px 0;
 }
 
 main .tag-header h1 {

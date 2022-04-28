@@ -33,7 +33,7 @@ export function checkAndAddMatch(matches, contender, maxMatches) {
  */
 export default async function interlink() {
   const articleBody = document.querySelector('main');
-  const resp = await fetch(`${getRootPath()}/keywords.json`);
+  const resp = await fetch(`${getRootPath()}/keywords.json?limit=-1`);
   if (articleBody && resp.ok) {
     const json = await resp.json();
     const articleText = articleBody.textContent.toLowerCase();

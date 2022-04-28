@@ -36,6 +36,7 @@ updateExternalLinks();
 /* Core Web Vitals RUM collection */
 
 sampleRUM('cwv');
+sampleRUM.observe(document.querySelectorAll('main picture > img'));
 
 function loadPrivacy() {
   function getOtDomainId() {
@@ -96,3 +97,46 @@ async function setupLinkTracking() {
 }
 
 setupLinkTracking();
+
+function getCookie(cname) {
+  const name = `${cname}=`;
+  const decodedCookie = decodeURIComponent(document.cookie);
+  const ca = decodedCookie.split(';');
+  for (let i = 0; i < ca.length; i += 1) {
+    let c = ca[i];
+    while (c.charAt(0) === ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) === 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return '';
+}
+
+function setLinksToGeo(location) {
+  const glocalCountries = ['au', 'uk'];
+  sessionStorage.setItem('blog-international', location.country);
+  if (location.country && glocalCountries.includes(location.country.toLowerCase())) {
+    const prefix = `/${location.country.toLowerCase()}`;
+    // eslint-disable-next-line no-console
+    console.log(`setting links to: ${prefix}`);
+    document.querySelectorAll('a[href^="https://business.adobe.com"], a[href^="https://www.adobe.com"]').forEach((a) => {
+      const url = new URL(a.href);
+      if (!url.pathname.startsWith(prefix) || !url.pathname.startsWith('/blog')) {
+        a.href = `${url.protocol}//${url.host}${prefix}${url.pathname}${url.search}`;
+      }
+    });
+  }
+}
+
+window.setLinksToGeo = setLinksToGeo;
+
+setTimeout(() => {
+  const intl = sessionStorage.getItem('blog-international') || getCookie('international');
+  if (intl) {
+    setLinksToGeo({ country: intl });
+  } else {
+    loadScript('https://geo2.adobe.com/json/?callback=setLinksToGeo');
+  }
+}, 2000);
