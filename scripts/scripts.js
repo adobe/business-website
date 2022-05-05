@@ -516,7 +516,7 @@ initHlx();
  */
 export function compliantHeadings() {
   document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((tag) => {
-    tag.outerHTML = `<div role="region" class="heading-container">${tag.outerHTML}</div>`;
+    tag.outerHTML = `<div role="region" class="heading-container" aria-label="${tag.outerHTML}">${tag.outerHTML}</div>`;
   });
 }
 
