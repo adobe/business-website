@@ -1389,8 +1389,10 @@ async function loadLazy() {
   loadfooterBanner(main);
 
   loadBlocks(main);
-  
-  await loadTaxonomy();
+
+  if (getLanguage() === ('jp' || 'kr')) {
+    await loadTaxonomy();
+  }
 
   loadCSS('/styles/lazy-styles.css');
   addFavIcon('/styles/favicon.svg');
