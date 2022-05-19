@@ -1390,7 +1390,7 @@ async function loadLazy() {
 
   loadBlocks(main);
 
-  if (getLanguage() === ('jp' || 'kr')) {
+  if (getLanguage() === 'kr' || getLanguage() === 'jp') {
     await loadTaxonomy();
   }
 
