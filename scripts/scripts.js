@@ -1360,6 +1360,21 @@ async function loadfooterBanner(main) {
 }
 
 /**
+ * LCP blocks update according to taxonomy loaded.
+ */
+ function lcpUpdateForTaxonomy() {
+  const featuredArticleCategoryLink = document.querySelector('.featured-article-card-category a');
+  if (!featuredArticleCategoryLink) {
+    return;
+  }
+  
+  const category = featuredArticleCategoryLink.innerHTML;
+  if (taxonomy && taxonomy.get(category)) {
+    featuredArticleCategoryLink.href = taxonomy.get(category).link;
+  }
+ }
+
+/**
  * loads everything that doesn't need to be delayed.
  */
 async function loadLazy() {
@@ -1392,6 +1407,7 @@ async function loadLazy() {
 
   if (getLanguage() === 'kr' || getLanguage() === 'jp') {
     await loadTaxonomy();
+    lcpUpdateForTaxonomy();
   }
 
   loadCSS('/styles/lazy-styles.css');
@@ -1475,6 +1491,10 @@ export function buildArticleCard(article, type = 'article') {
   const picture = createOptimizedPicture(image, imageAlt || title, type === 'featured-article', [{ width: '750' }]);
   const pictureTag = picture.outerHTML;
   const card = document.createElement('a');
+  let tagLink = `${window.location.origin}${getRootPath()}/tags/${toClassName(category)}`;
+  if (taxonomy && taxonomy.get(category)) {
+    tagLink = taxonomy.get(category).link;
+  }
   card.className = `${type}-card`;
   card.href = path;
   card.innerHTML = `<div class="${type}-card-image">
@@ -1482,7 +1502,7 @@ export function buildArticleCard(article, type = 'article') {
     </div>
     <div class="${type}-card-body">
       <p class="${type}-card-category">
-        <a href="${window.location.origin}${getRootPath()}/tags/${toClassName(category)}">${category}</a>
+        <a href="${tagLink}">${category}</a>
       </p>
       <h3>${title}</h3>
       <p>${description}</p>
