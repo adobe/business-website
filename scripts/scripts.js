@@ -1364,6 +1364,10 @@ async function loadfooterBanner(main) {
  */
  function lcpUpdateForTaxonomy() {
   const featuredArticleCategoryLink = document.querySelector('.featured-article-card-category a');
+  if (!featuredArticleCategoryLink) {
+    return;
+  }
+  
   const category = featuredArticleCategoryLink.innerHTML;
   if (taxonomy && taxonomy.get(category)) {
     featuredArticleCategoryLink.href = taxonomy.get(category).link;
