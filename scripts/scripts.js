@@ -939,7 +939,7 @@ function computeTaxonomyFromTopics(topics, path) {
     const visibleTopics = [];
     // if taxonomy loaded, we can compute more
     topics.forEach((tag) => {
-      const tax = taxonomy.get(tag);
+      const tax = taxonomy.get(tag.trim());
       if (tax) {
         if (!allTopics.includes(tag) && !tax.skipMeta) {
           allTopics.push(tag);
@@ -970,17 +970,16 @@ function computeTaxonomyFromTopics(topics, path) {
 
 
 // eslint-disable-next-line no-unused-vars
-async function loadTaxonomy() {
+export async function loadTaxonomy(elements) {
   const mod = await import('./taxonomy.js');
   taxonomy = await mod.default(getLanguage());
   if (taxonomy) {
     // taxonomy loaded, post loading adjustments
     // fix the links which have been created before the taxonomy has been loaded
     // (pre lcp or in lcp block).
-    document.querySelectorAll('.tags a, .article-category a').forEach((a) => {
+    elements.forEach((a) => {
       const topic = a.innerText;
       const tax = taxonomy.get(topic);
-
       if (tax) {
         a.href = tax.link;
       } else {
@@ -992,8 +991,8 @@ async function loadTaxonomy() {
     });
 
     // adjust meta article:tag
-
-    const currentTags = getMetadata('article:tag', true).split(',');
+    const metaTags = getMetadata('article:tag');
+    const currentTags = metaTags ? getMetadata('article:tag').split(',') : [];
     const articleTax = computeTaxonomyFromTopics(currentTags);
     const allTopics = articleTax.allTopics || [];
     allTopics.forEach((topic) => {
@@ -1360,21 +1359,6 @@ async function loadfooterBanner(main) {
 }
 
 /**
- * LCP blocks update according to taxonomy loaded.
- */
- function lcpUpdateForTaxonomy() {
-  const featuredArticleCategoryLink = document.querySelector('.featured-article-card-category a');
-  if (!featuredArticleCategoryLink) {
-    return;
-  }
-  
-  const category = featuredArticleCategoryLink.innerHTML;
-  if (taxonomy && taxonomy.get(category)) {
-    featuredArticleCategoryLink.href = taxonomy.get(category).link;
-  }
- }
-
-/**
  * loads everything that doesn't need to be delayed.
  */
 async function loadLazy() {
@@ -1406,8 +1390,8 @@ async function loadLazy() {
   loadBlocks(main);
 
   if (getLanguage() === 'kr' || getLanguage() === 'jp') {
-    await loadTaxonomy();
-    lcpUpdateForTaxonomy();
+    const taxElements = document.querySelectorAll('.article-category a, .featured-article-card-category a');
+    await loadTaxonomy(taxElements);
   }
 
   loadCSS('/styles/lazy-styles.css');
