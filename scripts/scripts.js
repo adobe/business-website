@@ -911,7 +911,7 @@ const LANG_LOC = {
   en: 'en-US',
   de: 'de-DE',
   fr: 'fr-FR',
-  ko: 'ko-KR',
+  kr: 'ko-KR',
   es: 'es-ES', // es-MX?
   it: 'it-IT',
   jp: 'ja-JP',
@@ -920,6 +920,56 @@ const LANG_LOC = {
 
 let language;
 let taxonomy;
+export const authorTaxonomy = {};
+
+/**
+ * Get the current Helix environment
+ * @returns {Object} the env object
+ */
+export function getHelixEnv() {
+  let envName = sessionStorage.getItem('helix-env');
+  if (!envName) envName = 'prod';
+  const envs = {
+    stage: {
+      ims: 'stg1',
+      adobeIO: 'cc-collab-stage.adobe.io',
+      adminconsole: 'stage.adminconsole.adobe.com',
+      account: 'stage.account.adobe.com',
+    },
+    prod: {
+      ims: 'prod',
+      adobeIO: 'cc-collab.adobe.io',
+      adminconsole: 'adminconsole.adobe.com',
+      account: 'account.adobe.com',
+    },
+  };
+  const env = envs[envName];
+
+  const overrideItem = sessionStorage.getItem('helix-env-overrides');
+  if (overrideItem) {
+    const overrides = JSON.parse(overrideItem);
+    const keys = Object.keys(overrides);
+    env.overrides = keys;
+
+    keys.forEach((value) => {
+      env[value] = overrides[value];
+    });
+  }
+
+  if (env) {
+    env.name = envName;
+  }
+  return env;
+}
+
+export function debug(message) {
+  const { hostname } = window.location;
+  const env = getHelixEnv();
+  if (env.name !== 'prod' || hostname === 'localhost') {
+    // eslint-disable-next-line no-console
+    console.log(message);
+  }
+}
 
 /**
  * For the given list of topics, returns the corresponding computed taxonomy:
@@ -968,8 +1018,22 @@ function computeTaxonomyFromTopics(topics, path) {
   };
 }
 
+export function getLanguage() {
+  if (language) return language;
+  language = LANG.EN;
+  const segs = window.location.pathname.split('/');
+  if (segs && segs.length > 0) {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const [, value] of Object.entries(LANG)) {
+      if (value === segs[1]) {
+        language = value;
+        break;
+      }
+    }
+  }
+  return language;
+}
 
-// eslint-disable-next-line no-unused-vars
 export async function loadTaxonomy(elements) {
   const mod = await import('./taxonomy.js');
   taxonomy = await mod.default(getLanguage());
@@ -1023,20 +1087,20 @@ export async function loadTaxonomy(elements) {
   }
 }
 
-export function getLanguage() {
-  if (language) return language;
-  language = LANG.EN;
-  const segs = window.location.pathname.split('/');
-  if (segs && segs.length > 0) {
-    // eslint-disable-next-line no-restricted-syntax
-    for (const [, value] of Object.entries(LANG)) {
-      if (value === segs[1]) {
-        language = value;
-        break;
-      }
-    }
+/**
+ * Load authorTaxonomy to map tanslated author name to English based author link.
+ */
+export async function loadAuthorTaxonomy() {
+  // Do this process only one time.
+  if (Object.keys(authorTaxonomy).length) {
+    return;
   }
-  return language;
+  const target = `/${getLanguage()}/blog/authors/author-taxonomy.json`;
+  const res = await fetch(target);
+  const json = await res.json();
+  json.data.forEach((item) => {
+    authorTaxonomy[item.Name] = item.Link;
+  });
 }
 
 // add language to html tag
@@ -1044,46 +1108,6 @@ export function setLanguage() {
   const lang = getLanguage();
   const html = document.querySelector('html');
   html.setAttribute('lang', LANG_LOC[lang]);
-}
-
-/**
- * Get the current Helix environment
- * @returns {Object} the env object
- */
-export function getHelixEnv() {
-  let envName = sessionStorage.getItem('helix-env');
-  if (!envName) envName = 'prod';
-  const envs = {
-    stage: {
-      ims: 'stg1',
-      adobeIO: 'cc-collab-stage.adobe.io',
-      adminconsole: 'stage.adminconsole.adobe.com',
-      account: 'stage.account.adobe.com',
-    },
-    prod: {
-      ims: 'prod',
-      adobeIO: 'cc-collab.adobe.io',
-      adminconsole: 'adminconsole.adobe.com',
-      account: 'account.adobe.com',
-    },
-  };
-  const env = envs[envName];
-
-  const overrideItem = sessionStorage.getItem('helix-env-overrides');
-  if (overrideItem) {
-    const overrides = JSON.parse(overrideItem);
-    const keys = Object.keys(overrides);
-    env.overrides = keys;
-
-    keys.forEach((value) => {
-      env[value] = overrides[value];
-    });
-  }
-
-  if (env) {
-    env.name = envName;
-  }
-  return env;
 }
 
 async function loadMartech() {
@@ -1392,6 +1416,7 @@ async function loadLazy() {
   if (getLanguage() === 'kr' || getLanguage() === 'jp') {
     const taxElements = document.querySelectorAll('.article-category a, .featured-article-card-category a');
     await loadTaxonomy(taxElements);
+    await loadAuthorTaxonomy();
   }
 
   loadCSS('/styles/lazy-styles.css');
@@ -1574,15 +1599,6 @@ export function rewritePath(path) {
     newpath = newpath.replace(`/${r.from}/`, `/${r.to}/`);
   });
   return newpath;
-}
-
-export function debug(message) {
-  const { hostname } = window.location;
-  const env = getHelixEnv();
-  if (env.name !== 'prod' || hostname === 'localhost') {
-    // eslint-disable-next-line no-console
-    console.log(message);
-  }
 }
 
 export function getBlockClasses(className) {

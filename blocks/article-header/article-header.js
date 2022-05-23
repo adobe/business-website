@@ -3,10 +3,14 @@ import {
   createOptimizedPicture,
   getRootPath,
   toClassName,
+  loadAuthorTaxonomy,
+  authorTaxonomy,
 } from '../../scripts/scripts.js';
 
 async function populateAuthorImg(imgContainer, url, name) {
-  const resp = await fetch(`${url}.plain.html`);
+  await loadAuthorTaxonomy();
+  const authorURL = authorTaxonomy[name] || url;
+  const resp = await fetch(`${authorURL}.plain.html`);
   const text = await resp.text();
   if (resp.status === 200) {
     const placeholder = document.createElement('div');
