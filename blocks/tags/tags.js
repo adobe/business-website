@@ -1,5 +1,6 @@
 import {
   toClassName,
+  loadTaxonomy,
 } from '../../scripts/scripts.js';
 
 export default function decorateTags(blockEl) {
@@ -20,4 +21,6 @@ export default function decorateTags(blockEl) {
     a.classList.add('button');
     container.append(a);
   });
+  const taxElements = document.querySelectorAll('.tags a');
+  loadTaxonomy(taxElements);
 }
