@@ -918,6 +918,11 @@ const LANG_LOC = {
   br: 'pt-BR',
 };
 
+const SPECIAL_LANG = [
+  'kr',
+  'jp',
+];
+
 let language;
 let taxonomy;
 export const authorTaxonomy = {};
@@ -1035,6 +1040,9 @@ export function getLanguage() {
 }
 
 export async function loadTaxonomy(elements) {
+  if (!SPECIAL_LANG.includes(getLanguage())) {
+    return;
+  }
   const mod = await import('./taxonomy.js');
   taxonomy = await mod.default(getLanguage());
   if (taxonomy) {
@@ -1091,6 +1099,9 @@ export async function loadTaxonomy(elements) {
  * Load authorTaxonomy to map tanslated author name to English based author link.
  */
 export async function loadAuthorTaxonomy() {
+  if (!SPECIAL_LANG.includes(getLanguage())) {
+    return;
+  }
   // Do this process only one time.
   if (Object.keys(authorTaxonomy).length) {
     return;
@@ -1413,11 +1424,9 @@ async function loadLazy() {
 
   loadBlocks(main);
 
-  if (getLanguage() === 'kr' || getLanguage() === 'jp') {
-    const taxElements = document.querySelectorAll('.article-category a, .featured-article-card-category a');
-    await loadTaxonomy(taxElements);
-    await loadAuthorTaxonomy();
-  }
+  const taxElements = document.querySelectorAll('.article-category a, .featured-article-card-category a');
+  await loadTaxonomy(taxElements);
+  await loadAuthorTaxonomy();
 
   loadCSS('/styles/lazy-styles.css');
   addFavIcon('/styles/favicon.svg');
