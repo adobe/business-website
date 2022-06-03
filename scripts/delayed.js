@@ -28,7 +28,7 @@ function updateExternalLinks() {
 }
 
 if (document.querySelector('.article-header') && !document.querySelector('[data-origin]')) {
-  loadScript('/blog/blocks/interlinks/interlinks.js', null, 'module');
+  loadScript('/blocks/interlinks/interlinks.js', null, 'module');
 }
 
 updateExternalLinks();

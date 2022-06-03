@@ -202,6 +202,22 @@ main {
   font-weight: var(--body-font-weight);
 }
 
+main .container {
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.heading-container {
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;  
+}
+
+.recommended-articles-wrapper .heading-container {
+  display: contents;
+}
+
 main p:not(:last-of-type) {
   margin-bottom: 32px;
 }
@@ -321,7 +337,7 @@ main .section > div {
 }
 
 @media (min-width: 700px) {
-  main .section > div {
+  main .section > div:not('.tag-header-wrapper') {
     max-width: 800px;
     margin-left: auto;
     margin-right: auto;

@@ -510,6 +510,15 @@ initHlx();
  * ------------------------------------------------------------
  */
 
+/**
+ *  Wraps headings in a '.region' container for SEO compliance.
+ */
+export function compliantHeadings() {
+  document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((tag) => {
+    tag.outerHTML = `<div role="region" class="heading-container" aria-label="${tag.innerHTML}">${tag.outerHTML}</div>`;
+  });
+}
+
 const usp = new URLSearchParams(window.location.search);
 
 // feature flag for alloy
@@ -899,7 +908,7 @@ const LANG = {
   EN: 'en',
   DE: 'de',
   FR: 'fr',
-  KO: 'ko',
+  KO: 'kr',
   ES: 'es',
   IT: 'it',
   JP: 'jp',
@@ -910,30 +919,21 @@ const LANG_LOC = {
   en: 'en-US',
   de: 'de-DE',
   fr: 'fr-FR',
-  ko: 'ko-KR',
+  kr: 'ko-KR',
   es: 'es-ES', // es-MX?
   it: 'it-IT',
   jp: 'ja-JP',
   br: 'pt-BR',
 };
 
-let language;
+const SPECIAL_LANG = [
+  'kr',
+  'jp',
+];
 
-export function getLanguage() {
-  if (language) return language;
-  language = LANG.EN;
-  const segs = window.location.pathname.split('/');
-  if (segs && segs.length > 0) {
-    // eslint-disable-next-line no-restricted-syntax
-    for (const [, value] of Object.entries(LANG)) {
-      if (value === segs[1]) {
-        language = value;
-        break;
-      }
-    }
-  }
-  return language;
-}
+let language;
+let taxonomy;
+export const authorTaxonomy = {};
 
 /**
  * Get the current Helix environment
@@ -975,8 +975,163 @@ export function getHelixEnv() {
   return env;
 }
 
+export function debug(message) {
+  const { hostname } = window.location;
+  const env = getHelixEnv();
+  if (env.name !== 'prod' || hostname === 'localhost') {
+    // eslint-disable-next-line no-console
+    console.log(message);
+  }
+}
+
+/**
+ * For the given list of topics, returns the corresponding computed taxonomy:
+ * - category: main topic
+ * - topics: tags as an array
+ * - visibleTopics: list of visible topics, including parents
+ * - allTopics: list of all topics, including parents
+ * @param {Array} topics List of topics
+ * @returns {Object} Taxonomy object
+ */
+function computeTaxonomyFromTopics(topics, path) {
+  // no topics: default to a randomly choosen category
+  const category = topics?.length > 0 ? topics[0] : 'news';
+
+  if (taxonomy) {
+    const allTopics = [];
+    const visibleTopics = [];
+    // if taxonomy loaded, we can compute more
+    topics.forEach((tag) => {
+      const tax = taxonomy.get(tag.trim());
+      if (tax) {
+        if (!allTopics.includes(tag) && !tax.skipMeta) {
+          allTopics.push(tag);
+          if (tax.isUFT) visibleTopics.push(tag);
+          const parents = taxonomy.getParents(tag);
+          if (parents) {
+            parents.forEach((parent) => {
+              const ptax = taxonomy.get(parent);
+              if (!allTopics.includes(parent)) {
+                allTopics.push(parent);
+                if (ptax.isUFT) visibleTopics.push(parent);
+              }
+            });
+          }
+        }
+      } else {
+        debug(`Unknown topic in tags list: ${tag} ${path ? `on page ${path}` : '(current page)'}`);
+      }
+    });
+    return {
+      category, topics, visibleTopics, allTopics,
+    };
+  }
+  return {
+    category, topics,
+  };
+}
+
+export function getLanguage() {
+  if (language) return language;
+  language = LANG.EN;
+  const segs = window.location.pathname.split('/');
+  if (segs && segs.length > 0) {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const [, value] of Object.entries(LANG)) {
+      if (value === segs[1]) {
+        language = value;
+        break;
+      }
+    }
+  }
+  return language;
+}
+
+export async function loadTaxonomy(elements) {
+  if (!SPECIAL_LANG.includes(getLanguage())) {
+    return;
+  }
+  const mod = await import('./taxonomy.js');
+  taxonomy = await mod.default(getLanguage());
+  if (taxonomy) {
+    // taxonomy loaded, post loading adjustments
+    // fix the links which have been created before the taxonomy has been loaded
+    // (pre lcp or in lcp block).
+    elements.forEach((a) => {
+      const topic = a.innerText;
+      const tax = taxonomy.get(topic);
+      if (tax) {
+        a.href = tax.link;
+      } else {
+        // eslint-disable-next-line no-console
+        debug(`Trying to get a link for an unknown topic: ${topic} (current page)`);
+        a.href = '#';
+      }
+      delete a.dataset.topicLink;
+    });
+
+    // adjust meta article:tag
+    const metaTags = getMetadata('article:tag');
+    const currentTags = metaTags ? getMetadata('article:tag').split(',') : [];
+    const articleTax = computeTaxonomyFromTopics(currentTags);
+    const allTopics = articleTax.allTopics || [];
+    allTopics.forEach((topic) => {
+      if (!currentTags.includes(topic)) {
+        // computed topic (parent...) is not in meta -> add it
+        const newMetaTag = document.createElement('meta');
+        newMetaTag.setAttribute('property', 'article:tag');
+        newMetaTag.setAttribute('content', topic);
+        document.head.append(newMetaTag);
+      }
+    });
+
+    currentTags.forEach((tag) => {
+      const tax = taxonomy.get(tag);
+      if (tax && tax.skipMeta) {
+        // if skipMeta, remove from meta "article:tag"
+        const meta = document.querySelector(`[property="article:tag"][content="${tag}"]`);
+        if (meta) {
+          meta.remove();
+        }
+        // but add as meta with name
+        const newMetaTag = document.createElement('meta');
+        newMetaTag.setAttribute('name', tag);
+        newMetaTag.setAttribute('content', 'true');
+        document.head.append(newMetaTag);
+      }
+    });
+  }
+}
+
+/**
+ * Load authorTaxonomy to map tanslated author name to English based author link.
+ */
+export async function loadAuthorTaxonomy() {
+  if (!SPECIAL_LANG.includes(getLanguage())) {
+    return;
+  }
+  // Do this process only one time.
+  if (Object.keys(authorTaxonomy).length) {
+    return;
+  }
+  const target = `/${getLanguage()}/blog/authors/author-taxonomy.json`;
+  const res = await fetch(target);
+  const json = await res.json();
+  json.data.forEach((item) => {
+    authorTaxonomy[item.Name] = item.Link;
+  });
+}
+
+// add language to html tag
+export function setLanguage() {
+  const lang = getLanguage();
+  const html = document.querySelector('html');
+  html.setAttribute('lang', LANG_LOC[lang]);
+}
+
 async function loadMartech() {
-  const target = getMetadata('target').toLocaleLowerCase() === 'on';
+  // const target = getMetadata('target').toLocaleLowerCase() === 'on';
+  const target = true;
   const env = getHelixEnv();
   const prod = env.name === 'prod' && usp.get('alloy-env') !== 'stage';
 
@@ -1037,7 +1192,7 @@ async function loadMartech() {
     };
     window.alloy_deferred.promises.push(new Promise((resolve) => {
       loadScript(`https://www.adobe.com/marketingtech/${(
-        prod ? 'main.alloy.min.js' : 'main.stage.alloy.js'
+        prod ? 'main.alloy.min.js' : 'main.alloy.stage.js'
       )}`, async () => {
         const resp = await fetch('/blog/instrumentation.json');
         const json = await resp.json();
@@ -1175,6 +1330,10 @@ async function loadMartech() {
 }
 
 async function loadfooterBanner(main) {
+  const getPath = (url) => {
+    const u = new URL(url);
+    return u.pathname;
+  };
   // getting Banner URL from the json
   const { href } = window.location;
   let URLpattern;
@@ -1218,7 +1377,7 @@ async function loadfooterBanner(main) {
   }
 
   // get block body from the Banner URL
-  const response = await fetch(`${footerBannerURL}.plain.html`);
+  const response = await fetch(getPath(`${footerBannerURL}.plain.html`));
   if (response.ok) {
     const responseEl = document.createElement('div');
     responseEl.innerHTML = await response.text();
@@ -1226,12 +1385,17 @@ async function loadfooterBanner(main) {
     const bannerCTABlock = responseEl.querySelector('div[class^="banner-cta"]');
     main.append(responseEl);
     const header = document.querySelector('header');
-    header.addEventListener('gnav:init', () => {
+    const matchGnavCta = () => {
       const gnavCta = header.querySelector('.gnav-cta a');
       if (gnavCta) {
         bannerCTABlock.querySelector('a').href = gnavCta.href;
       }
+    };
+    matchGnavCta();
+    header.addEventListener('gnav:init', () => {
+      matchGnavCta();
     });
+
     // decorate the banner block
     decorateBlock(bannerCTABlock);
     loadBlock(bannerCTABlock);
@@ -1243,6 +1407,12 @@ async function loadfooterBanner(main) {
  */
 async function loadLazy() {
   const main = document.querySelector('main');
+
+  // set <html> lang attribute
+  setLanguage();
+
+  // Compliant headings.
+  compliantHeadings();
 
   // post LCP actions go here
   sampleRUM('lcp');
@@ -1262,6 +1432,11 @@ async function loadLazy() {
   loadfooterBanner(main);
 
   loadBlocks(main);
+
+  const taxElements = document.querySelectorAll('.article-category a, .featured-article-card-category a');
+  await loadTaxonomy(taxElements);
+  await loadAuthorTaxonomy();
+
   loadCSS('/styles/lazy-styles.css');
   addFavIcon('/styles/favicon.svg');
   if (!window.hlx.lighthouse) loadMartech();
@@ -1343,6 +1518,10 @@ export function buildArticleCard(article, type = 'article') {
   const picture = createOptimizedPicture(image, imageAlt || title, type === 'featured-article', [{ width: '750' }]);
   const pictureTag = picture.outerHTML;
   const card = document.createElement('a');
+  let tagLink = `${window.location.origin}${getRootPath()}/tags/${toClassName(category)}`;
+  if (taxonomy && taxonomy.get(category)) {
+    tagLink = taxonomy.get(category).link;
+  }
   card.className = `${type}-card`;
   card.href = path;
   card.innerHTML = `<div class="${type}-card-image">
@@ -1350,7 +1529,7 @@ export function buildArticleCard(article, type = 'article') {
     </div>
     <div class="${type}-card-body">
       <p class="${type}-card-category">
-        <a href="${window.location.origin}${getRootPath()}/tags/${toClassName(category)}">${category}</a>
+        <a href="${tagLink}">${category}</a>
       </p>
       <h3>${title}</h3>
       <p>${description}</p>
@@ -1438,15 +1617,6 @@ export function rewritePath(path) {
     newpath = newpath.replace(`/${r.from}/`, `/${r.to}/`);
   });
   return newpath;
-}
-
-export function debug(message) {
-  const { hostname } = window.location;
-  const env = getHelixEnv();
-  if (env.name !== 'prod' || hostname === 'localhost') {
-    // eslint-disable-next-line no-console
-    console.log(message);
-  }
 }
 
 export function getBlockClasses(className) {
