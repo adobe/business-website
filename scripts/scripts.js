@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+const PRODUCTION_DOMAINS = ['business.adobe.com'];
+
 /**
  * log RUM if part of the sample.
  * @param {string} checkpoint identifies the checkpoint in funnel
  * @param {Object} data additional data for RUM sample
  */
-
 export function sampleRUM(checkpoint, data = {}) {
   try {
     window.hlx = window.hlx || {};
@@ -288,14 +289,16 @@ export async function loadBlock(block, eager = false) {
   if (!(block.getAttribute('data-block-status') === 'loading' || block.getAttribute('data-block-status') === 'loaded')) {
     block.setAttribute('data-block-status', 'loading');
     const blockName = block.getAttribute('data-block-name');
+    const { list } = window.milo?.libs?.blocks;
+    const base = list && list.includes(blockName) ? window.milo.libs.base : window.hlx.codeBasePath;
     try {
       const cssLoaded = new Promise((resolve) => {
-        loadCSS(`${window.hlx.codeBasePath}/blocks/${blockName}/${blockName}.css`, resolve);
+        loadCSS(`${base}/blocks/${blockName}/${blockName}.css`, resolve);
       });
       const decorationComplete = new Promise((resolve) => {
         (async () => {
           try {
-            const mod = await import(`../blocks/${blockName}/${blockName}.js`);
+            const mod = await import(`${base}/blocks/${blockName}/${blockName}.js`);
             if (mod.default) {
               await mod.default(block, blockName, document, eager);
             }
@@ -475,10 +478,31 @@ async function waitForLCP() {
   });
 }
 
+async function loadLibs() {
+  window.milo = window.milo || {};
+  if (!window.milo.libs) {
+    let domain = `https://${PRODUCTION_DOMAINS[0]}`;
+    const isProd = window.location.hostname === PRODUCTION_DOMAINS[0];
+    if (!isProd) {
+      const milolibs = new URLSearchParams(window.location.search).get('milolibs');
+      const libStore = milolibs || 'main';
+      domain = libStore === 'local' ? 'http://localhost:6456' : `https://${libStore}.milo.pink`;
+    }
+    window.milo.libs = { base: `${domain}/libs` };
+    try {
+      const { default: list } = await import(`${window.milo.libs.base}/blocks/list.js`);
+      window.milo.libs.blocks = { list };
+    } catch (e) {
+      console.log('Couldn\'t load libs list');
+    }
+  }
+}
+
 /**
  * Decorates the page.
  */
 async function loadPage(doc) {
+  await loadLibs();
   // eslint-disable-next-line no-use-before-define
   await loadEager(doc);
   // eslint-disable-next-line no-use-before-define
@@ -532,8 +556,6 @@ const alloy = true;
 
 const LCP_BLOCKS = ['featured-article', 'article-header'];
 window.RUM_GENERATION = 'biz-gen3'; // add your RUM generation information here
-const PRODUCTION_DOMAINS = [];
-
 sampleRUM.mediaobserver = (window.IntersectionObserver) ? new IntersectionObserver((entries) => {
   entries
     .filter((entry) => entry.isIntersecting)
