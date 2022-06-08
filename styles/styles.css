@@ -599,3 +599,8 @@ body {
 body.appear {
   visibility: unset;
 }
+
+.columns {
+  max-width: 600px;
+  margin: 0 auto;
+}
