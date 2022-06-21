@@ -22,6 +22,7 @@
   --color-info-accent-light: #DEDEF9;
 
   /* body */
+  --body-max-width: 600px;
   --body-background-color: var(--color-white);
   --body-alt-background-color: var(--color-gray-600);
   --body-font-family: 'adobe-clean', 'Trebuchet MS', sans-serif;
@@ -56,6 +57,18 @@
   --detail-font-size-l: 1.25rem; /* 20px */
   --detail-font-size-m: 1rem; /* 16px */
   --detail-font-size-s: 0.75rem; /* 12px */
+  
+  /* Milo Config Variables */
+  --grid-container-width: var(--body-max-width);
+  
+  /* Spacing */
+  --spacing-xxs: 8px;
+  --spacing-xs: 16px;
+  --spacing-s: 24px;
+  --spacing-m: 32px;
+  --spacing-l: 48px;
+  --spacing-xl: 56px;
+  --spacing-xxl: 80px;
 }
 
 
@@ -203,13 +216,13 @@ main {
 }
 
 main .container {
-  max-width: 600px;
+  max-width: var(--body-max-width);
   margin-left: auto;
   margin-right: auto;
 }
 
 .heading-container {
-  max-width: 600px;
+  max-width: var(--body-max-width);
   margin-left: auto;
   margin-right: auto;  
 }
@@ -344,7 +357,7 @@ main .section > div {
   }
 
   main .section > div > :not(div) {
-    max-width: 600px;
+    max-width: var(--body-max-width);
     margin-left: auto;
     margin-right: auto;
   }
@@ -386,7 +399,7 @@ main .figure .caption {
 
 @media (min-width: 700px) {
   main .figure .caption {
-    max-width: 600px;
+    max-width: var(--body-max-width);
     margin-left: auto;
     margin-right: auto;
   }
@@ -601,6 +614,6 @@ body.appear {
 }
 
 .columns {
-  max-width: 600px;
+  max-width: var(--body-max-width);
   margin: 0 auto;
 }
