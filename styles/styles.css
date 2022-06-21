@@ -57,20 +57,7 @@
   --detail-font-size-l: 1.25rem; /* 20px */
   --detail-font-size-m: 1rem; /* 16px */
   --detail-font-size-s: 0.75rem; /* 12px */
-  
-  /* Milo Config Variables */
-  --grid-container-width: var(--body-max-width);
-  
-  /* Spacing */
-  --spacing-xxs: 8px;
-  --spacing-xs: 16px;
-  --spacing-s: 24px;
-  --spacing-m: 32px;
-  --spacing-l: 48px;
-  --spacing-xl: 56px;
-  --spacing-xxl: 80px;
 }
-
 
 @media (min-width: 900px) {
   :root {
@@ -82,6 +69,11 @@
   :root {
     --heading-font-size-xxxl: 2.75rem; /* 44px */
   }
+}
+
+/* Milo variable override */
+body {
+  --grid-container-width: var(--body-max-width);
 }
 
 body {
