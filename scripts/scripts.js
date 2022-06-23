@@ -290,10 +290,20 @@ export async function loadBlock(block, eager = false) {
     block.setAttribute('data-block-status', 'loading');
     const blockName = block.getAttribute('data-block-name');
     const { list } = window.milo?.libs?.blocks;
-    const base = list && list.includes(blockName) ? window.milo.libs.base : window.hlx.codeBasePath;
+    // Determine if block should be loaded from milo libs
+    const isMiloBlock = !!(list && list.includes(blockName));
+    let base;
+    if (isMiloBlock) {
+      base = window.milo.libs.base;
+    } else {
+      base = window.hlx.codeBasePath;
+    }
     try {
       const cssLoaded = new Promise((resolve) => {
         loadCSS(`${base}/blocks/${blockName}/${blockName}.css`, resolve);
+        if (isMiloBlock) {
+          loadCSS(`${base}/styles/variables.css`, resolve);
+        }
       });
       const decorationComplete = new Promise((resolve) => {
         (async () => {
@@ -540,7 +550,7 @@ initHlx();
  */
 export function compliantHeadings() {
   document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((tag) => {
-    tag.outerHTML = `<div role="region" class="heading-container" aria-label="${tag.innerHTML}">${tag.outerHTML}</div>`;
+    tag.outerHTML = `<div role="region" class="heading-container" aria-label="${tag.textContent}">${tag.outerHTML}</div>`;
   });
 }
 
