@@ -12,8 +12,8 @@ export default function decorate(block) {
       bannerContent.classList.add('content-wrapper');
 
       // get response from the URL
-      const { pathname } = new URL(a);
-      const response = await fetch(`${pathname}.plain.html`);
+      const { href, origin } = new URL(a);
+      const response = await fetch(`${href}.plain.html`);
       if (response.ok) {
         const responseEl = document.createElement('div');
         responseEl.innerHTML = await response.text();
@@ -27,6 +27,10 @@ export default function decorate(block) {
 
         // banner image content
         const picture = responseEl.querySelector('picture');
+        const source = picture.querySelector('source');
+        const img = picture.querySelector('img');
+        source.srcset = origin + source.srcset.slice(1);
+        img.src = origin + new URL(img.src).pathname;
         bannerImage.append(picture);
 
         // banner text content
