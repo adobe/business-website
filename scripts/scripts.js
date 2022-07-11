@@ -1454,6 +1454,12 @@ async function loadLazy() {
   loadBlock(footer);
   loadfooterBanner(main);
 
+  /* nofollow-link */
+  if (getMetadata('nofollow-links') === 'on') {
+    const { default: nofollow } = await import(`${window.milo?.libs?.base}/features/nofollow.js`);
+    nofollow('/seo/nofollow.json');
+  }
+
   loadBlocks(main);
 
   const taxElements = document.querySelectorAll('.article-category a, .featured-article-card-category a');
