@@ -20,7 +20,7 @@ function updateExternalLinks() {
     }
 
     const { origin } = new URL(a);
-    if (origin && origin !== window.location.origin) {
+    if (origin && origin !== window.location.origin && !a.getAttribute('rel')) {
       a.setAttribute('rel', 'noopener');
       a.setAttribute('target', '_blank');
     }
