@@ -1457,7 +1457,7 @@ async function loadLazy() {
   /* nofollow-link */
   if (getMetadata('nofollow-links') === 'on') {
     const { default: nofollow } = await import(`${window.milo?.libs?.base}/features/nofollow.js`);
-    nofollow('/seo/nofollow.json');
+    nofollow('/blog/seo/nofollow.json');
   }
 
   loadBlocks(main);
