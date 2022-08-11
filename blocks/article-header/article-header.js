@@ -3,17 +3,21 @@ import {
   createOptimizedPicture,
   getRootPath,
   toClassName,
+  loadAuthorTaxonomy,
+  authorTaxonomy,
 } from '../../scripts/scripts.js';
 
 async function populateAuthorImg(imgContainer, url, name) {
-  const resp = await fetch(`${url}.plain.html`);
+  await loadAuthorTaxonomy();
+  const authorURL = authorTaxonomy[name] || url;
+  const resp = await fetch(`${authorURL}.plain.html`);
   const text = await resp.text();
   if (resp.status === 200) {
     const placeholder = document.createElement('div');
     placeholder.innerHTML = text;
     const placeholderImg = placeholder.querySelector('img');
     if (placeholderImg) {
-      const src = new URL(placeholderImg.getAttribute('src'), new URL(url));
+      const src = new URL(placeholderImg.getAttribute('src'), new URL(authorURL));
       const picture = createOptimizedPicture(src, name, false, [{ width: 200 }]);
       imgContainer.append(picture);
       picture.querySelector('img').onerror = (e) => {

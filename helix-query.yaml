@@ -67,3 +67,63 @@ indices:
     include:
       - /au/blog/**
     target: /au/blog/query-index.xlsx
+
+  fr:
+    <<: *default
+    exclude: 
+      - '/blog/**'
+      - '**/blog/index*'
+      - '**/blog/gnav*'
+      - '**/blog/footer*'
+      - '**/blog/authors/**'
+      - '**/blog/banners/**'
+      - '**/blog/categories/**'
+      - '**/blog/tags/**'      
+    include:
+      - /fr/blog/**
+    target: /fr/blog/query-index.xlsx
+
+  de:
+    <<: *default
+    exclude: 
+      - '/blog/**'  
+      - '**/blog/index*'
+      - '**/blog/gnav*'
+      - '**/blog/footer*'
+      - '**/blog/authors/**'
+      - '**/blog/banners/**'
+      - '**/blog/categories/**'
+      - '**/blog/tags/**'      
+    include:
+      - /de/blog/**
+    target: /de/blog/query-index.xlsx
+
+  jp:
+    <<: *default
+    exclude: 
+      - '/blog/**'  
+      - '**/blog/index*'
+      - '**/blog/gnav*'
+      - '**/blog/footer*'
+      - '**/blog/authors/**'
+      - '**/blog/banners/**'
+      - '**/blog/categories/**'
+      - '**/blog/tags/**' 
+    include:
+      - /jp/blog/**
+    target: /jp/blog/query-index.xlsx
+
+  kr:
+    <<: *default
+    exclude: 
+      - '/blog/**'  
+      - '**/blog/index*'
+      - '**/blog/gnav*'
+      - '**/blog/footer*'
+      - '**/blog/authors/**'
+      - '**/blog/banners/**'
+      - '**/blog/categories/**'
+      - '**/blog/tags/**'    
+    include:
+      - /kr/blog/**
+    target: /kr/blog/query-index.xlsx

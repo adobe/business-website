@@ -7,7 +7,7 @@ import {
 
 async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
   if (recommendedArticlesEl.classList.contains('small')) {
-    recommendedArticlesEl.parentNode.querySelectorAll('a').forEach((aEl) => {
+    recommendedArticlesEl.closest('.recommended-articles-small-container').querySelectorAll('a').forEach((aEl) => {
       aEl.classList.add('button', 'primary', 'small', 'light');
     });
     recommendedArticlesEl.parentNode.classList.add('recommended-articles-small-content-wrapper');
@@ -29,7 +29,7 @@ async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
       recommendedArticlesEl.append(articleCardsContainer);
     }
   }
-  recommendedArticlesEl.closest('.section-wrapper').classList.add('appear');
+  recommendedArticlesEl.closest('.section').classList.add('appear');
   if (!articleCardsContainer.hasChildNodes()) {
     recommendedArticlesEl.parentNode.parentNode.remove();
   }
@@ -38,6 +38,17 @@ async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
 export default async function decorate(blockEl) {
   const anchors = [...blockEl.querySelectorAll('a')];
   blockEl.innerHTML = '';
-  const paths = anchors.map((a) => new URL(a.href).pathname);
+  const urls = anchors.map((a) => new URL(a.href));
+  const paths = [];
+  // eslint-disable-next-line no-restricted-syntax
+  for (const url of urls) {
+    if (url.host === 'blog.adobe.com') {
+      // eslint-disable-next-line no-await-in-loop
+      const res = await fetch(url.href);
+      paths.push(new URL(res.url).pathname);
+    } else {
+      paths.push(url.pathname);
+    }
+  }
   await decorateRecommendedArticles(blockEl, paths);
 }
