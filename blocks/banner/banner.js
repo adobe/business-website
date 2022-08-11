@@ -1,10 +1,12 @@
 import {
   normalizeHeadings,
+  makeLinksRelative,
 } from '../../scripts/scripts.js';
 
 export default function decorate(block) {
   const bannerContents = document.createElement('div');
   bannerContents.classList.add('banner-contents');
+  makeLinksRelative(block);
   block.querySelectorAll('a').forEach(async (a) => {
     if (a && a.href) {
       // content wrapper
