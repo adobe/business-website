@@ -13,6 +13,7 @@ indices:
       - '**/blog/banners/**'
       - '**/blog/categories/**'
       - '**/blog/tags/**'
+      - '**/blog/fpost/**'
     target: /blog/query-index.xlsx
     properties:
       author:
@@ -127,3 +128,18 @@ indices:
     include:
       - /kr/blog/**
     target: /kr/blog/query-index.xlsx
+
+  fpost:
+    <<: *default
+    exclude: 
+      - '/blog/**'  
+      - '**/blog/index*'
+      - '**/blog/gnav*'
+      - '**/blog/footer*'
+      - '**/blog/authors/**'
+      - '**/blog/banners/**'
+      - '**/blog/categories/**'
+      - '**/blog/tags/**'    
+    include:
+      - /blog/fpost/**
+    target: /blog/fpost/query-index.xlsx

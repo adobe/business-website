@@ -40,3 +40,9 @@ sitemaps:
         destination: /blog/sitemap-kr.xml
         hreflang: ko
         alternate: /kr/{path}
+      fpost:
+        source: /blog/fpost/query-index.json
+        destination: /blog/fpost/sitemap-fpost.xml
+        hreflang: en
+        alternate: /en/{path}
+
