@@ -9,8 +9,8 @@ import {
 } from '../../scripts/scripts.js';
 import createTag from './gnav-utils.js';
 
-const COMPANY_IMG = '<img alt="Adobe" src="/blocks/gnav/adobe-logo.svg">';
-const BRAND_IMG = '<img src="/blocks/gnav/brand-logo.svg">';
+const COMPANY_IMG = '<img alt="Adobe" src="/blog/blocks/gnav/adobe-logo.svg">';
+const BRAND_IMG = '<img src="/blog/blocks/gnav/brand-logo.svg">';
 const SEARCH_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" focusable="false">
 <path d="M14 2A8 8 0 0 0 7.4 14.5L2.4 19.4a1.5 1.5 0 0 0 2.1 2.1L9.5 16.6A8 8 0 1 0 14 2Zm0 14.1A6.1 6.1 0 1 1 20.1 10 6.1 6.1 0 0 1 14 16.1Z"></path>
 </svg>`;
