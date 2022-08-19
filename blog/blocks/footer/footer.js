@@ -175,7 +175,7 @@ class Footer {
         const socialIcon = createTag('img', {
           class: 'footer-social-img',
           loading: 'lazy',
-          src: `/blocks/footer/${domain}-square.svg`,
+          src: `/blog/blocks/footer/${domain}-square.svg`,
           alt: `${domain} logo`,
         });
         a.setAttribute('aria-label', domain);

@@ -18,7 +18,7 @@ import {
   loadBlock,
 } from '../../../scripts/scripts.js';
 
-const ROOT_PATH = '/blocks-test';
+const ROOT_PATH = '/blog/blocks-test';
 
 const getFragment = (html) => {
   const template = document.createElement('template');
