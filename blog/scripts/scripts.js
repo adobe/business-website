@@ -524,7 +524,7 @@ async function loadPage(doc) {
 export function initHlx() {
   window.hlx = window.hlx || {};
   window.hlx.lighthouse = new URLSearchParams(window.location.search).get('lighthouse') === 'on';
-  window.hlx.codeBasePath = '';
+  window.hlx.codeBasePath = '/blog';
 
   const scriptEl = document.querySelector('script[src$="/scripts/scripts.js"]');
   if (scriptEl) {
