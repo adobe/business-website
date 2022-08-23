@@ -524,7 +524,7 @@ async function loadPage(doc) {
 export function initHlx() {
   window.hlx = window.hlx || {};
   window.hlx.lighthouse = new URLSearchParams(window.location.search).get('lighthouse') === 'on';
-  window.hlx.codeBasePath = '';
+  window.hlx.codeBasePath = '/blog';
 
   const scriptEl = document.querySelector('script[src$="/scripts/scripts.js"]');
   if (scriptEl) {
@@ -964,7 +964,7 @@ export const authorTaxonomy = {};
  * @returns {Object} the env object
  */
 export function getHelixEnv() {
-  let envName = sessionStorage.getItem('helix-env');
+  let envName = sessionStorage.getItem('helix-env') || new URL(window.location.href).searchParams.get('env');
   if (!envName) envName = 'prod';
   const envs = {
     stage: {
@@ -1189,9 +1189,7 @@ async function loadMartech() {
         target,
         alloy: {
           edgeConfigId: (
-            prod
-              ? '65acfd54-d9fe-405c-ba04-8342d6782ab0'
-              : '7d1ba912-10b6-4384-a8ff-4bfb1178e869'
+            prod ? '65acfd54-d9fe-405c-ba04-8342d6782ab0' : '7d1ba912-10b6-4384-a8ff-4bfb1178e869'
           ),
         },
         launch: {
@@ -1466,8 +1464,8 @@ async function loadLazy() {
   await loadTaxonomy(taxElements);
   await loadAuthorTaxonomy();
 
-  loadCSS('/styles/lazy-styles.css');
-  addFavIcon('/styles/favicon.svg');
+  loadCSS('/blog/styles/lazy-styles.css');
+  addFavIcon('/blog/styles/favicon.svg');
   if (!window.hlx.lighthouse) loadMartech();
 }
 

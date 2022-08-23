@@ -58,7 +58,7 @@ export default async function decorateArticleHeader(blockEl, blockName, document
   // author img
   const authorImg = document.createElement('div');
   authorImg.classList = 'article-author-image';
-  authorImg.style.backgroundImage = 'url(/blocks/article-header/adobe-logo.svg)';
+  authorImg.style.backgroundImage = 'url(/blog/blocks/article-header/adobe-logo.svg)';
   bylineContainer.prepend(authorImg);
   populateAuthorImg(authorImg, authorURL, authorName);
   // feature img
