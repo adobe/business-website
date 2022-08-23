@@ -4,8 +4,8 @@ import {
 } from '../../scripts/scripts.js';
 import createTag from '../gnav/gnav-utils.js';
 
-const GLOBE_IMG = '<img class="footer-region-img" loading="lazy" alt="wireframe globe" src="/blocks/footer/globe.svg">';
-const ADCHOICE_IMG = '<img class="footer-link-img" loading="lazy" alt="AdChoices icon" src="/blocks/footer/adchoices-small.svg">';
+const GLOBE_IMG = '<img class="footer-region-img" loading="lazy" alt="wireframe globe" src="/blog/blocks/footer/globe.svg">';
+const ADCHOICE_IMG = '<img class="footer-link-img" loading="lazy" alt="AdChoices icon" src="/blog/blocks/footer/adchoices-small.svg">';
 
 class Footer {
   constructor(body, el) {
