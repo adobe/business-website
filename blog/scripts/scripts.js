@@ -1189,9 +1189,7 @@ async function loadMartech() {
         target,
         alloy: {
           edgeConfigId: (
-            prod
-              ? '65acfd54-d9fe-405c-ba04-8342d6782ab0'
-              : '7d1ba912-10b6-4384-a8ff-4bfb1178e869'
+            prod ? '65acfd54-d9fe-405c-ba04-8342d6782ab0' : '8d2805dd-85bf-4748-82eb-f99fdad117a6'
           ),
         },
         launch: {
