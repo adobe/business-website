@@ -1466,8 +1466,8 @@ async function loadLazy() {
   await loadTaxonomy(taxElements);
   await loadAuthorTaxonomy();
 
-  loadCSS('/styles/lazy-styles.css');
-  addFavIcon('/styles/favicon.svg');
+  loadCSS('/blog/styles/lazy-styles.css');
+  addFavIcon('/blog/styles/favicon.svg');
   if (!window.hlx.lighthouse) loadMartech();
 }
 
