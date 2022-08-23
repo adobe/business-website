@@ -964,7 +964,7 @@ export const authorTaxonomy = {};
  * @returns {Object} the env object
  */
 export function getHelixEnv() {
-  let envName = sessionStorage.getItem('helix-env');
+  let envName = sessionStorage.getItem('helix-env') || new URL(window.location.href).searchParams.get('env');
   if (!envName) envName = 'prod';
   const envs = {
     stage: {
