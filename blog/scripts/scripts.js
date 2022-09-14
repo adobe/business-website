@@ -654,7 +654,7 @@ loadPage(document);
  * @returns {string} The computed root path
  */
 export function getRootPath() {
-  const loc = window.location.pathname.includes('/blog/') ? window.location.pathname.split('/blog/')[0].substring(0, 3) : '';
+  const loc = window.location.pathname.includes('/blog/') ? window.location.pathname.split('/blog/')[0] : '';
   return `${loc}/blog`;
 }
 
