@@ -1,7 +1,7 @@
 # Adobe Experience Cloud Website
 
 Inner CDN:
-- https://main--business-website--adobe.hlx3.page/
+- https://main--business-website--adobe.hlx.page/
 
 Outer CDN:
 - https://main--business-website--adobe.hlx.live/
