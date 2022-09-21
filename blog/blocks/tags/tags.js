@@ -20,6 +20,9 @@ export default function decorateTags(blockEl) {
     a.textContent = tag;
     a.classList.add('button');
     container.append(a);
+    if (tagname === 'fpost') {
+      a.remove();
+    }
   });
   const taxElements = document.querySelectorAll('.tags a');
   loadTaxonomy(taxElements);
