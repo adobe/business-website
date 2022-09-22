@@ -1,0 +1,68 @@
+main .--with-scroll-margin-top {
+    scroll-margin-top: 88px;
+}
+
+main .table-of-contents-container hr {
+    opacity: 0.5;
+}
+
+main .table-of-contents {
+    background-color: #F5F5F5;
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px 0;
+    border-radius: 9px;
+}
+
+main .table-of-contents>div {
+    display: flex;
+    justify-content: center;
+}
+
+main .table-of-contents h3 {
+    margin-top: 16px;
+    margin-bottom: 0;
+}
+
+main .table-of-contents ol {
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 12px;
+}
+
+main .table-of-contents ol > li {
+    counter-increment: li;
+}
+
+main .table-of-contents ol > li:before {
+    content: counter(li) ".";
+    font-weight: bold;
+    margin-right: 10px;
+    color: #4646C6;
+}
+
+main .table-of-contents li {
+    position: relative;
+    margin: 6px 0;
+}
+
+
+main .table-of-contents li a {
+    font-weight: 400;
+    text-decoration: none!important;
+    font-size: 18px;
+    line-height: 31px;
+    color: #4646C6;
+}
+
+main .table-of-contents li.active a {
+    font-weight: 700;
+}
+
+main .table-of-contents li.active::before {
+    content: "|";
+    position: absolute;
+    left: -14px;
+    color: #4646C6;
+    font-weight: 700;
+}
