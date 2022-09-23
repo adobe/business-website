@@ -42,10 +42,8 @@ export default async function decorate(blockEl) {
   const paths = [];
   // eslint-disable-next-line no-restricted-syntax
   for (const url of urls) {
-    if (url.host === 'blog.adobe.com') {
-      // eslint-disable-next-line no-await-in-loop
-      const res = await fetch(url.href);
-      paths.push(new URL(res.url).pathname);
+    if (url.host === 'blog.adobe.com' || url.host === 'main--blog--adobe.hlx.page') {
+      paths.push(url.href);
     } else {
       paths.push(url.pathname);
     }
