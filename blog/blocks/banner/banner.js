@@ -15,7 +15,7 @@ export default function decorate(block) {
 
       // get response from the URL
       const { href, origin } = new URL(a);
-      const response = await fetch(`${href}.plain.html`);
+      const response = await fetch(`${href?.replace(/\.html$/, '')}.plain.html`);
       if (response.ok) {
         const responseEl = document.createElement('div');
         responseEl.innerHTML = await response.text();

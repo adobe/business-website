@@ -1540,8 +1540,6 @@ export function buildArticleCard(article, type = 'article') {
     title, description, image, imageAlt, category,
   } = article;
 
-  const path = article.path.split('.')[0];
-
   const picture = createOptimizedPicture(image, imageAlt || title, type === 'featured-article', [{ width: '750' }]);
   const pictureTag = picture.outerHTML;
   const card = document.createElement('a');
@@ -1550,7 +1548,7 @@ export function buildArticleCard(article, type = 'article') {
     tagLink = taxonomy.get(category).link;
   }
   card.className = `${type}-card`;
-  card.href = path;
+  card.href = article.path;
   card.innerHTML = `<div class="${type}-card-image">
       ${pictureTag}
     </div>
@@ -1587,7 +1585,7 @@ export async function fetchPlaceholders() {
  * @returns {Object} containing sanitized meta data
  */
 async function getMetadataJson(path) {
-  const resp = await fetch(path.split('.')[0]);
+  const resp = await fetch(path);
   const text = await resp.text();
   const meta = {};
   if (resp.status === 200 && text && text.includes('<head>')) {
@@ -1614,7 +1612,7 @@ async function getMetadataJson(path) {
  * @returns {object} article object
  */
 export async function getBlogArticle(path) {
-  const json = await getMetadataJson(`${path}.metadata.json`);
+  const json = await getMetadataJson(`${path}`);
   const meta = JSON.parse(json);
   if (meta['og:title']) {
     const articleMeta = {
