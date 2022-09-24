@@ -1579,13 +1579,12 @@ export async function fetchPlaceholders() {
 }
 
 /**
- * forward looking *.metadata.json experiment
- * fetches metadata.json of page
- * @param {path} path to *.metadata.json
+ * fetches meta of page's head
+ * @param {path} path
  * @returns {Object} containing sanitized meta data
  */
 async function getMetadataJson(path) {
-  const resp = await fetch(path);
+  const resp = await fetch(path, { redirect: 'follow' });
   const text = await resp.text();
   const meta = {};
   if (resp.status === 200 && text && text.includes('<head>')) {
