@@ -1537,7 +1537,7 @@ export function buildFigure(blockEl) {
  */
 export function buildArticleCard(article, type = 'article') {
   const {
-    title, description, image, imageAlt, category,
+    title, description, image, imageAlt, category, h1,
   } = article;
 
   const picture = createOptimizedPicture(image, imageAlt || title, type === 'featured-article', [{ width: '750' }]);
@@ -1556,7 +1556,7 @@ export function buildArticleCard(article, type = 'article') {
       <p class="${type}-card-category">
         <a href="${tagLink}">${category}</a>
       </p>
-      <h3>${title}</h3>
+      <h3>${h1 || title}</h3>
       <p>${description}</p>
     </div>`;
   return card;
@@ -1587,11 +1587,11 @@ export async function fetchPlaceholders() {
 async function getMetadataJson(path) {
   const resp = await fetch(path);
   const text = await resp.text();
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(text, 'text/html');
+  const head = doc.querySelector('head');
   const meta = {};
-  if (resp.status === 200 && text && text.includes('<head>')) {
-    const headStr = text.split('<head>')[1].split('</head>')[0];
-    const head = document.createElement('head');
-    head.innerHTML = headStr;
+  if (resp.status === 200 && text && head) {
     const metaTags = head.querySelectorAll(':scope > meta');
     metaTags.forEach((metaTag) => {
       const name = metaTag.getAttribute('name') || metaTag.getAttribute('property');
@@ -1602,6 +1602,7 @@ async function getMetadataJson(path) {
         meta[name] = value;
       }
     });
+    meta.h1 = doc.querySelector('h1').textContent;
   }
   return (JSON.stringify(meta));
 }
@@ -1623,6 +1624,7 @@ export async function getBlogArticle(path) {
       date: meta['publication-date'],
       path,
       category: meta.category,
+      h1: meta.h1,
     };
     return (articleMeta);
   }

@@ -23,6 +23,10 @@ indices:
         select: head > meta[property="og:title"]
         value: |
           attribute(el, 'content')
+      h1:
+        select: h1
+        value: |
+          attribute(el, 'content')
       date:
         select: head > meta[name="publication-date"]
         value: |
