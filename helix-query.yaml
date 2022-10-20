@@ -24,9 +24,9 @@ indices:
         value: |
           attribute(el, 'content')
       h1:
-        select: h1
+        select: main h1
         value: |
-          attribute(el, 'content')
+          textContent(el)
       date:
         select: head > meta[name="publication-date"]
         value: |
