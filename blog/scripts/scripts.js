@@ -127,16 +127,12 @@ export function toClassName(name) {
  */
 export function decorateBlock(block) {
   const trimDashes = (str) => str.replace(/(^\s*-)|(-\s*$)/g, '');
-
-  // transform v7 classes to v6 compatible format
-  block.className = Array.from(block.classList).join('--');
-  
   const classes = Array.from(block.classList.values());
   const blockName = classes[0];
   if (!blockName) return;
   const section = block.closest('.section');
   if (section) {
-    section.classList.add(`${blockName}-container`.replace(/--/g, '-'));
+    section.classList.add(`${classes.join('-')}-container`);
   }
   const blockWithVariants = blockName.split('--');
   const shortBlockName = trimDashes(blockWithVariants.shift());
