@@ -64,7 +64,7 @@ export default async function interlink() {
         const paraWords = p.textContent.trim().split(/\s/).length;
         const maxParaLinks = Math.floor(paraWords / 40) - paraLinks;
         if (maxParaLinks > 0) {
-          Array.from(p.children)
+          Array.from(p.childNodes)
           // filter out non text nodes
             .filter((node) => node.nodeType === Node.TEXT_NODE)
             .forEach((textNode) => {
