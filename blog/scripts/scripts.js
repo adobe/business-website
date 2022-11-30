@@ -503,6 +503,7 @@ async function loadLibs() {
       const { default: list } = await import(`${window.milo.libs.base}/blocks/list.js`);
       window.milo.libs.blocks = { list };
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.log('Couldn\'t load libs list');
     }
   }

@@ -92,7 +92,8 @@ export default async function interlink() {
                   a.setAttribute('data-origin', 'interlink');
                   a.appendChild(document.createTextNode(text.substring(start, end)));
                   p.insertBefore(a, textNode.nextElementSibling);
-                  p.insertBefore(document.createTextNode(text.substring(end)), a.nextElementSibling);
+                  p.insertBefore(document.createTextNode(text.substring(end)),
+                    a.nextElementSibling);
                   textNode.nodeValue = text.substring(0, start);
                   // remove matched link from interlinks
                   keywords.splice(keywords.indexOf(item), 1);
