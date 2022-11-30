@@ -87,7 +87,7 @@ async function setupLinkTracking() {
           if (img) {
             value = img.getAttribute('alt');
           } else {
-            value = a.textContent.substr(0, 64);
+            value = a.textContent.trim().substr(0, 64);
           }
           a.setAttribute('daa-ll', value);
         }

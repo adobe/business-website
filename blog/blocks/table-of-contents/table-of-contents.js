@@ -11,15 +11,15 @@ export default function decorate($block) {
     const $anchor = createTag('a', {}, null);
     let target;
 
-    if ($tab.textContent === 'Introduction') {
+    if ($tab.textContent.trim() === 'Introduction') {
       $anchor.href = `${baseUrl}introduction`;
       $anchor.textContent = 'Introduction';
       target = $block.parentElement.parentElement.previousElementSibling;
     } else {
       $headers.forEach(($header) => {
-        if ($tab.textContent === $header.textContent) {
+        if ($tab.textContent.trim() === $header.textContent.trim()) {
           $anchor.href = `${baseUrl}${$header.id}`;
-          $anchor.textContent = $tab.textContent;
+          $anchor.textContent = $tab.textContent.trim();
           target = $header;
         }
       });

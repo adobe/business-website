@@ -160,7 +160,7 @@ export function readBlockConfig(block) {
       const cols = [...row.children];
       if (cols[1]) {
         const col = cols[1];
-        const name = toClassName(cols[0].textContent);
+        const name = toClassName(cols[0].textContent.trim());
         let value = '';
         if (col.querySelector('a')) {
           const as = [...col.querySelectorAll('a')];
@@ -172,11 +172,11 @@ export function readBlockConfig(block) {
         } else if (col.querySelector('p')) {
           const ps = [...col.querySelectorAll('p')];
           if (ps.length === 1) {
-            value = ps[0].textContent;
+            value = ps[0].textContent.trim();
           } else {
-            value = ps.map((p) => p.textContent);
+            value = ps.map((p) => p.textContent.trim());
           }
-        } else value = row.children[1].textContent;
+        } else value = row.children[1].textContent.trim();
         config[name] = value;
       }
     }
@@ -404,7 +404,7 @@ export function normalizeHeadings(el, allowedHeadings) {
         }
       }
       if (level !== 7) {
-        tag.outerHTML = `<h${level} id="${tag.id}">${tag.textContent}</h${level}>`;
+        tag.outerHTML = `<h${level} id="${tag.id}">${tag.textContent.trim()}</h${level}>`;
       }
     }
   });
@@ -550,7 +550,7 @@ initHlx();
  */
 export function compliantHeadings() {
   document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((tag) => {
-    tag.outerHTML = `<div role="region" class="heading-container" aria-label="${tag.textContent}">${tag.outerHTML}</div>`;
+    tag.outerHTML = `<div role="region" class="heading-container" aria-label="${tag.textContent.trim()}">${tag.outerHTML}</div>`;
   });
 }
 
@@ -1604,7 +1604,7 @@ async function getMetadataJson(path) {
         meta[name] = value;
       }
     });
-    meta.h1 = doc.querySelector('h1').textContent;
+    meta.h1 = doc.querySelector('h1').textContent.trim();
   }
   return (JSON.stringify(meta));
 }

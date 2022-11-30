@@ -36,7 +36,7 @@ export default async function interlink() {
   const resp = await fetch(`${getRootPath()}/keywords.json`);
   if (articleBody && resp.ok) {
     const json = await resp.json();
-    const articleText = articleBody.textContent.toLowerCase();
+    const articleText = articleBody.textContent.trim().toLowerCase();
     // set article link limit: 1 every 100 words
     const articleLinks = articleBody.querySelectorAll('a').length;
     const articleWords = articleText.split(/\s/).length;
@@ -61,7 +61,7 @@ export default async function interlink() {
       .forEach((p) => {
         // set paragraph link limit: 1 every 40 words
         const paraLinks = p.querySelectorAll('a').length;
-        const paraWords = p.textContent.split(/\s/).length;
+        const paraWords = p.textContent.trim().split(/\s/).length;
         const maxParaLinks = Math.floor(paraWords / 40) - paraLinks;
         if (maxParaLinks > 0) {
           Array.from(p.children)
