@@ -49,7 +49,7 @@
   --heading-font-size-s: 1.25rem; /* 20px */
   --heading-font-size-xs: 1.125rem; /* 18px */
   --heading-font-size-xxs: 0.875rem; /* 14px */
-  
+
   /* details */
   --detail-font-weight: 700;
   --detail-color: var(--color-gray-600);
@@ -85,6 +85,11 @@ body {
   padding: 0;
 }
 
+img {
+  height: auto;
+  width: auto;
+}
+
 /* buttons */
 
 a.button:any-link {
@@ -95,7 +100,7 @@ a.button:any-link {
   /* outline: none; (keep outline for a11n) */
   text-align: center;
   font-size: var(--body-font-size-s);
-  font-style: normal; 
+  font-style: normal;
   font-weight: 600;
   cursor: pointer;
   color: var(--color-white);
@@ -216,7 +221,7 @@ main .container {
 .heading-container {
   max-width: var(--body-max-width);
   margin-left: auto;
-  margin-right: auto;  
+  margin-right: auto;
 }
 
 .recommended-articles-wrapper .heading-container {

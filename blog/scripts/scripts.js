@@ -668,7 +668,7 @@ function removeStylingFromImages(mainEl) {
   styledImgEls.forEach((imgEl) => {
     const parentEl = imgEl.closest('p');
     parentEl.prepend(imgEl);
-    parentEl.lastChild.remove();
+    parentEl.lastElementChild.remove();
   });
 }
 
@@ -679,7 +679,7 @@ function removeStylingFromImages(mainEl) {
 function getImageCaption(picture) {
   const parentEl = picture.parentNode;
   const parentSiblingEl = parentEl.nextElementSibling;
-  return (parentSiblingEl && parentSiblingEl.firstChild.nodeName === 'EM' ? parentSiblingEl : undefined);
+  return (parentSiblingEl && parentSiblingEl.firstElementChild.nodeName === 'EM' ? parentSiblingEl : undefined);
 }
 
 /**
@@ -787,7 +787,7 @@ function unwrapBlock(block) {
   const els = [...section.children];
   const blockSection = document.createElement('div');
   const postBlockSection = document.createElement('div');
-  const nextSection = section.nextSibling;
+  const nextSection = section.nextElementSibling;
   section.parentNode.insertBefore(blockSection, nextSection);
   section.parentNode.insertBefore(postBlockSection, nextSection);
 
@@ -799,13 +799,13 @@ function unwrapBlock(block) {
       appendTo = postBlockSection;
     }
   });
-  if (!section.hasChildNodes()) {
+  if (section.childElementCount === 0) {
     section.remove();
   }
-  if (!blockSection.hasChildNodes()) {
+  if (blockSection.childElementCount === 0) {
     blockSection.remove();
   }
-  if (!postBlockSection.hasChildNodes()) {
+  if (postBlockSection.childElementCount === 0) {
     postBlockSection.remove();
   }
 }
@@ -1500,31 +1500,31 @@ export function buildFigure(blockEl) {
   const figEl = document.createElement('figure');
   figEl.classList.add('figure');
   // content is picture only, no caption or link
-  if (blockEl.firstChild) {
-    if (blockEl.firstChild.nodeName === 'PICTURE' || blockEl.firstChild.nodeName === 'VIDEO') {
-      figEl.append(blockEl.firstChild);
-    } else if (blockEl.firstChild.nodeName === 'P') {
+  if (blockEl.firstElementChild) {
+    if (blockEl.firstElementChild.nodeName === 'PICTURE' || blockEl.firstElementChild.nodeName === 'VIDEO') {
+      figEl.append(blockEl.firstElementChild);
+    } else if (blockEl.firstElementChild.nodeName === 'P') {
       const pEls = Array.from(blockEl.children);
       pEls.forEach((pEl) => {
-        if (pEl.firstChild) {
-          if (pEl.firstChild.nodeName === 'PICTURE' || pEl.firstChild.nodeName === 'VIDEO') {
-            figEl.append(pEl.firstChild);
-          } else if (pEl.firstChild.nodeName === 'EM') {
+        if (pEl.firstElementChild) {
+          if (pEl.firstElementChild.nodeName === 'PICTURE' || pEl.firstElementChild.nodeName === 'VIDEO') {
+            figEl.append(pEl.firstElementChild);
+          } else if (pEl.firstElementChild.nodeName === 'EM') {
             const figCapEl = buildCaption(pEl);
             figEl.append(figCapEl);
-          } else if (pEl.firstChild.nodeName === 'A') {
+          } else if (pEl.firstElementChild.nodeName === 'A') {
             const picEl = figEl.querySelector('picture');
             if (picEl) {
-              pEl.firstChild.textContent = '';
-              pEl.firstChild.append(picEl);
+              pEl.firstElementChild.textContent = '';
+              pEl.firstElementChild.append(picEl);
             }
-            figEl.prepend(pEl.firstChild);
+            figEl.prepend(pEl.firstElementChild);
           }
         }
       });
     // catch link-only figures (like embed blocks);
-    } else if (blockEl.firstChild.nodeName === 'A') {
-      figEl.append(blockEl.firstChild);
+    } else if (blockEl.firstElementChild.nodeName === 'A') {
+      figEl.append(blockEl.firstElementChild);
     }
   }
   return figEl;

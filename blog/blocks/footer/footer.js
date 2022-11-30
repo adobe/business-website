@@ -44,13 +44,13 @@ class Footer {
       infoRow.classList.add('has-privacy');
     }
 
-    if (infoColumnLeft.hasChildNodes()) {
+    if (infoColumnLeft.childElementCount !== 0) {
       infoRow.append(infoColumnLeft);
     }
-    if (infoColumnRight.hasChildNodes()) {
+    if (infoColumnRight.childElementCount !== 0) {
       infoRow.append(infoColumnRight);
     }
-    if (infoRow.hasChildNodes()) {
+    if (infoRow.childElementCount !== 0) {
       wrapper.append(infoRow);
     }
 

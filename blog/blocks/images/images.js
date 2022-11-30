@@ -11,11 +11,11 @@ function buildColumns(rowEl, count) {
 }
 
 export default function decorateImages(blockEl) {
-  const blockCount = blockEl.firstChild.childElementCount;
+  const blockCount = blockEl.firstElementChild.childElementCount;
   if (blockCount > 1) {
-    buildColumns(blockEl.firstChild, blockCount);
+    buildColumns(blockEl.firstElementChild, blockCount);
   } else {
-    const figEl = buildFigure(blockEl.firstChild.firstChild);
+    const figEl = buildFigure(blockEl.firstElementChild.firstElementChild);
     blockEl.innerHTML = '';
     blockEl.append(figEl);
   }

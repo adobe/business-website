@@ -64,7 +64,7 @@ export default async function interlink() {
         const paraWords = p.textContent.split(/\s/).length;
         const maxParaLinks = Math.floor(paraWords / 40) - paraLinks;
         if (maxParaLinks > 0) {
-          Array.from(p.childNodes)
+          Array.from(p.children)
           // filter out non text nodes
             .filter((node) => node.nodeType === Node.TEXT_NODE)
             .forEach((textNode) => {
@@ -91,8 +91,8 @@ export default async function interlink() {
                   a.href = item.URL;
                   a.setAttribute('data-origin', 'interlink');
                   a.appendChild(document.createTextNode(text.substring(start, end)));
-                  p.insertBefore(a, textNode.nextSibling);
-                  p.insertBefore(document.createTextNode(text.substring(end)), a.nextSibling);
+                  p.insertBefore(a, textNode.nextElementSibling);
+                  p.insertBefore(document.createTextNode(text.substring(end)), a.nextElementSibling);
                   textNode.nodeValue = text.substring(0, start);
                   // remove matched link from interlinks
                   keywords.splice(keywords.indexOf(item), 1);

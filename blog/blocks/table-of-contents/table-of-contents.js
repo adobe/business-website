@@ -14,7 +14,7 @@ export default function decorate($block) {
     if ($tab.textContent === 'Introduction') {
       $anchor.href = `${baseUrl}introduction`;
       $anchor.textContent = 'Introduction';
-      target = $block.parentElement.parentElement.previousSibling;
+      target = $block.parentElement.parentElement.previousElementSibling;
     } else {
       $headers.forEach(($header) => {
         if ($tab.textContent === $header.textContent) {
