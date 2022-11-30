@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-const PRODUCTION_DOMAINS = ['business.adobe.com'];
+const PRODUCTION_DOMAINS = ['business.adobe.com']; //
 
 /**
  * log RUM if part of the sample.
