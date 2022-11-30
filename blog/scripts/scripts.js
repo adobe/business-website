@@ -820,8 +820,10 @@ function splitSections() {
 }
 
 function removeEmptySections() {
-  document.querySelectorAll('main > div:empty').forEach((div) => {
-    div.remove();
+  document.querySelectorAll('main > div').forEach((div) => {
+    if (div.innerHTML.trim() === '') {
+      div.remove();
+    }
   });
 }
 
