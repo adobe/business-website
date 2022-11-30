@@ -679,7 +679,7 @@ function removeStylingFromImages(mainEl) {
 function getImageCaption(picture) {
   const parentEl = picture.parentNode;
   const parentSiblingEl = parentEl.nextElementSibling;
-  return (parentSiblingEl && parentSiblingEl.firstElementChild.nodeName === 'EM' ? parentSiblingEl : undefined);
+  return (parentSiblingEl && parentSiblingEl.firstElementChild && parentSiblingEl.firstElementChild.nodeName === 'EM' ? parentSiblingEl : undefined);
 }
 
 /**
