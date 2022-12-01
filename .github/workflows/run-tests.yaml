@@ -4,7 +4,7 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, edited]
     branches:
-      - v7
+      - main
   pull_request_target:
     types: [opened, synchronize, reopened, edited]
 
@@ -19,7 +19,7 @@ jobs:
         node-version: '12'
     - run: npm install
       working-directory: test
-    - run: git status & npm run lint
+    - run: npm run lint
     - run: npm test
       working-directory: test
       env:
