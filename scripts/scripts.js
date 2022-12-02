@@ -14,7 +14,7 @@ import {
   createOptimizedPicture,
 } from './lib-franklin.js';
 
-const LCP_BLOCKS = ['featured-article', 'article-header'];
+const LCP_BLOCKS = ['featured-article', 'article-header']; //
 
 sampleRUM.mediaobserver = (window.IntersectionObserver) ? new IntersectionObserver((entries) => {
   entries
