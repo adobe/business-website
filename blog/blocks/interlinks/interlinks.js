@@ -1,6 +1,6 @@
 import {
   getRootPath,
-} from '../../scripts/scripts.js';
+} from '../../../scripts/scripts.js';
 
 /**
  * Checks if a given match intersects with an existing match

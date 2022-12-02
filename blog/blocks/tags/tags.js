@@ -1,7 +1,9 @@
 import {
   toClassName,
+} from '../../../scripts/lib-franklin.js';
+import {
   loadTaxonomy,
-} from '../../scripts/scripts.js';
+} from '../../../scripts/scripts.js';
 
 export default function decorateTags(blockEl) {
   const tags = blockEl.textContent.split(', ');

@@ -11,7 +11,9 @@
  */
 
 /* globals */
-import { loadScript, sampleRUM, getHelixEnv } from './scripts.js';
+// eslint-disable-next-line import/no-cycle
+import { sampleRUM } from './lib-franklin.js';
+import { loadScript, getHelixEnv } from './scripts.js';
 
 function updateExternalLinks() {
   document.querySelectorAll('main a, footer a').forEach((a) => {

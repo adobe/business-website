@@ -1,11 +1,13 @@
 import {
-  buildFigure,
-  createOptimizedPicture,
-  getRootPath,
   toClassName,
+  createOptimizedPicture,
+} from '../../../scripts/lib-franklin.js';
+import {
+  buildFigure,
+  getRootPath,
   loadAuthorTaxonomy,
   authorTaxonomy,
-} from '../../scripts/scripts.js';
+} from '../../../scripts/scripts.js';
 
 async function populateAuthorImg(imgContainer, url, name) {
   await loadAuthorTaxonomy();

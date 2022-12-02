@@ -1,4 +1,9 @@
-import { fetchBlogArticleIndex, createOptimizedPicture } from '../../scripts/scripts.js';
+import {
+  createOptimizedPicture,
+} from '../../../scripts/lib-franklin.js';
+import {
+  fetchBlogArticleIndex,
+} from '../../../scripts/scripts.js';
 import createTag from './gnav-utils.js';
 
 function decorateCard(hit) {

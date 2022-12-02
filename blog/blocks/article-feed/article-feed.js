@@ -1,10 +1,12 @@
 import {
   readBlockConfig,
+} from '../../../scripts/lib-franklin.js';
+import {
   buildArticleCard,
   fetchPlaceholders,
   fetchBlogArticleIndex,
   stamp,
-} from '../../scripts/scripts.js';
+} from '../../../scripts/scripts.js';
 
 function isCardOnPage(article) {
   const path = article.path.split('.')[0];

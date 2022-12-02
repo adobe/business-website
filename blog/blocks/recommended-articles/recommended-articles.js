@@ -3,7 +3,7 @@ import {
   getBlogArticle,
   fetchPlaceholders,
   rewritePath,
-} from '../../scripts/scripts.js';
+} from '../../../scripts/scripts.js';
 
 async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
   if (recommendedArticlesEl.classList.contains('small')) {

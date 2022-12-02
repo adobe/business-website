@@ -1,7 +1,9 @@
 import {
   normalizeHeadings,
+} from '../../../scripts/lib-franklin.js';
+import {
   makeLinksRelative,
-} from '../../scripts/scripts.js';
+} from '../../../scripts/scripts.js';
 
 export default function decorate(block) {
   const bannerContents = document.createElement('div');

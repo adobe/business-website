@@ -16,7 +16,7 @@
 import {
   decorateBlock,
   loadBlock,
-} from '../../../scripts/scripts.js';
+} from '../../../scripts/lib-franklin.js';
 
 const ROOT_PATH = '/blog/blocks-test';
 
