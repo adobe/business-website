@@ -1,4 +1,4 @@
-import { getHelixEnv } from '../../scripts/scripts.js';
+import { getHelixEnv } from '../../../scripts/scripts.js';
 import createTag from './gnav-utils.js';
 
 function decorateEmail(email) {

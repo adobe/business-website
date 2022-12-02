@@ -4,7 +4,7 @@ import {
   buildArticleCard,
   getBlogArticle,
   rewritePath,
-} from '../../scripts/scripts.js';
+} from '../../../scripts/scripts.js';
 
 async function decorateFeaturedArticle(featuredArticleEl, articlePath) {
   const article = await getBlogArticle(articlePath);

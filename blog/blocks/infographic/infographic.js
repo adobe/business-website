@@ -1,4 +1,4 @@
-import { buildFigure } from '../../scripts/scripts.js';
+import { buildFigure } from '../../../scripts/scripts.js';
 
 export default function decorateInfographic(blockEl) {
   const figEl = buildFigure(blockEl.firstChild.firstChild);

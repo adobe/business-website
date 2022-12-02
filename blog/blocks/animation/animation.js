@@ -1,4 +1,4 @@
-import { buildFigure } from '../../scripts/scripts.js';
+import { buildFigure } from '../../../scripts/scripts.js';
 
 export default function decorateAnimation(blockEl) {
   const a = blockEl.querySelector('a');

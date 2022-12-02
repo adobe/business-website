@@ -1,12 +1,14 @@
 import {
+  loadCSS,
+} from '../../../scripts/lib-franklin.js';
+import {
   loadScript,
   getHelixEnv,
   getBlockClasses,
   debug,
   makeLinkRelative,
-  loadCSS,
   getRootPath,
-} from '../../scripts/scripts.js';
+} from '../../../scripts/scripts.js';
 import createTag from './gnav-utils.js';
 
 const COMPANY_IMG = '<img alt="Adobe" src="/blog/blocks/gnav/adobe-logo.svg">';

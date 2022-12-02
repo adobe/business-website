@@ -1,7 +1,7 @@
 import {
   fetchPlaceholders,
   debug,
-} from '../../scripts/scripts.js';
+} from '../../../scripts/scripts.js';
 import createTag from '../gnav/gnav-utils.js';
 
 const GLOBE_IMG = '<img class="footer-region-img" loading="lazy" alt="wireframe globe" src="/blog/blocks/footer/globe.svg">';

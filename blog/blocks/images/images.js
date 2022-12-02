@@ -1,4 +1,4 @@
-import { buildFigure } from '../../scripts/scripts.js';
+import { buildFigure } from '../../../scripts/scripts.js';
 
 function buildColumns(rowEl, count) {
   const columnEls = Array.from(rowEl.children);
