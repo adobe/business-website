@@ -30,7 +30,7 @@ async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
     }
   }
   recommendedArticlesEl.closest('.section').classList.add('appear');
-  if (!articleCardsContainer.hasChildNodes()) {
+  if (articleCardsContainer.childElementCount === 0) {
     recommendedArticlesEl.parentNode.parentNode.remove();
   }
 }

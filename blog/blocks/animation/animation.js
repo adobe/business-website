@@ -27,7 +27,7 @@ export default function decorateAnimation(blockEl) {
     parentEl.innerHTML = picEl;
   }
 
-  const figEl = buildFigure(blockEl.firstChild.firstChild);
+  const figEl = buildFigure(blockEl.firstElementChild.firstElementChild);
   blockEl.prepend(figEl);
-  blockEl.lastChild.remove();
+  blockEl.lastElementChild.remove();
 }

@@ -36,18 +36,19 @@ const createMetadata = (main, document) => {
 
   meta.Tags = 'Glossary';
 
+  // eslint-disable-next-line no-undef
   const block = WebImporter.Blocks.getMetadataBlock(document, meta);
   main.append(block);
 
   return meta;
-}
+};
 
 const createColumnsBlock = (main, document) => {
   const relatedLinks = document.querySelector('.dexter-FlexContainer-Items.dexter-FlexContainer--mobileJustifyCenter.dexter-FlexContainer--mobileAlignItemCenter.dexter-FlexContainer--mobileAlignContentStretch.dexter-FlexContainer--mobileAlignItemContentStart.dexter-FlexContainer--tabletJustifyCenter.dexter-FlexContainer--tabletAlignItemStart.dexter-FlexContainer--desktopJustifyCenter.dexter-FlexContainer--desktopAlignItemStart');
 
-  if(relatedLinks) {
+  if (relatedLinks) {
     const paragraphs = relatedLinks.querySelectorAll('p');
-    if(paragraphs) {
+    if (paragraphs) {
       const columnsBlock = document.createElement('table');
 
       let row = document.createElement('tr');
@@ -77,7 +78,7 @@ const createColumnsBlock = (main, document) => {
       main.append(columnsBlock);
     }
   }
-}
+};
 
 export default {
   /**
@@ -86,10 +87,12 @@ export default {
    * @param {HTMLDocument} document The document
    * @returns {HTMLElement} The root element
    */
-  transformDOM: ({ document, html}) => {
+  // eslint-disable-next-line no-unused-vars
+  transformDOM: ({ document, html }) => {
     // simply return the body, no transformation (yet)
+    // eslint-disable-next-line no-undef
     WebImporter.DOMUtils.remove(document, [
-      'header, footer, .modalContainer.static, .xf'
+      'header, footer, .modalContainer.static, .xf',
     ]);
 
     const main = document.querySelector('.page');
@@ -106,7 +109,6 @@ export default {
    * @param {String} url The url of the document being transformed.
    * @param {HTMLDocument} document The document
    */
-  generateDocumentPath: ({ document, url }) => {
-    return new URL(url).pathname.replace(/\/$/, '');
-  },
-}
+  // eslint-disable-next-line no-unused-vars
+  generateDocumentPath: ({ document, url }) => new URL(url).pathname.replace(/\/$/, ''),
+};

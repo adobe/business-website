@@ -16,7 +16,7 @@
 import {
   decorateBlock,
   loadBlock,
-} from '../../../scripts/scripts.js';
+} from '../../../blog/scripts/scripts.js';
 
 const ROOT_PATH = '/blog/blocks-test';
 
