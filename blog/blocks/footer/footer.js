@@ -44,13 +44,13 @@ class Footer {
       infoRow.classList.add('has-privacy');
     }
 
-    if (infoColumnLeft.hasChildNodes()) {
+    if (infoColumnLeft.childElementCount !== 0) {
       infoRow.append(infoColumnLeft);
     }
-    if (infoColumnRight.hasChildNodes()) {
+    if (infoColumnRight.childElementCount !== 0) {
       infoRow.append(infoColumnRight);
     }
-    if (infoRow.hasChildNodes()) {
+    if (infoRow.childElementCount !== 0) {
       wrapper.append(infoRow);
     }
 
@@ -81,7 +81,7 @@ class Footer {
           'aria-expanded': expanded,
           'aria-controls': `${titleId}-menu`,
         });
-        title.textContent = heading.textContent;
+        title.textContent = heading.textContent.trim();
         navItem.append(title);
         const linksContainer = heading.nextElementSibling;
         linksContainer.classList = 'footer-nav-item-links';
@@ -197,7 +197,7 @@ class Footer {
     const privacyWrapper = createTag('div', { class: 'footer-privacy' });
     // build privacy copyright text
     const copyright = createTag('p', { class: 'footer-privacy-copyright' });
-    copyright.textContent = copyrightEl.textContent;
+    copyright.textContent = copyrightEl.textContent.trim();
     privacyWrapper.append(copyright);
     // build privacy links
     const infoLinks = createTag('ul', { class: 'footer-privacy-links' });

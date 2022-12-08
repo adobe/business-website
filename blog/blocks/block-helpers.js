@@ -25,7 +25,7 @@ export const replaceElementType = (el, type) => {
  * @param {HTMLElement} html the content of the element
  * @returns {HTMLElement} the element created
  */
- export function createTag(tag, attributes, html) {
+export function createTag(tag, attributes, html) {
   const el = document.createElement(tag);
   if (html) {
     if (html instanceof HTMLElement) {

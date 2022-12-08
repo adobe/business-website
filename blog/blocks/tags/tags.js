@@ -3,8 +3,8 @@ import {
   loadTaxonomy,
 } from '../../scripts/scripts.js';
 
-export default function decorateTags(blockEl) {
-  const tags = blockEl.textContent.split(', ');
+export default function decorateTags(blockEl) { //
+  const tags = blockEl.textContent.trim().split(', ');
   const container = blockEl.querySelector('p');
   container.classList.add('tags-container');
   container.textContent = '';

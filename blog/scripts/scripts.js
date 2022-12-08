@@ -132,7 +132,7 @@ export function decorateBlock(block) {
   if (!blockName) return;
   const section = block.closest('.section');
   if (section) {
-    section.classList.add(`${blockName}-container`.replace(/--/g, '-'));
+    section.classList.add(`${classes.join('-')}-container`);
   }
   const blockWithVariants = blockName.split('--');
   const shortBlockName = trimDashes(blockWithVariants.shift());
@@ -160,7 +160,7 @@ export function readBlockConfig(block) {
       const cols = [...row.children];
       if (cols[1]) {
         const col = cols[1];
-        const name = toClassName(cols[0].textContent);
+        const name = toClassName(cols[0].textContent.trim());
         let value = '';
         if (col.querySelector('a')) {
           const as = [...col.querySelectorAll('a')];
@@ -172,11 +172,11 @@ export function readBlockConfig(block) {
         } else if (col.querySelector('p')) {
           const ps = [...col.querySelectorAll('p')];
           if (ps.length === 1) {
-            value = ps[0].textContent;
+            value = ps[0].textContent.trim();
           } else {
-            value = ps.map((p) => p.textContent);
+            value = ps.map((p) => p.textContent.trim());
           }
-        } else value = row.children[1].textContent;
+        } else value = row.children[1].textContent.trim();
         config[name] = value;
       }
     }
@@ -404,7 +404,7 @@ export function normalizeHeadings(el, allowedHeadings) {
         }
       }
       if (level !== 7) {
-        tag.outerHTML = `<h${level} id="${tag.id}">${tag.textContent}</h${level}>`;
+        tag.outerHTML = `<h${level} id="${tag.id}">${tag.textContent.trim()}</h${level}>`;
       }
     }
   });
@@ -503,6 +503,7 @@ async function loadLibs() {
       const { default: list } = await import(`${window.milo.libs.base}/blocks/list.js`);
       window.milo.libs.blocks = { list };
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.log('Couldn\'t load libs list');
     }
   }
@@ -550,7 +551,7 @@ initHlx();
  */
 export function compliantHeadings() {
   document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((tag) => {
-    tag.outerHTML = `<div role="region" class="heading-container" aria-label="${tag.textContent}">${tag.outerHTML}</div>`;
+    tag.outerHTML = `<div role="region" class="heading-container" aria-label="${tag.textContent.trim()}">${tag.outerHTML}</div>`;
   });
 }
 
@@ -668,7 +669,7 @@ function removeStylingFromImages(mainEl) {
   styledImgEls.forEach((imgEl) => {
     const parentEl = imgEl.closest('p');
     parentEl.prepend(imgEl);
-    parentEl.lastChild.remove();
+    parentEl.lastElementChild.remove();
   });
 }
 
@@ -679,7 +680,7 @@ function removeStylingFromImages(mainEl) {
 function getImageCaption(picture) {
   const parentEl = picture.parentNode;
   const parentSiblingEl = parentEl.nextElementSibling;
-  return (parentSiblingEl && parentSiblingEl.firstChild.nodeName === 'EM' ? parentSiblingEl : undefined);
+  return (parentSiblingEl && parentSiblingEl.firstElementChild && parentSiblingEl.firstElementChild.nodeName === 'EM' ? parentSiblingEl : undefined);
 }
 
 /**
@@ -787,7 +788,7 @@ function unwrapBlock(block) {
   const els = [...section.children];
   const blockSection = document.createElement('div');
   const postBlockSection = document.createElement('div');
-  const nextSection = section.nextSibling;
+  const nextSection = section.nextElementSibling;
   section.parentNode.insertBefore(blockSection, nextSection);
   section.parentNode.insertBefore(postBlockSection, nextSection);
 
@@ -799,13 +800,13 @@ function unwrapBlock(block) {
       appendTo = postBlockSection;
     }
   });
-  if (!section.hasChildNodes()) {
+  if (section.childElementCount === 0) {
     section.remove();
   }
-  if (!blockSection.hasChildNodes()) {
+  if (blockSection.childElementCount === 0) {
     blockSection.remove();
   }
-  if (!postBlockSection.hasChildNodes()) {
+  if (postBlockSection.childElementCount === 0) {
     postBlockSection.remove();
   }
 }
@@ -820,8 +821,10 @@ function splitSections() {
 }
 
 function removeEmptySections() {
-  document.querySelectorAll('main > div:empty').forEach((div) => {
-    div.remove();
+  document.querySelectorAll('main > div').forEach((div) => {
+    if (div.innerHTML.trim() === '') {
+      div.remove();
+    }
   });
 }
 
@@ -1500,31 +1503,31 @@ export function buildFigure(blockEl) {
   const figEl = document.createElement('figure');
   figEl.classList.add('figure');
   // content is picture only, no caption or link
-  if (blockEl.firstChild) {
-    if (blockEl.firstChild.nodeName === 'PICTURE' || blockEl.firstChild.nodeName === 'VIDEO') {
-      figEl.append(blockEl.firstChild);
-    } else if (blockEl.firstChild.nodeName === 'P') {
+  if (blockEl.firstElementChild) {
+    if (blockEl.firstElementChild.nodeName === 'PICTURE' || blockEl.firstElementChild.nodeName === 'VIDEO') {
+      figEl.append(blockEl.firstElementChild);
+    } else if (blockEl.firstElementChild.nodeName === 'P') {
       const pEls = Array.from(blockEl.children);
       pEls.forEach((pEl) => {
-        if (pEl.firstChild) {
-          if (pEl.firstChild.nodeName === 'PICTURE' || pEl.firstChild.nodeName === 'VIDEO') {
-            figEl.append(pEl.firstChild);
-          } else if (pEl.firstChild.nodeName === 'EM') {
+        if (pEl.firstElementChild) {
+          if (pEl.firstElementChild.nodeName === 'PICTURE' || pEl.firstElementChild.nodeName === 'VIDEO') {
+            figEl.append(pEl.firstElementChild);
+          } else if (pEl.firstElementChild.nodeName === 'EM') {
             const figCapEl = buildCaption(pEl);
             figEl.append(figCapEl);
-          } else if (pEl.firstChild.nodeName === 'A') {
+          } else if (pEl.firstElementChild.nodeName === 'A') {
             const picEl = figEl.querySelector('picture');
             if (picEl) {
-              pEl.firstChild.textContent = '';
-              pEl.firstChild.append(picEl);
+              pEl.firstElementChild.textContent = '';
+              pEl.firstElementChild.append(picEl);
             }
-            figEl.prepend(pEl.firstChild);
+            figEl.prepend(pEl.firstElementChild);
           }
         }
       });
     // catch link-only figures (like embed blocks);
-    } else if (blockEl.firstChild.nodeName === 'A') {
-      figEl.append(blockEl.firstChild);
+    } else if (blockEl.firstElementChild.nodeName === 'A') {
+      figEl.append(blockEl.firstElementChild);
     }
   }
   return figEl;
@@ -1602,7 +1605,7 @@ async function getMetadataJson(path) {
         meta[name] = value;
       }
     });
-    meta.h1 = doc.querySelector('h1').textContent;
+    meta.h1 = doc.querySelector('h1').textContent.trim();
   }
   return (JSON.stringify(meta));
 }

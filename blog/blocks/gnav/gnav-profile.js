@@ -46,7 +46,7 @@ function decorateProfileMenu(blockEl, profileEl, profiles, toggle) {
   const profileActions = createTag('ul', { class: 'gnav-profile-actions' });
 
   profileHeader.href = decorateProfileLink(accountLink.href, 'account');
-  profileHeader.setAttribute('aria-label', accountLink.textContent);
+  profileHeader.setAttribute('aria-label', accountLink.textContent.trim());
 
   const profileImg = avatarImg.cloneNode(true);
   const profileName = createTag('p', { class: 'gnav-profile-name' }, displayName);

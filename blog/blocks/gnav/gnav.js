@@ -92,10 +92,10 @@ class Gnav {
     if (!brandBlock) return null;
     const brand = brandBlock.querySelector('a');
     brand.className = brandBlock.className;
-    const title = createTag('span', { class: 'gnav-brand-title' }, brand.textContent);
+    const title = createTag('span', { class: 'gnav-brand-title' }, brand.textContent.trim());
 
     brand.href = makeLinkRelative(brand.href);
-    brand.setAttribute('aria-label', brand.textContent);
+    brand.setAttribute('aria-label', brand.textContent.trim());
     brand.textContent = '';
     if (brand.classList.contains('logo')) {
       brand.insertAdjacentHTML('afterbegin', BRAND_IMG);
@@ -108,7 +108,7 @@ class Gnav {
     const logo = this.body.querySelector('.adobe-logo a');
     logo.href = makeLinkRelative(logo.href);
     logo.classList.add('gnav-logo');
-    logo.setAttribute('aria-label', logo.textContent);
+    logo.setAttribute('aria-label', logo.textContent.trim());
     logo.textContent = '';
     logo.insertAdjacentHTML('afterbegin', COMPANY_IMG);
     return logo;
@@ -169,7 +169,7 @@ class Gnav {
     linkGroups.forEach((linkGroup) => {
       const image = linkGroup.querySelector('picture');
       const anchor = linkGroup.querySelector('p a');
-      const title = anchor.textContent;
+      const title = anchor.textContent.trim();
       const subtitle = linkGroup.querySelector('p:last-of-type');
       const titleWrapper = createTag('div');
       anchor.href = makeLinkRelative(anchor.href);
@@ -257,7 +257,7 @@ class Gnav {
   decorateSearch = () => {
     const searchBlock = this.body.querySelector('.search');
     if (searchBlock) {
-      const label = searchBlock.querySelector('p').textContent;
+      const label = searchBlock.querySelector('p').textContent.trim();
       const advancedLink = searchBlock.querySelector('a');
       const searchEl = createTag('div', { class: 'gnav-search' });
       const searchBar = this.decorateSearchBar(label, advancedLink);

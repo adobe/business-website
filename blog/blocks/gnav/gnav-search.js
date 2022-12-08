@@ -21,7 +21,7 @@ function decorateCard(hit) {
 function highlightTextElements(terms, elements) {
   elements.forEach((e) => {
     const matches = [];
-    const txt = e.textContent;
+    const txt = e.textContent.trim();
     terms.forEach((term) => {
       const offset = txt.toLowerCase().indexOf(term);
       if (offset >= 0) {
