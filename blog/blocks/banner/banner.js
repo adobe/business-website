@@ -31,7 +31,7 @@ export default function decorate(block) {
         const picture = responseEl.querySelector('picture');
         const source = picture.querySelector('source');
         const img = picture.querySelector('img');
-        source.srcset = origin + source.srcset.slice(1);
+        source.srcset = origin + new URL(img.src).pathname;
         img.src = origin + new URL(img.src).pathname;
         bannerImage.append(picture);
 
