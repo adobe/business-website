@@ -123,8 +123,13 @@ function setLinksToGeo(location) {
     console.log(`setting links to: ${prefix}`);
     document.querySelectorAll('a[href^="https://business.adobe.com"], a[href^="https://www.adobe.com"]').forEach((a) => {
       const url = new URL(a.href);
-      if (!url.pathname.startsWith(prefix) || (!url.pathname.startsWith(prefix) && !url.pathname.startsWith('/blog'))) {
-        a.href = `${url.protocol}//${url.host}${prefix}${url.pathname}${url.search}`;
+      if (!url.pathname.startsWith(prefix) && !url.pathname.startsWith('/blog')) {
+        const newHref = `${url.protocol}//${url.host}${prefix}${url.pathname}${url.search}`;
+        fetch(newHref).then((response) => {
+          if (response.ok) {
+            a.href = newHref;
+          }
+        });
       }
     });
   }
