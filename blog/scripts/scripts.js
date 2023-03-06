@@ -545,6 +545,18 @@ export function initHlx() {
       console.log(e);
     }
   }
+
+  sampleRUM('top');
+
+  window.addEventListener('load', () => sampleRUM('load'));
+
+  window.addEventListener('unhandledrejection', (event) => {
+    sampleRUM('error', { source: event.reason.sourceURL, target: event.reason.line });
+  });
+
+  window.addEventListener('error', (event) => {
+    sampleRUM('error', { source: event.filename, target: event.lineno });
+  });
 }
 
 initHlx();
@@ -576,20 +588,6 @@ const alloy = true;
 
 const LCP_BLOCKS = ['featured-article', 'article-header'];
 window.RUM_GENERATION = 'biz-gen4'; // add your RUM generation information here
-
-const olderror = window.onerror;
-window.onerror = (event, source, line) => {
-  sampleRUM('error', { source, target: line });
-  // keep the old error handler around
-  if (typeof olderror === 'function') {
-    olderror(event, source, line);
-  } else {
-    throw new Error(event);
-  }
-};
-
-sampleRUM('top');
-window.addEventListener('load', () => sampleRUM('load'));
 
 loadPage(document);
 
