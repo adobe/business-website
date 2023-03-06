@@ -47,6 +47,7 @@ export function sampleRUM(checkpoint, data = {}) {
       window.hlx.rum = { weight, id, random, isSelected, sampleRUM, pings: 0 };
     }
     const { weight, id } = window.hlx.rum;
+    // eslint-disable-next-line max-len, no-plusplus
     if (window.hlx && window.hlx.rum && window.hlx.rum.isSelected && window.hlx.MAX_RUM_PINGS > window.hlx.rum.pings++) {
       const sendPing = (pdata = data) => {
         // eslint-disable-next-line object-curly-newline, max-len, no-use-before-define
