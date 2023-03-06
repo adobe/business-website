@@ -44,10 +44,10 @@ export function sampleRUM(checkpoint, data = {}) {
       const random = Math.random();
       const isSelected = (random * weight < 1);
       // eslint-disable-next-line object-curly-newline
-      window.hlx.rum = { weight, id, random, isSelected, sampleRUM };
+      window.hlx.rum = { weight, id, random, isSelected, sampleRUM, pings: 0 };
     }
     const { weight, id } = window.hlx.rum;
-    if (window.hlx && window.hlx.rum && window.hlx.rum.isSelected) {
+    if (window.hlx && window.hlx.rum && window.hlx.rum.isSelected && window.hlx.MAX_RUM_PINGS > window.hlx.rum.pings++) {
       const sendPing = (pdata = data) => {
         // eslint-disable-next-line object-curly-newline, max-len, no-use-before-define
         const body = JSON.stringify({ weight, id, referer: window.location.href, generation: window.hlx.RUM_GENERATION, checkpoint, ...data });
@@ -587,7 +587,8 @@ const usp = new URLSearchParams(window.location.search);
 const alloy = true;
 
 const LCP_BLOCKS = ['featured-article', 'article-header'];
-window.RUM_GENERATION = 'biz-gen4'; // add your RUM generation information here
+window.hlx.RUM_GENERATION = 'biz-gen4'; // add your RUM generation information here
+window.hlx.MAX_RUM_PINGS = 50;
 
 loadPage(document);
 
